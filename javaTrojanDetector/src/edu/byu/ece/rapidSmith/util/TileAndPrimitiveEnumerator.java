@@ -456,7 +456,7 @@ public class TileAndPrimitiveEnumerator{
 	/**
 	 * Allows this class to be invoked from the command line.  
 	 */
-	public static void main(String args[]){
+	public void mainMethod(String args[]){
 		// Create a new instance of this class
 		TileAndPrimitiveEnumerator me = new TileAndPrimitiveEnumerator();
 		

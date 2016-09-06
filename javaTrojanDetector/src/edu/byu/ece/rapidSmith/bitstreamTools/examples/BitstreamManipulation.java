@@ -65,7 +65,7 @@ public class BitstreamManipulation {
 	
 	public static boolean DEBUG = false;
 	
-	public static void main(String[] args) {
+	public void mainMethod(String[] args) {
 
 		/////////////////////////////////////////////////////////////////////
 		// Begin command line parsing

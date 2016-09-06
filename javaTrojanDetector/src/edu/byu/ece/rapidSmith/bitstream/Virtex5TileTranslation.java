@@ -113,7 +113,7 @@ public class Virtex5TileTranslation {
 		return FrameAddressRegister.createFAR(spec, topBottom, 0, row, column, minor);
 	}
 	
-	public static void main(String[] args){
+	public void mainMethod(String[] args){
 		String partName = "xc5vlx30t";
 		String packageName = "ff665";
 		// Load up all the RapidSmith data structures

@@ -45,7 +45,7 @@ import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.XilinxCo
  */
 public class DebugBitstreamDecoder {
 
-    public static void main(String[] args) {
+    public void mainMethod(String[] args) {
         
         if (args.length != 1) {
             System.err.println("Usage: java edu.byu.ece.bitstreamTools.examples.DebugBitstreamDecoder <input.bit>");

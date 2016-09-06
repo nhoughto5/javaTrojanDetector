@@ -37,7 +37,7 @@ import edu.byu.ece.rapidSmith.design.Pin;
  */
 public class MergeStaticNets {
 
-	public static void main(String[] args){
+	public void mainMethod(String[] args){
 		if(args.length != 2){
 			MessageGenerator.briefMessageAndExit("USAGE: <input.xdl> <output.xdl>");
 		}

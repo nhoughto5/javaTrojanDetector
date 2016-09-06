@@ -23,7 +23,7 @@ package edu.byu.ece.rapidSmith.util;
 import edu.byu.ece.rapidSmith.design.Design;
 
 public class FlattenDesign {
-	public static void main(String[] args) {
+	public void mainMethod(String[] args) {
 		if(args.length != 2){
 			MessageGenerator.briefMessageAndExit("USAGE: <inputDesign.xdl> <flattenedDesign.xdl>");
 		}

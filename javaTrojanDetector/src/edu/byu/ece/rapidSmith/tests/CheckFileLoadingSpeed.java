@@ -26,7 +26,7 @@ import edu.byu.ece.rapidSmith.util.MessageGenerator;
 public class CheckFileLoadingSpeed {
 
 	
-	public static void main(String[] args) {
+	public void mainMethod(String[] args) {
 		if(args.length > 2 || args.length == 0){
 			MessageGenerator.briefMessageAndExit(
 				"USAGE: [-c | --compressed] <serializedFileName>");

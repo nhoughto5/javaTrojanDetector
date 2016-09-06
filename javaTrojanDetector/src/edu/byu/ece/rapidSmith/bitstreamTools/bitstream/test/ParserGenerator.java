@@ -39,7 +39,7 @@ public class ParserGenerator {
      * 
      * @param args
      */
-    public static void main(String[] args) {
+    public void mainMethod(String[] args) {
         
         if (args.length != 3) {
             System.err.println("Usage: java edu.byu.ece.bitstreamTools.bitstream.test.ParserGenerator <input.bit> <output.bit> <output.mcs>");

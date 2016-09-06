@@ -36,7 +36,7 @@ public class PrintXML {
 	 * 
 	 * @param args bitstream name
 	 */
-	public static void main(String[] args) {
+	public void mainMethod(String[] args) {
 
 		int printLevel = 0;
 		

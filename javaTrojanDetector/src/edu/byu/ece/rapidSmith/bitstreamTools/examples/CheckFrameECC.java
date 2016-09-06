@@ -185,7 +185,7 @@ public class CheckFrameECC{
 		return s; 
 	}
 	
-	public static void main(String[] args){
+	public void mainMethod(String[] args){
 		Bitstream bitstream = BitstreamParser.parseBitstreamExitOnError(args[0]);
 		XilinxConfigurationSpecification spec = DeviceLookup.lookupPartFromPartnameOrBitstreamExitOnError(bitstream);
 		FPGA fpga = new FPGA(spec);

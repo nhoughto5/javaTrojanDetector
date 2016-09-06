@@ -473,7 +473,7 @@ public class ArgsParser {
 		return length;
 	}
 
-	public static void main(String[] args) {
+	public void mainMethod(String[] args) {
 		String[] rules = {"-v --verbose-c +", "-a"};
 		ArgsParser ap = new ArgsParser(rules);
 		ap.parse(args);

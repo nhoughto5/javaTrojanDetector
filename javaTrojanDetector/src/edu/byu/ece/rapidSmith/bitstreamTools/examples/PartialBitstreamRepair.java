@@ -31,7 +31,7 @@ import edu.byu.ece.rapidSmith.bitstreamTools.examples.support.BitstreamOptionPar
 
 public class PartialBitstreamRepair {
 
-	public static void main(String args[]) {
+	public void mainMethod(String args[]) {
 
 		/////////////////////////////////////////////////////////////////////
 		// Begin command line parsing

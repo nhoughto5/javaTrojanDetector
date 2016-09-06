@@ -34,7 +34,7 @@ import edu.byu.ece.rapidSmith.bitstreamTools.examples.support.BitstreamOptionPar
 public class NonEmptyFrames {
 
 	@SuppressWarnings("unused")
-	public static void main(String[] args) {
+	public void mainMethod(String[] args) {
 
 		/////////////////////////////////////////////////////////////////////
 		// Setup class and Options

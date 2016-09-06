@@ -82,7 +82,7 @@ public class UnrouteNets {
 	}
 	
 	
-	public static void main(String[] args){
+	public void mainMethod(String[] args){
 		if(args.length != 2){
 			System.out.println("USAGE: <input.xdl> <output.xdl>");
 			System.exit(0);

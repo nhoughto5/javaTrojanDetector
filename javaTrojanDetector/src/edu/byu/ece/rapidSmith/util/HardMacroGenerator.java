@@ -1477,7 +1477,7 @@ public class HardMacroGenerator {
 		design.setName("GRACEFUL_FAILURE");
 	}
 	
-	public static void main(String[] args){
+	public void mainMethod(String[] args){
 		if(args.length < 2 || args.length > 3){
 			System.out.println("USAGE: <input.xdl|input.ncd> <output file type: xdl|nmc> [optional: original_vhdl_top.vhd]");
 			System.exit(0);

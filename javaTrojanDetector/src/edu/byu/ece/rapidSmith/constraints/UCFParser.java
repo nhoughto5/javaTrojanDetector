@@ -206,7 +206,7 @@ public class UCFParser {
 		new_constraint.addAreaGroupRange(new AreaGroupRange(group_name, range_type, ll_x, ll_y, ur_x, ur_y));
 	}
 		
-	public static void main(String[] args) {
+	public void mainMethod(String[] args) {
 		UCFParser p = new UCFParser();
 		ArrayList<Constraint> constraints = p.parseUCF(args[0]);
 		

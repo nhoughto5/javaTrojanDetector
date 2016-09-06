@@ -21,6 +21,8 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import edu.byu.ece.rapidSmith.bitstreamTools.examples.BitstreamDiff;
+
 
 public class main {
 
@@ -86,6 +88,18 @@ public class main {
 		});
 		btnMessage.setBounds(333, 259, 89, 23);
 		frame.getContentPane().add(btnMessage);
+		
+		JButton btnFinddiffs = new JButton("findDiffs");
+		btnFinddiffs.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String[] args = {"-i", "C:\\Users\\Nick\\Desktop\\NickTop\\HomeWork\\MASc\\Virtex5\\bitFiles\\itemDefault.bit", "-c", "C:\\Users\\Nick\\Desktop\\NickTop\\HomeWork\\MASc\\Virtex5\\bitFiles\\itemDefault.bit"};
+				BitstreamDiff diff = new BitstreamDiff();
+				diff.findDifferences(args);
+				
+			}
+		});
+		btnFinddiffs.setBounds(359, 132, 89, 23);
+		frame.getContentPane().add(btnFinddiffs);
 		
 
 		//frame.getContentPane().add(fileChooser);

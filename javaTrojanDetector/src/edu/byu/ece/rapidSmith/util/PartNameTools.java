@@ -514,7 +514,7 @@ public class PartNameTools{
 	}
 	
 	
-	public static void main(String[] args){
+	public void mainMethod(String[] args){
 		// Run some tests to make sure we are doing things right
 		for(FamilyType type : FamilyType.values()){
 			System.out.println("Current Type: " + type);

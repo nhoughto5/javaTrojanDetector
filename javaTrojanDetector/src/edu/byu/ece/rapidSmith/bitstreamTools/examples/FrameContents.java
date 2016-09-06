@@ -44,7 +44,7 @@ public class FrameContents {
 	 * Prints information about each FDRI write command (i.e., for each FDRI command,
 	 * it prints a text location of the FAR address and the # of frames).
 	 */
-	public static void main(String[] args) {
+	public void mainMethod(String[] args) {
 
 		/////////////////////////////////////////////////////////////////////
 		// Setup class and Options

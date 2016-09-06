@@ -33,7 +33,7 @@ public class FrameAddressInfo {
 	/**
 	 * Simple main that parses a FAR address and returns information about it.
 	 */
-	public static void main(String[] args) {
+	public void mainMethod(String[] args) {
 		if (args.length < 2) {
 			System.err.println("usage: <executable> <part name> <far address - hex format>\n");
 			System.exit(1);

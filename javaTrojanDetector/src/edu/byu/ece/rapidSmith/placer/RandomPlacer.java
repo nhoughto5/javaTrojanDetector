@@ -26,7 +26,7 @@ import edu.byu.ece.rapidSmith.device.*;
 import edu.byu.ece.rapidSmith.util.MessageGenerator;
 
 public class RandomPlacer{
-  public static void main(String[] args){
+  public void mainMethod(String[] args){
     // Create and load a design
     Design design = new Design(args[0]);
 

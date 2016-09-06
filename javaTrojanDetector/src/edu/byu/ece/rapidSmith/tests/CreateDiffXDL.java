@@ -24,7 +24,7 @@ import edu.byu.ece.rapidSmith.design.Design;
 import edu.byu.ece.rapidSmith.util.MessageGenerator;
 
 public class CreateDiffXDL {
-	public static void main(String[] args){
+	public void mainMethod(String[] args){
 		if(args.length != 2){
 			MessageGenerator.briefMessageAndExit("USAGE: <firstXDLDesign.xdl> <secondXDLDesign.xdl>");
 		}

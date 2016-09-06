@@ -76,7 +76,7 @@ public class Installer{
 		return names;
 	}
 	
-	public static void main(String[] args){
+	public void mainMethod(String[] args){
 		MessageGenerator.printHeader("RapidSmith Release " + Device.rapidSmithVersion +" - Installer");
 		String[] names = null;
 		long timeStart = System.currentTimeMillis();

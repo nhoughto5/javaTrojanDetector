@@ -28,7 +28,7 @@ import joptsimple.OptionSet;
 
 public class CompareEmptyBitstreams {
 
-    public static void main(String[] args) {
+    public void mainMethod(String[] args) {
         
         OptionParser parser = new OptionParser() {
             {

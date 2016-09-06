@@ -73,7 +73,7 @@ public class BitstreamDiff {
 	 * 
 	 * @param args bitstream name
 	 */
-	public static void main(String[] args) {
+	public void findDifferences(String[] args) {
 
 		/** Setup parser **/
 		BitstreamOptionParser cmdLineParser = new BitstreamOptionParser(HELP_DESCRIPTION);

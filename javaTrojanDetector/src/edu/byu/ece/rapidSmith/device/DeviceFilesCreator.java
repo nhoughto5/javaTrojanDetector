@@ -499,7 +499,7 @@ public class DeviceFilesCreator{
 	 * Creates the appropriate primitive defs
 	 * @param args The first argument should be the Xilinx part name with package and speed grade
 	 */
-	public static void main(String args[]){
+	public void mainMethod(String args[]){
 		if(args.length != 1){
 			MessageGenerator.briefMessageAndExit("USAGE: <Xilinx partname>");
 		}

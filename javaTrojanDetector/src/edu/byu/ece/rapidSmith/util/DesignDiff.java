@@ -139,7 +139,7 @@ public class DesignDiff{
 		return identical;
 	}
 	
-	public static void main(String[] args){
+	public void mainMethod(String[] args){
 		if(args.length != 2){
 			MessageGenerator.briefMessageAndExit("USAGE: <design1.xdl> <design2.xdl>");			
 		}

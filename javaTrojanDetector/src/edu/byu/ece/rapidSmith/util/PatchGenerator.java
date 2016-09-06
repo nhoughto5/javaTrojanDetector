@@ -46,7 +46,7 @@ public class PatchGenerator {
 		}		
 	}
 	
-	public static void main(String[] args) {
+	public void mainMethod(String[] args) {
 		if(args.length != 1){
 			MessageGenerator.briefMessageAndExit("USAGE: <directory to patch files>");
 		}

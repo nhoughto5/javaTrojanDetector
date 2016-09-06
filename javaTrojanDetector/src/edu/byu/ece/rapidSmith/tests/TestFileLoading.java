@@ -95,7 +95,7 @@ public class TestFileLoading{
 	
 	
 	@SuppressWarnings("unused")
-	public static void main(String[] args){
+	public void mainMethod(String[] args){
 		//createTestBashScript("testRapidSmithFiles.sh");
 		if(args.length < 2 && args.length > 3){
 			MessageGenerator.briefMessageAndExit("USAGE: -<d|w|p (d:Device, w:WireEnumerator, p:PrimitiveDefs)> <partname|familyName> [-verbose]");	

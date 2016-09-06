@@ -46,7 +46,7 @@ public class BitstreamSummary {
 	 * 
 	 * @param args bitstream name
 	 */
-	public static void main(String[] args) {
+	public void mainMethod(String[] args) {
 
 		/** Setup parser **/
 		BitstreamOptionParser cmdLineParser = new BitstreamOptionParser();

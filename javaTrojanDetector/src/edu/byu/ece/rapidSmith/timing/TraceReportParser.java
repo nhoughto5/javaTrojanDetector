@@ -272,7 +272,7 @@ public class TraceReportParser{
 	}
 	
 	
-	public static void main(String[] args) {
+	public void mainMethod(String[] args) {
 		TraceReportParser test = new TraceReportParser();
 		test.parseTWR(args[0], args[1]);
 		

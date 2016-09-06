@@ -27,7 +27,7 @@ import joptsimple.OptionSet;
 
 public class CreateEmptyBitstream {
 
-    public static void main(String[] args) {
+    public void mainMethod(String[] args) {
 
         OptionParser parser = new OptionParser() {
             {

@@ -136,7 +136,7 @@ public class XDLDesignChecker{
 		}		
 	}
 		
-	public static void main(String[] args){
+	public void mainMethod(String[] args){
 		if(args.length != 1){
 			MessageGenerator.briefMessageAndExit("USAGE: <input.xdl>");
 		}

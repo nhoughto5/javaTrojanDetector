@@ -234,7 +234,7 @@ public class XilinxV4DeviceClassGenerator extends XilinxDeviceClassGenerator {
 	 * Allows this class to run stand alone from the rest of the project
 	 * @param args The architectures for which to generate the java files (ie. virtex4, virtex5 ...)
 	 */
-	public static void main(String args[]){
+	public void mainMethod(String args[]){
 	    XilinxV4DeviceClassGenerator gen = new XilinxV4DeviceClassGenerator();
 	    gen.createJavaSourceFile();
 	}

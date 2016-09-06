@@ -293,7 +293,7 @@ public class BasicRouter extends AbstractRouter{
 				(System.nanoTime() - start) / 1000000000.0);
 	}
 	
-	public static void main(String[] args){
+	public void mainMethod(String[] args){
 		long[] runtimes = new long[4];
 		String nl = System.getProperty("line.separator");
 		runtimes[0] = runtimes[1] = System.nanoTime();
