@@ -75,7 +75,7 @@ public class BitstreamDiff {
 	 * 
 	 * @param args bitstream name
 	 */
-	public List<ModifiedFrame> findDifferences(String[] args) {
+	public ArrayList<ModifiedFrame> findDifferences(String[] args) {
 
 		/** Setup parser **/
 		BitstreamOptionParser cmdLineParser = new BitstreamOptionParser(HELP_DESCRIPTION);
@@ -154,7 +154,7 @@ public class BitstreamDiff {
 	 * @return A List of Integer objects that correspond to the Frame Address Registers of the 
 	 * Frames that differ.
 	 */
-	public static List<ModifiedFrame> diff(FPGA goldenChip, FPGA targetChip, 
+	public ArrayList<ModifiedFrame> diff(FPGA goldenChip, FPGA targetChip, 
 			boolean ignoreUnconfiguredFrames, boolean printData, boolean silentMode) {
 		
 		XilinxConfigurationSpecification spec1 = goldenChip.getDeviceSpecification();
@@ -165,7 +165,7 @@ public class BitstreamDiff {
 		}
 
 		ArrayList<Integer> diffFARs = new ArrayList<Integer>();
-		List<ModifiedFrame> diffPairs = new ArrayList<>();
+		ArrayList<ModifiedFrame> diffPairs = new ArrayList<>();
 		FrameAddressRegister far = new FrameAddressRegister(spec1);
 		
 		// Diff counters
@@ -255,7 +255,8 @@ public class BitstreamDiff {
 			// print out message if there is one
 			if (!silentMode && msg != null) {
 				System.out.println(far.getHexAddress() + " (" + far + "):"+ msg);
-				diffPairs.add(new ModifiedFrame(goldenFrame, targetFrame, far));
+				ModifiedFrame temp = new ModifiedFrame(goldenFrame, targetFrame, far);
+				diffPairs.add(temp);
 			}
 			
 		}	

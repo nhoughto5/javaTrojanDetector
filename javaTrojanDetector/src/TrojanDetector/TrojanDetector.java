@@ -1,5 +1,6 @@
 package TrojanDetector;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import UtilityClasses.ModifiedFrame;
@@ -11,7 +12,7 @@ public class TrojanDetector {
 	public void  performDetection(){
 		String[] args = {"-i", "C:\\Users\\Nick\\Desktop\\NickTop\\HomeWork\\MASc\\Virtex5\\bitFiles\\itemDefault.bit", "-c", "C:\\Users\\Nick\\Desktop\\NickTop\\HomeWork\\MASc\\Virtex5\\bitFiles\\itemMod.bit"};
 		BitstreamDiff diff = new BitstreamDiff();
-		List<ModifiedFrame> differences = diff.findDifferences(args);
+		ArrayList<ModifiedFrame> differences = diff.findDifferences(args);
 		System.out.println("Here we are mother fuckers");
 		for(ModifiedFrame t : differences){
 			System.out.println(t.printModifiedFrame());
