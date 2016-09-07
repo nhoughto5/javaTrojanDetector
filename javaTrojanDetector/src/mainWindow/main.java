@@ -21,12 +21,14 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import TrojanDetector.TrojanDetector;
 import edu.byu.ece.rapidSmith.bitstreamTools.examples.BitstreamDiff;
 
 
 public class main {
 
 	private JFrame frame;
+	private TrojanDetector trojanDetector;
 	/**
 	 * Launch the application.
 	 */
@@ -55,6 +57,7 @@ public class main {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		trojanDetector = new TrojanDetector();
 		frame.setBounds(100, 100, 828, 565);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -92,10 +95,7 @@ public class main {
 		JButton btnFinddiffs = new JButton("findDiffs");
 		btnFinddiffs.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String[] args = {"-i", "C:\\Users\\Nick\\Desktop\\NickTop\\HomeWork\\MASc\\Virtex5\\bitFiles\\itemDefault.bit", "-c", "C:\\Users\\Nick\\Desktop\\NickTop\\HomeWork\\MASc\\Virtex5\\bitFiles\\itemDefault.bit"};
-				BitstreamDiff diff = new BitstreamDiff();
-				diff.findDifferences(args);
-				
+				trojanDetector.performDetection();		
 			}
 		});
 		btnFinddiffs.setBounds(359, 132, 89, 23);

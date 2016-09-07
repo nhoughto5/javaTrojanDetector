@@ -21,7 +21,9 @@
 package edu.byu.ece.rapidSmith.bitstreamTools.examples;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import UtilityClasses.ModifiedFrame;
 import joptsimple.OptionSet;
 import edu.byu.ece.rapidSmith.bitstreamTools.bitstream.Bitstream;
 import edu.byu.ece.rapidSmith.bitstreamTools.configuration.FPGA;
@@ -73,7 +75,7 @@ public class BitstreamDiff {
 	 * 
 	 * @param args bitstream name
 	 */
-	public void findDifferences(String[] args) {
+	public List<ModifiedFrame> findDifferences(String[] args) {
 
 		/** Setup parser **/
 		BitstreamOptionParser cmdLineParser = new BitstreamOptionParser(HELP_DESCRIPTION);
@@ -115,15 +117,15 @@ public class BitstreamDiff {
 		/////////////////////////////////////////////////////////////////////
 		// 1. Get base FPGA object
 		/////////////////////////////////////////////////////////////////////
-		FPGA fpga1 = null;		
-		fpga1 = cmdLineParser.createFPGAFromBitstreamOrReadbackFileExitOnError(options);
-		XilinxConfigurationSpecification part = fpga1.getDeviceSpecification();
+		FPGA goldenChip = null;		
+		goldenChip = cmdLineParser.createFPGAFromBitstreamOrReadbackFileExitOnError(options);
+		XilinxConfigurationSpecification part = goldenChip.getDeviceSpecification();
 		
 		/////////////////////////////////////////////////////////////////////
 		// 2. Get compare FPGA object
 		/////////////////////////////////////////////////////////////////////
-		FPGA fpga2 = null;
-		fpga2 = cmdLineParser.createFPGAFromBitstreamOrReadbackFileExitOnError(options, 
+		FPGA targetChip = null;
+		targetChip = cmdLineParser.createFPGAFromBitstreamOrReadbackFileExitOnError(options, 
 				COMPARE_READBACK_OPTION,
 				COMPARE_BITSTREAM_OPTION, part);
 
@@ -138,11 +140,11 @@ public class BitstreamDiff {
 			maskFPGA.configureBitstream(maskBitstream);
 			
 			// Now mask the two FPGAs
-			FPGAOperation.MASKoperation(fpga1, maskFPGA);
-			FPGAOperation.MASKoperation(fpga2, maskFPGA);
+			FPGAOperation.MASKoperation(goldenChip, maskFPGA);
+			FPGAOperation.MASKoperation(targetChip, maskFPGA);
 		}
 		
-		diff(fpga1, fpga2, ignoreUnconfiguredFrames, printData, silentMode);
+		return diff(goldenChip, targetChip, ignoreUnconfiguredFrames, printData, silentMode);
 		
 	}
 
@@ -152,18 +154,18 @@ public class BitstreamDiff {
 	 * @return A List of Integer objects that correspond to the Frame Address Registers of the 
 	 * Frames that differ.
 	 */
-	public static ArrayList<Integer> diff(FPGA fpga1, FPGA fpga2, 
+	public static List<ModifiedFrame> diff(FPGA goldenChip, FPGA targetChip, 
 			boolean ignoreUnconfiguredFrames, boolean printData, boolean silentMode) {
 		
-		XilinxConfigurationSpecification spec1 = fpga1.getDeviceSpecification();
-		XilinxConfigurationSpecification spec2 = fpga2.getDeviceSpecification();
+		XilinxConfigurationSpecification spec1 = goldenChip.getDeviceSpecification();
+		XilinxConfigurationSpecification spec2 = targetChip.getDeviceSpecification();
 		if (spec1 != spec2) {
 			System.err.println("Not the same device");
 			System.exit(1);
 		}
 
 		ArrayList<Integer> diffFARs = new ArrayList<Integer>();
-		
+		List<ModifiedFrame> diffPairs = new ArrayList<>();
 		FrameAddressRegister far = new FrameAddressRegister(spec1);
 		
 		// Diff counters
@@ -179,38 +181,38 @@ public class BitstreamDiff {
 		int fpga2NonEmptyFrames = 0;
 		
 		for (; far.validFARAddress(); far.incrementFAR()) {
-			Frame f1 = fpga1.getFrame(far);
-			Frame f2 = fpga2.getFrame(far);
+			Frame goldenFrame = goldenChip.getFrame(far);
+			Frame targetFrame = targetChip.getFrame(far);
 			String msg = null;
 
 			// Collect statistics
-			if (f1.isConfigured()) {
+			if (goldenFrame.isConfigured()) {
 				fpga1ConfiguredFrames++;
-				if (!f1.getData().isEmpty())
+				if (!goldenFrame.getData().isEmpty())
 					fpga1NonEmptyFrames++;
 			}
-			if (f2.isConfigured()) {
+			if (targetFrame.isConfigured()) {
 				fpga2ConfiguredFrames++;
-				if (!f2.getData().isEmpty())
+				if (!targetFrame.getData().isEmpty())
 					fpga2NonEmptyFrames++;
 			}
 			
 			// Check #1: see if frames are configured or not
-			if ( !f1.isConfigured() || !f2.isConfigured()) {
+			if ( !goldenFrame.isConfigured() || !targetFrame.isConfigured()) {
 				String umsg = null;
 				
 				// Don't create a message if the ignore unconfigured frames option was set
 				if (ignoreUnconfiguredFrames) continue;
 				
-				if (!f1.isConfigured() && f2.isConfigured() ) {					
+				if (!goldenFrame.isConfigured() && targetFrame.isConfigured() ) {					
 					umsg = "FPGA 1 not configured";
-					if (!f2.getData().isEmpty())
+					if (!targetFrame.getData().isEmpty())
 						umsg += " (non empty frame in FPGA2)";
 					else
 						umsg += " (empty frame in FPGA2)";
-				} else if (f1.isConfigured() && !f2.isConfigured()) {
+				} else if (goldenFrame.isConfigured() && !targetFrame.isConfigured()) {
 					umsg = "FPGA 2 not configured";
-					if (!f1.getData().isEmpty())
+					if (!goldenFrame.getData().isEmpty())
 						umsg += " (non empty frame in FPGA1)";
 					else
 						umsg += " (empty frame in FPGA1)";
@@ -220,8 +222,8 @@ public class BitstreamDiff {
 			} else {
 			
 				// both frames configured
-				FrameData d1 = f1.getData();
-				FrameData d2 = f2.getData();
+				FrameData d1 = goldenFrame.getData();
+				FrameData d2 = targetFrame.getData();
 				if (!d1.isEqual(d2)) {
 					
 					diffFARs.add(far.getAddress());
@@ -253,29 +255,30 @@ public class BitstreamDiff {
 			// print out message if there is one
 			if (!silentMode && msg != null) {
 				System.out.println(far.getHexAddress() + " (" + far + "):"+ msg);
+				diffPairs.add(new ModifiedFrame(goldenFrame, targetFrame, far));
 			}
 			
 		}	
 
 		// Print summary
-		System.out.println("FPGA1:");
-		System.out.println("\t"+fpga1ConfiguredFrames+" configured frames");
-		System.out.println("\t"+fpga1NonEmptyFrames+" configured frames with data");
-		System.out.println("FPGA2:");
-		System.out.println("\t"+fpga2ConfiguredFrames+" configured frames");
-		System.out.println("\t"+fpga2NonEmptyFrames+" configured frames with data");
-		int totalSame = configuredFramesEqualEmpty+configuredFramesEqualWithData;
-		System.out.println("# configured frames with no data differences:"+totalSame);
-		System.out.println("\t"+configuredFramesEqualEmpty+" empty frames that are equal");
-		System.out.println("\t"+configuredFramesEqualWithData+" non-empty frames that are equal");
-		// Data diff counters
-		int totalDiffs = configuredDataNonEmptyDifferences + configuredFPGA1EmptyDifferences + configuredFPGA2EmptyDifferences;
-		System.out.println("# configured frames with data differences:"+totalDiffs);
-		System.out.println("\t"+configuredDataNonEmptyDifferences+" Non empty frame differences");
-		System.out.println("\t"+configuredFPGA1EmptyDifferences+" FPGA1 empty frame differences");
-		System.out.println("\t"+configuredFPGA2EmptyDifferences+" FPGA2 empty frame differences");
+//		System.out.println("FPGA1:");
+//		System.out.println("\t"+fpga1ConfiguredFrames+" configured frames");
+//		System.out.println("\t"+fpga1NonEmptyFrames+" configured frames with data");
+//		System.out.println("FPGA2:");
+//		System.out.println("\t"+fpga2ConfiguredFrames+" configured frames");
+//		System.out.println("\t"+fpga2NonEmptyFrames+" configured frames with data");
+//		int totalSame = configuredFramesEqualEmpty+configuredFramesEqualWithData;
+//		System.out.println("# configured frames with no data differences:"+totalSame);
+//		System.out.println("\t"+configuredFramesEqualEmpty+" empty frames that are equal");
+//		System.out.println("\t"+configuredFramesEqualWithData+" non-empty frames that are equal");
+//		// Data diff counters
+//		int totalDiffs = configuredDataNonEmptyDifferences + configuredFPGA1EmptyDifferences + configuredFPGA2EmptyDifferences;
+//		System.out.println("# configured frames with data differences:"+totalDiffs);
+//		System.out.println("\t"+configuredDataNonEmptyDifferences+" Non empty frame differences");
+//		System.out.println("\t"+configuredFPGA1EmptyDifferences+" FPGA1 empty frame differences");
+//		System.out.println("\t"+configuredFPGA2EmptyDifferences+" FPGA2 empty frame differences");
 
-		return diffFARs;
+		return diffPairs;
 
 	}
 	
