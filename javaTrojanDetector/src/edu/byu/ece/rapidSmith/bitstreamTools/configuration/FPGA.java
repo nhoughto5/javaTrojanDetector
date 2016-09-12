@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import edu.byu.ece.rapidSmith.bitstreamTools.bitstream.Bitstream;
+import edu.byu.ece.rapidSmith.bitstreamTools.bitstream.BitstreamHeader;
 import edu.byu.ece.rapidSmith.bitstreamTools.bitstream.Packet;
 import edu.byu.ece.rapidSmith.bitstreamTools.bitstream.PacketList;
 import edu.byu.ece.rapidSmith.bitstreamTools.bitstream.PacketOpcode;
@@ -86,7 +87,7 @@ public class FPGA {
 		// TODO: make sure that the bitstream ends on the proper boundry?
 		// TODO: keep track of where the packet data ends up on the FPGA? (i.e. a map
 		//       between array data and FAR addresses).
-
+		header = bitstream.getHeader();
 		// Iterate through all of the packets of the bitstream 
 		PacketList packets = bitstream.getPackets();
 		for (Iterator<Packet> i = packets.iterator(); i.hasNext(); ) {
@@ -370,6 +371,10 @@ public class FPGA {
 		setFAR(0);
 	}
 	
+	public BitstreamHeader getBitstreamHeader(){
+		return header;
+	}
+	
 	protected boolean DEBUG = false;
 	
 	protected FrameData frameBuffer;
@@ -378,5 +383,6 @@ public class FPGA {
 	protected FrameAddressRegister frameAddress;
 	protected XilinxConfigurationSpecification spec;
 	private HashMap<Integer, Integer> frameMap;
+	private BitstreamHeader header;
 	
 }

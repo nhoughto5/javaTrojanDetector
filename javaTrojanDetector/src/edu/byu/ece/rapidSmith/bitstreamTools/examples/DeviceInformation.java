@@ -28,7 +28,7 @@ import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.XilinxCo
  */
 public class DeviceInformation {
 
-	static public void main(String args[]) {
+	static public void mainMethod(String args[]) {
 
 		if (args.length < 1) {
 			System.err.println("usage: <executable> <part name>\n");

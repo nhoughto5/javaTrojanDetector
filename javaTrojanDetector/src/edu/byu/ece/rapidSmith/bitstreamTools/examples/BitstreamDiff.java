@@ -21,11 +21,11 @@
 package edu.byu.ece.rapidSmith.bitstreamTools.examples;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import UtilityClasses.ModifiedFrame;
 import joptsimple.OptionSet;
 import edu.byu.ece.rapidSmith.bitstreamTools.bitstream.Bitstream;
+import edu.byu.ece.rapidSmith.bitstreamTools.bitstream.BitstreamHeader;
 import edu.byu.ece.rapidSmith.bitstreamTools.configuration.FPGA;
 import edu.byu.ece.rapidSmith.bitstreamTools.configuration.FPGAOperation;
 import edu.byu.ece.rapidSmith.bitstreamTools.configuration.Frame;
@@ -66,6 +66,8 @@ public class BitstreamDiff {
 	public static final String PRINT_DATA_OPTION_HELP = 
 		"Print the frame contents of frames that differ.";
 	
+	private BitstreamHeader header;
+	private XilinxConfigurationSpecification spec1, spec2;
 	public static final String[] HELP_DESCRIPTION = {
 		"Compares the values of two different bitstreams and reports any differences",
 	};
@@ -120,7 +122,7 @@ public class BitstreamDiff {
 		FPGA goldenChip = null;		
 		goldenChip = cmdLineParser.createFPGAFromBitstreamOrReadbackFileExitOnError(options);
 		XilinxConfigurationSpecification part = goldenChip.getDeviceSpecification();
-		
+		header = goldenChip.getBitstreamHeader();
 		/////////////////////////////////////////////////////////////////////
 		// 2. Get compare FPGA object
 		/////////////////////////////////////////////////////////////////////
@@ -157,8 +159,8 @@ public class BitstreamDiff {
 	public ArrayList<ModifiedFrame> diff(FPGA goldenChip, FPGA targetChip, 
 			boolean ignoreUnconfiguredFrames, boolean printData, boolean silentMode) {
 		
-		XilinxConfigurationSpecification spec1 = goldenChip.getDeviceSpecification();
-		XilinxConfigurationSpecification spec2 = targetChip.getDeviceSpecification();
+		spec1 = goldenChip.getDeviceSpecification();
+		spec2 = targetChip.getDeviceSpecification();
 		if (spec1 != spec2) {
 			System.err.println("Not the same device");
 			System.exit(1);
@@ -282,5 +284,17 @@ public class BitstreamDiff {
 		return diffPairs;
 
 	}
-	
+	public XilinxConfigurationSpecification getDeviceType(){
+		if(spec1 != null){
+			return spec1;
+		}
+		else{
+			System.err.println("Device not set!");
+			System.exit(1);
+			return spec1;
+		}
+	}
+	public String getPartName(){
+		return header.getPartName();
+	}
 }

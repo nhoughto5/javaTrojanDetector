@@ -272,17 +272,24 @@ public class FrameAddressRegister {
 		StringBuffer sb = new StringBuffer();
 
 		// Print address
-		sb.append("FAR="+BitstreamUtils.toHexString(getAddress())+", ");
+		sb.append("FAR:"+BitstreamUtils.toHexString(getAddress())+", Half: ");
 				// Print top & bottom
 		sb.append(AbstractConfigurationSpecification.getTopBottom(top_bottom));
-		sb.append(" Type=" + AbstractConfigurationSpecification.getBlockType(configSpec, blockType) + " ("+blockType+")");		
-		sb.append(", Row="+ row);
-		sb.append(", Column=" + column +" (" +
-				AbstractConfigurationSpecification.getBlockSubtype(configSpec, blockType, column) + "),");
-		sb.append(" Minor="+ minor);
+		sb.append(", Type:" + getFrameBlockType() + " ("+blockType+")");		
+		sb.append(", Row:"+ row);
+		sb.append(", Column:" + column +" (" +
+				getFrameBlockSubType() + "),");
+		sb.append(" Minor:"+ minor);
 		return sb.toString();			
 	}
 
+	public String getFrameBlockType(){
+		return AbstractConfigurationSpecification.getBlockType(configSpec, blockType);
+	}
+	
+	public String getFrameBlockSubType(){
+		return AbstractConfigurationSpecification.getBlockSubtype(configSpec, blockType, column);
+	}
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	// Static Methods
 	//////////////////////////////////////////////////////////////////////////////////////////////
