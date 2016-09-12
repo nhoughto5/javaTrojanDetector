@@ -1,7 +1,12 @@
 package UtilityClasses;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import edu.byu.ece.rapidSmith.bitstreamTools.configuration.Frame;
 import edu.byu.ece.rapidSmith.bitstreamTools.configuration.FrameAddressRegister;
+import edu.byu.ece.rapidSmith.bitstreamTools.configuration.FrameData;
 import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.XilinxConfigurationSpecification;
 import edu.byu.ece.rapidSmith.device.Tile;
 
@@ -15,6 +20,9 @@ public class ModifiedFrame {
 	protected int column;
 	protected int minor, address;
 	protected String hexAddress, printOut, columnBlockType, columnFrameBlockSubType, familyName;
+	protected DeviceCLBColumnSperator selector;
+	protected XilinxConfigurationSpecification spec;
+	protected boolean isFrameTop;
 	public String getFamilyName() {
 		return familyName;
 	}
@@ -24,7 +32,7 @@ public class ModifiedFrame {
 	}
 	protected Tile tile;
 	
-	public ModifiedFrame(Frame goldenFrame, Frame targetFrame, FrameAddressRegister frameAddressRegister, String familyName) {
+	public ModifiedFrame(Frame goldenFrame, Frame targetFrame, FrameAddressRegister frameAddressRegister, XilinxConfigurationSpecification spec) {
 		this.goldenFrame = goldenFrame;
 		this.targetFrame = targetFrame;
 		this.top_bottom = frameAddressRegister.getTopBottom();
@@ -37,7 +45,51 @@ public class ModifiedFrame {
 		this.printOut = frameAddressRegister.toString(1);
 		this.columnBlockType = frameAddressRegister.getFrameBlockType();
 		this.columnFrameBlockSubType = frameAddressRegister.getFrameBlockSubType();
-		this.familyName = familyName;
+		this.spec = spec;
+		this.isFrameTop = frameAddressRegister.isFrameTop();
+		selector = new DeviceCLBColumnSperator(familyName);
+	}
+	
+	private void createYCoordinateDifferenceseList(){
+		List<Integer> goldenData = goldenFrame.getData().getAllFrameWords();
+		List<Integer> targetData = targetFrame.getData().getAllFrameWords();
+		List<Integer> differentWordNumber = new ArrayList<>();
+		if(goldenData.size() != targetData.size()){
+			System.err.println("Target and Golden frame length do not match!");
+			System.exit(1);
+		}
+		int numTopRows = spec.getTopNumberOfRows();
+		int numBottomRows = spec.getBottomNumberOfRows();
+		for(int i = 0; i < goldenData.size(); ++i){
+			if(goldenData.get(i) != targetData.get(i)){
+				differentWordNumber.add(i);
+			}
+		}
+		
+	}
+	
+	public DeviceCLBColumnSperator getSelector() {
+		return selector;
+	}
+
+	public void setSelector(DeviceCLBColumnSperator selector) {
+		this.selector = selector;
+	}
+
+	public boolean isFrameTop() {
+		return isFrameTop;
+	}
+
+	public void setFrameTop(boolean isFrameTop) {
+		this.isFrameTop = isFrameTop;
+	}
+
+	public XilinxConfigurationSpecification getSpec() {
+		return spec;
+	}
+
+	public void setSpec(XilinxConfigurationSpecification spec) {
+		this.spec = spec;
 	}
 	
 	public XilinxConfigurationSpecification getConfigSpec() {

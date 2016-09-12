@@ -37,6 +37,8 @@ public class TrojanDetector {
 		Tile test = tiles[13][21];
 		PrimitiveSite[] sites = tiles[13][21].getPrimitiveSites();
 		XilinxConfigurationSpecification deviceType = diff.getDeviceType();
+		int BottomNumberOfRows = deviceType.getBottomNumberOfRows();
+		int TopNumberOfRows = deviceType.getTopNumberOfRows();
 		DeviceCLBColumnSperator seperator = new DeviceCLBColumnSperator(readDevice.getFamilyType().toString());
 		for(ModifiedFrame frame : modifiedFrames){
 			if(frame.getColumnFrameBlockSubType().equals("CLB")){

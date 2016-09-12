@@ -257,7 +257,7 @@ public class BitstreamDiff {
 			// print out message if there is one
 			if (!silentMode && msg != null) {
 				System.out.println(far.getHexAddress() + " (" + far + "):"+ msg);
-				ModifiedFrame temp = new ModifiedFrame(goldenFrame, targetFrame, far);
+				ModifiedFrame temp = new ModifiedFrame(goldenFrame, targetFrame, far, spec1);
 				diffPairs.add(temp);
 			}
 			

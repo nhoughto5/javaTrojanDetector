@@ -290,6 +290,21 @@ public class FrameAddressRegister {
 	public String getFrameBlockSubType(){
 		return AbstractConfigurationSpecification.getBlockSubtype(configSpec, blockType, column);
 	}
+	
+	public boolean isFrameTop(){
+		String ret = AbstractConfigurationSpecification.getTopBottom(top_bottom);
+		if(ret.equals("top")){
+			return true;
+		}
+		else if(ret.equals("false")){
+			return false;
+		}
+		else{
+			System.err.println("Failed to determine whether frame is in top or bottom");
+			System.exit(1);
+			return false;
+		}
+	}
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	// Static Methods
 	//////////////////////////////////////////////////////////////////////////////////////////////
