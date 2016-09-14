@@ -315,7 +315,7 @@ public class FrameAddressRegister {
 		if(ret.equals("top")){
 			return true;
 		}
-		else if(ret.equals("false")){
+		else if(ret.equals("bottom")){
 			return false;
 		}
 		else{

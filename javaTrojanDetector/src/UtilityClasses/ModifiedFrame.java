@@ -2,6 +2,7 @@ package UtilityClasses;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import edu.byu.ece.rapidSmith.bitstreamTools.configuration.Frame;
@@ -10,6 +11,7 @@ import edu.byu.ece.rapidSmith.bitstreamTools.configuration.FrameData;
 import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.AbstractConfigurationSpecification;
 import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.BlockSubType;
 import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.XilinxConfigurationSpecification;
+import edu.byu.ece.rapidSmith.device.Device;
 import edu.byu.ece.rapidSmith.device.Tile;
 
 public class ModifiedFrame {
@@ -26,7 +28,7 @@ public class ModifiedFrame {
 	protected DeviceColumnInfo selector;
 	protected XilinxConfigurationSpecification spec;
 	protected boolean isFrameTop;
-	protected List<Tile> tiles;
+	protected HashSet<Tile> tiles;
 	
 	public ModifiedFrame(Frame goldenFrame, Frame targetFrame, FrameAddressRegister frameAddressRegister, XilinxConfigurationSpecification spec) {
 		this.goldenFrame = goldenFrame;
@@ -35,7 +37,7 @@ public class ModifiedFrame {
 		this.blockType = frameAddressRegister.getBlockType(); 
 		this.row = frameAddressRegister.getRow();
 		this.column = frameAddressRegister.getColumn();
-		this.minor = frameAddressRegister.getColumn();
+		this.minor = frameAddressRegister.getMinor();
 		this.address = frameAddressRegister.getAddress();
 		this.hexAddress = frameAddressRegister.getHexAddress();
 		this.printOut = frameAddressRegister.toString(1);
@@ -44,33 +46,47 @@ public class ModifiedFrame {
 		this.spec = spec;
 		this.isFrameTop = frameAddressRegister.isFrameTop();
 		this.selector = new DeviceColumnInfo(this.spec.getDeviceFamily());
-		createYCoordinateDifferenceseList();
 	}
 	
-	private void createYCoordinateDifferenceseList(){
+	public void createYCoordinateDifferenceseList(Device readDevice){
+		tiles = new HashSet<Tile>();
 		List<Integer> goldenData = goldenFrame.getData().getAllFrameWords();
 		List<Integer> targetData = targetFrame.getData().getAllFrameWords();
 		if(goldenData.size() != targetData.size()){
 			System.err.println("Target and Golden frame length do not match!");
 			System.exit(1);
 		}
-		int numTopRows = spec.getTopNumberOfRows();
+		//int numTopRows = spec.getTopNumberOfRows();
 		int numBottomRows = spec.getBottomNumberOfRows();
-		List<Integer> differentWordNumber = new ArrayList<>();
+		int numLowerTiles;
 		if(this.columnFrameBlockSubType.getName().equalsIgnoreCase("CLB")){
 			numberOfWordsPerTile = (this.spec.getFrameSize() - this.selector.getNumberOfClockWordsPerFrame()) / this.selector.getNumberOfTilesInCLBColumn();
 			for(int i = 0; i < goldenData.size(); ++i){
 				if(goldenData.get(i) != targetData.get(i)){
-					differentWordNumber.add(i);
+					if(this.isFrameTop){
+						numLowerTiles = numBottomRows + this.row;
+					}
+					else{
+						numLowerTiles = numBottomRows - this.row;
+					}
+					int rowNum = (numLowerTiles * this.selector.getNumberOfTilesInCLBColumn()) + ((int) i / this.numberOfWordsPerTile);
+					Tile tempTile = readDevice.getTile(rowNum, this.column);
+					if(tempTile == null){
+						System.err.println("Tile at row: " + rowNum + " col: " + this.column + " does not exist");
+					}
+					else{
+						tiles.add(tempTile);
+						System.out.print(tempTile.getName() + " ");
+					}
+					
 				}
-			}
-			for(int diffWordNum : differentWordNumber){
-				int globalY = 
 			}
 		}
 		else{
 			System.err.println("Unknown frame type " + this.columnFrameBlockSubType.getName());
 		}
+		System.out.println("");
+		return;
 	}
 	
 	
@@ -83,11 +99,11 @@ public class ModifiedFrame {
 		this.columnFrameBlockSubType = columnFrameBlockSubType;
 	}
 
-	public List<Tile> getTiles() {
+	public HashSet<Tile> getTiles() {
 		return tiles;
 	}
 
-	public void setTiles(List<Tile> tiles) {
+	public void setTiles(HashSet<Tile> tiles) {
 		this.tiles = tiles;
 	}
 

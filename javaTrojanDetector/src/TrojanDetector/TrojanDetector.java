@@ -18,11 +18,14 @@ import edu.byu.ece.rapidSmith.util.FamilyType;
 public class TrojanDetector {
 	BitstreamDiff diff; 
 	ArrayList<ModifiedFrame> modifiedFrames;
+	Device readDevice;
 	public void performDetection(File goldenBitFile, File targetBitFile){
 		String[] args = {"-i", goldenBitFile.getAbsolutePath(), "-c", targetBitFile.getAbsolutePath()};
 		diff = new BitstreamDiff();
+		this.readDevice = selectedDevice();
 		modifiedFrames = diff.findDifferences(args); 
 		matchFramesToTiles(args);
+		return;
 	}
 	
 	private Device selectedDevice(){
@@ -32,19 +35,25 @@ public class TrojanDetector {
 	}
 	
 	private void matchFramesToTiles(String[] args){
-		Device readDevice = selectedDevice();
-		Tile[][] tiles = readDevice.getTiles();
-		Tile test = tiles[13][21];
-		PrimitiveSite[] sites = tiles[13][21].getPrimitiveSites();
-		XilinxConfigurationSpecification deviceType = diff.getDeviceType();
-		int BottomNumberOfRows = deviceType.getBottomNumberOfRows();
-		int TopNumberOfRows = deviceType.getTopNumberOfRows();
-		DeviceColumnInfo seperator = new DeviceColumnInfo(readDevice.getFamilyType().toString());
-		for(ModifiedFrame frame : modifiedFrames){
-			if(frame.getColumnFrameBlockSubType().equals("CLB")){
-				frame.getColumn(); frame.getMinor();
-				//PrimitiveSite[] sites = tiles[frame.getColumn()][]
-			}
+		
+		for(ModifiedFrame mF : modifiedFrames){
+			mF.createYCoordinateDifferenceseList(this.readDevice);
 		}
+		
+//		Device readDevice = selectedDevice();
+//		Tile[][] tiles = readDevice.getTiles();
+//
+//		Tile test = tiles[13][21];
+//		PrimitiveSite[] sites = tiles[13][21].getPrimitiveSites();
+//		XilinxConfigurationSpecification deviceType = diff.getDeviceType();
+//		int BottomNumberOfRows = deviceType.getBottomNumberOfRows();
+//		int TopNumberOfRows = deviceType.getTopNumberOfRows();
+//		DeviceColumnInfo seperator = new DeviceColumnInfo(readDevice.getFamilyType().toString());
+//		for(ModifiedFrame frame : modifiedFrames){
+//			if(frame.getColumnFrameBlockSubType().equals("CLB")){
+//				frame.getColumn(); frame.getMinor();
+//				//PrimitiveSite[] sites = tiles[frame.getColumn()][]
+//			}
+//		}
 	}
 }
