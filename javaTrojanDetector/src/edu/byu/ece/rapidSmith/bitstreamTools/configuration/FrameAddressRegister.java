@@ -20,6 +20,8 @@
  */
 package edu.byu.ece.rapidSmith.bitstreamTools.configuration;
 
+import java.util.List;
+
 import edu.byu.ece.rapidSmith.bitstreamTools.bitstream.BitstreamUtils;
 import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.AbstractConfigurationSpecification;
 import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.BlockSubType;
@@ -287,8 +289,25 @@ public class FrameAddressRegister {
 		return AbstractConfigurationSpecification.getBlockType(configSpec, blockType);
 	}
 	
-	public String getFrameBlockSubType(){
+	public String getFrameBlockSubTypeString(){
 		return AbstractConfigurationSpecification.getBlockSubtype(configSpec, blockType, column);
+	}
+	
+	public BlockSubType getFrameBlockSubType(){
+        List<BlockType> types = configSpec.getBlockTypes();
+        BlockType type = null;
+        if (getBlockType() < types.size())
+            type = types.get(getBlockType());
+        else
+            return null;
+        List<BlockSubType> layout = configSpec.getBlockSubTypeLayout(type);
+        BlockSubType subType = null;
+        if (getColumn() < layout.size()) {
+            subType = layout.get(getColumn());
+        } else {
+            return null;
+        }
+        return subType;
 	}
 	
 	public boolean isFrameTop(){

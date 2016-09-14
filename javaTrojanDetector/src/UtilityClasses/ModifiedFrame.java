@@ -7,6 +7,8 @@ import java.util.List;
 import edu.byu.ece.rapidSmith.bitstreamTools.configuration.Frame;
 import edu.byu.ece.rapidSmith.bitstreamTools.configuration.FrameAddressRegister;
 import edu.byu.ece.rapidSmith.bitstreamTools.configuration.FrameData;
+import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.AbstractConfigurationSpecification;
+import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.BlockSubType;
 import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.XilinxConfigurationSpecification;
 import edu.byu.ece.rapidSmith.device.Tile;
 
@@ -18,19 +20,13 @@ public class ModifiedFrame {
 	protected int blockType;
 	protected int row;
 	protected int column;
-	protected int minor, address;
-	protected String hexAddress, printOut, columnBlockType, columnFrameBlockSubType, familyName;
-	protected DeviceCLBColumnSperator selector;
+	protected int minor, address, numberOfWordsPerTile;
+	protected String hexAddress, printOut, columnBlockType, familyName;
+	protected BlockSubType columnFrameBlockSubType;
+	protected DeviceColumnInfo selector;
 	protected XilinxConfigurationSpecification spec;
 	protected boolean isFrameTop;
-	public String getFamilyName() {
-		return familyName;
-	}
-
-	public void setFamilyName(String familyName) {
-		this.familyName = familyName;
-	}
-	protected Tile tile;
+	protected List<Tile> tiles;
 	
 	public ModifiedFrame(Frame goldenFrame, Frame targetFrame, FrameAddressRegister frameAddressRegister, XilinxConfigurationSpecification spec) {
 		this.goldenFrame = goldenFrame;
@@ -47,32 +43,66 @@ public class ModifiedFrame {
 		this.columnFrameBlockSubType = frameAddressRegister.getFrameBlockSubType();
 		this.spec = spec;
 		this.isFrameTop = frameAddressRegister.isFrameTop();
-		selector = new DeviceCLBColumnSperator(familyName);
+		this.selector = new DeviceColumnInfo(this.spec.getDeviceFamily());
+		createYCoordinateDifferenceseList();
 	}
 	
 	private void createYCoordinateDifferenceseList(){
 		List<Integer> goldenData = goldenFrame.getData().getAllFrameWords();
 		List<Integer> targetData = targetFrame.getData().getAllFrameWords();
-		List<Integer> differentWordNumber = new ArrayList<>();
 		if(goldenData.size() != targetData.size()){
 			System.err.println("Target and Golden frame length do not match!");
 			System.exit(1);
 		}
 		int numTopRows = spec.getTopNumberOfRows();
 		int numBottomRows = spec.getBottomNumberOfRows();
-		for(int i = 0; i < goldenData.size(); ++i){
-			if(goldenData.get(i) != targetData.get(i)){
-				differentWordNumber.add(i);
+		List<Integer> differentWordNumber = new ArrayList<>();
+		if(this.columnFrameBlockSubType.getName().equalsIgnoreCase("CLB")){
+			numberOfWordsPerTile = (this.spec.getFrameSize() - this.selector.getNumberOfClockWordsPerFrame()) / this.selector.getNumberOfTilesInCLBColumn();
+			for(int i = 0; i < goldenData.size(); ++i){
+				if(goldenData.get(i) != targetData.get(i)){
+					differentWordNumber.add(i);
+				}
+			}
+			for(int diffWordNum : differentWordNumber){
+				int globalY = 
 			}
 		}
-		
+		else{
+			System.err.println("Unknown frame type " + this.columnFrameBlockSubType.getName());
+		}
 	}
 	
-	public DeviceCLBColumnSperator getSelector() {
+	
+	
+	public BlockSubType getColumnFrameBlockSubType() {
+		return columnFrameBlockSubType;
+	}
+
+	public void setColumnFrameBlockSubType(BlockSubType columnFrameBlockSubType) {
+		this.columnFrameBlockSubType = columnFrameBlockSubType;
+	}
+
+	public List<Tile> getTiles() {
+		return tiles;
+	}
+
+	public void setTiles(List<Tile> tiles) {
+		this.tiles = tiles;
+	}
+
+	public String getFamilyName() {
+		return familyName;
+	}
+
+	public void setFamilyName(String familyName) {
+		this.familyName = familyName;
+	}
+	public DeviceColumnInfo getSelector() {
 		return selector;
 	}
 
-	public void setSelector(DeviceCLBColumnSperator selector) {
+	public void setSelector(DeviceColumnInfo selector) {
 		this.selector = selector;
 	}
 
@@ -146,12 +176,6 @@ public class ModifiedFrame {
 	public void setColumnBlockType(String columnBlockType) {
 		this.columnBlockType = columnBlockType;
 	}
-	public String getColumnFrameBlockSubType() {
-		return columnFrameBlockSubType;
-	}
-	public void setColumnFrameBlockSubType(String columnFrameBlockSubType) {
-		this.columnFrameBlockSubType = columnFrameBlockSubType;
-	}
 	public Frame getGoldenFrame() {
 		return goldenFrame;
 	}
@@ -173,11 +197,5 @@ public class ModifiedFrame {
 	
 	public String printModifiedFrame(){
 		return printOut;
-	}
-	public Tile getTile() {
-		return tile;
-	}
-	public void setTile(Tile tile) {
-		this.tile = tile;
 	}
 }

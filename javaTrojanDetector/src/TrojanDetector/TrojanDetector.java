@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import UtilityClasses.DeviceCLBColumnSperator;
+import UtilityClasses.DeviceColumnInfo;
 import UtilityClasses.ModifiedFrame;
 import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.BlockSubType;
 import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.BlockType;
@@ -39,7 +39,7 @@ public class TrojanDetector {
 		XilinxConfigurationSpecification deviceType = diff.getDeviceType();
 		int BottomNumberOfRows = deviceType.getBottomNumberOfRows();
 		int TopNumberOfRows = deviceType.getTopNumberOfRows();
-		DeviceCLBColumnSperator seperator = new DeviceCLBColumnSperator(readDevice.getFamilyType().toString());
+		DeviceColumnInfo seperator = new DeviceColumnInfo(readDevice.getFamilyType().toString());
 		for(ModifiedFrame frame : modifiedFrames){
 			if(frame.getColumnFrameBlockSubType().equals("CLB")){
 				frame.getColumn(); frame.getMinor();
