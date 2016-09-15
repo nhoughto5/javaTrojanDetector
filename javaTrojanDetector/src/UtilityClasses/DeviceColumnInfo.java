@@ -3,7 +3,6 @@ package UtilityClasses;
 public class DeviceColumnInfo {
 	private int maxIRFrameNumber, maxInterfaceFrameNumber, numberOfFrames_CLBColumn, numberOfTilesInCLBColumn,
 		numberOfClockWordsPerFrame, numberOfFrames_IOBColumn, numberOfFrames_DSPColumn, numberOfFrames_BRAMColumn, numberOfFrames_CLKColumn;
-
 	public DeviceColumnInfo(String deviceName) {
 		if(deviceName.equalsIgnoreCase("VIRTEX5")){
 			this.maxIRFrameNumber = 25;
@@ -20,8 +19,25 @@ public class DeviceColumnInfo {
 			System.err.println("Unrecognized Family Name");
 			System.exit(1);
 		}
+		
 	}
 
+	public String clbFrameSubType(int minorAddress){
+		if(minorAddress <= this.maxIRFrameNumber){
+			return "IR";
+		}
+		else if((minorAddress <= this.maxInterfaceFrameNumber) && (minorAddress > this.maxIRFrameNumber)){
+			return "interFace";
+		}
+		else if ((minorAddress <= this.numberOfFrames_CLBColumn) && (minorAddress > this.maxInterfaceFrameNumber)){
+			return "CLB";
+		}
+		else{
+			System.err.println("Unexpected minor address");
+			System.exit(1);
+			return "NA";
+		}
+	}
 	public int getNumberOfFrames_IOBColumn() {
 		return numberOfFrames_IOBColumn;
 	}

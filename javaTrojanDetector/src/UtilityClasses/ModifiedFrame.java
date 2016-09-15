@@ -67,18 +67,19 @@ public class ModifiedFrame {
 						numLowerTiles = numBottomRows + this.row;
 					}
 					else{
-						numLowerTiles = numBottomRows - this.row;
+						numLowerTiles = numBottomRows - this.row - 1;
 					}
+					//TODO is this necessary?
+					numLowerTiles = (numLowerTiles < 0) ? 0 : numLowerTiles;
 					int rowNum = (numLowerTiles * this.selector.getNumberOfTilesInCLBColumn()) + ((int) i / this.numberOfWordsPerTile);
-					Tile tempTile = readDevice.getTile(rowNum, this.column);
+					Tile tempTile = readDevice.getCLBTileByLocalCoordinates(rowNum, this.column, this.selector.clbFrameSubType(this.minor));
 					if(tempTile == null){
 						System.err.println("Tile at row: " + rowNum + " col: " + this.column + " does not exist");
 					}
 					else{
 						tiles.add(tempTile);
-						System.out.print(tempTile.getName() + " ");
+						System.out.print("Tile: " + tempTile.getName() +": G = 0x" + Integer.toHexString(goldenData.get(i)) + "  T = 0x" + Integer.toHexString(targetData.get(i))+ "     ");
 					}
-					
 				}
 			}
 		}

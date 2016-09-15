@@ -245,6 +245,28 @@ public class Device implements Serializable{
 		return routeThroughMap.get(w);
 	}
 	
+	public Tile getCLBTileByLocalCoordinates(int row, int column, String subType){
+		if(subType.equals("IR")){
+			return getTile("INT_X"+ column +"Y" + row);
+		}
+		else if(subType.equals("interFace")){
+			return getTile("TIEOFF_X" + column + "Y" + row);
+		}
+		else if(subType.equals("CLB")){
+			Tile tempTile = null;
+			tempTile = getTile("CLBLL_X" + column+ "Y" + row);
+			if(tempTile == null){
+				tempTile = getTile("CLBLM_X" + column+ "Y" + row);
+			}
+			return tempTile;
+		}
+		else{
+			System.err.println("Unexpected CLB tile type");
+			System.exit(1);
+			return null;
+		}
+	}
+	
 	/**
 	 * Gets the current tile in the device based on absolute row and column indices
 	 * @param row The absolute row index (0 starting at top)
