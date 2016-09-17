@@ -4,14 +4,16 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import UtilityClasses.DeviceColumnInfo;
-import UtilityClasses.ModifiedFrame;
+import deviceArchitecture.Architecture;
+import utilityClasses.DeviceColumnInfo;
+import utilityClasses.ModifiedFrame;
 import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.BlockSubType;
 import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.BlockType;
 import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.XilinxConfigurationSpecification;
 import edu.byu.ece.rapidSmith.bitstreamTools.examples.BitstreamDiff;
 import edu.byu.ece.rapidSmith.device.Device;
 import edu.byu.ece.rapidSmith.device.PrimitiveSite;
+import edu.byu.ece.rapidSmith.device.PrimitiveType;
 import edu.byu.ece.rapidSmith.device.Tile;
 import edu.byu.ece.rapidSmith.util.FamilyType;
 
@@ -19,12 +21,16 @@ public class TrojanDetector {
 	BitstreamDiff diff; 
 	ArrayList<ModifiedFrame> modifiedFrames;
 	Device readDevice;
+	Architecture architecture;
+
 	public void performDetection(File goldenBitFile, File targetBitFile){
 		String[] args = {"-i", goldenBitFile.getAbsolutePath(), "-c", targetBitFile.getAbsolutePath()};
 		diff = new BitstreamDiff();
 		this.readDevice = selectedDevice();
-		modifiedFrames = diff.findDifferences(args); 
-		matchFramesToTiles(args);
+		modifiedFrames = diff.findDifferences(args);
+		architecture = new Architecture(this.readDevice, diff.getDeviceType());
+		architecture.loadArchitecture();
+		//matchFramesToTiles(args);
 		return;
 	}
 	
@@ -35,25 +41,8 @@ public class TrojanDetector {
 	}
 	
 	private void matchFramesToTiles(String[] args){
-		
 		for(ModifiedFrame mF : modifiedFrames){
 			mF.createYCoordinateDifferenceseList(this.readDevice);
 		}
-		
-//		Device readDevice = selectedDevice();
-//		Tile[][] tiles = readDevice.getTiles();
-//
-//		Tile test = tiles[13][21];
-//		PrimitiveSite[] sites = tiles[13][21].getPrimitiveSites();
-//		XilinxConfigurationSpecification deviceType = diff.getDeviceType();
-//		int BottomNumberOfRows = deviceType.getBottomNumberOfRows();
-//		int TopNumberOfRows = deviceType.getTopNumberOfRows();
-//		DeviceColumnInfo seperator = new DeviceColumnInfo(readDevice.getFamilyType().toString());
-//		for(ModifiedFrame frame : modifiedFrames){
-//			if(frame.getColumnFrameBlockSubType().equals("CLB")){
-//				frame.getColumn(); frame.getMinor();
-//				//PrimitiveSite[] sites = tiles[frame.getColumn()][]
-//			}
-//		}
 	}
 }

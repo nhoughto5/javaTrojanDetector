@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Stack;
 
 import com.caucho.hessian.io.Deflation;
@@ -278,6 +279,18 @@ public class Device implements Serializable{
 			return null;
 		}
 		return tiles[row][column];
+	}
+	
+	public List<Tile> getTilesInColumn(int column){
+		List<Tile> columnTiles = new ArrayList<>();
+		int rows = getRows();
+		for(int i = 0; i < rows; ++i){
+			Tile tempTile = getTile(i, column);
+			if(tempTile != null){
+				columnTiles.add(tempTile);
+			}
+		}
+		return columnTiles;
 	}
 	
 	/**

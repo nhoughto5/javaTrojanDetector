@@ -22,7 +22,7 @@ package edu.byu.ece.rapidSmith.bitstreamTools.examples;
 
 import java.util.ArrayList;
 
-import UtilityClasses.ModifiedFrame;
+import utilityClasses.ModifiedFrame;
 import joptsimple.OptionSet;
 import edu.byu.ece.rapidSmith.bitstreamTools.bitstream.Bitstream;
 import edu.byu.ece.rapidSmith.bitstreamTools.bitstream.BitstreamHeader;

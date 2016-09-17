@@ -1,4 +1,4 @@
-package UtilityClasses;
+package utilityClasses;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,15 +78,17 @@ public class ModifiedFrame {
 					}
 					else{
 						tiles.add(tempTile);
-						System.out.print("Tile: " + tempTile.getName() +": G = 0x" + Integer.toHexString(goldenData.get(i)) + "  T = 0x" + Integer.toHexString(targetData.get(i))+ "     ");
+						System.out.print("Tile: " + tempTile.getName() +": G = 0x" + String.format("%08X", goldenData.get(i)) + "  T = 0x" + String.format("%08X", targetData.get(i))+ "     ");
+						//System.out.print("Tile: " + tempTile.getName() +": G = 0x" + Integer.toHexString(goldenData.get(i)) + "  T = 0x" + Integer.toHexString(targetData.get(i))+ "     ");
 					}
 				}
 			}
+			System.out.println("");
 		}
 		else{
 			System.err.println("Unknown frame type " + this.columnFrameBlockSubType.getName());
 		}
-		System.out.println("");
+		
 		return;
 	}
 	

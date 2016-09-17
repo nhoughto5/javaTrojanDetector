@@ -1,4 +1,4 @@
-package UtilityClasses;
+package utilityClasses;
 
 public class DeviceColumnInfo {
 	private int maxIRFrameNumber, maxInterfaceFrameNumber, numberOfFrames_CLBColumn, numberOfTilesInCLBColumn,
