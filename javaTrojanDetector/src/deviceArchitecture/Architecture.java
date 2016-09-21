@@ -59,7 +59,8 @@ public class Architecture {
 				|| Utils.isDSP(tile.getType())
 				|| Utils.isSwitchBox(tile.getType())
 				|| Utils.isCNFG(tile.getType()) || Utils.isIOB(tile.getType())
-				|| Utils.isCLK(tile.getType())) {
+				|| Utils.isCLK(tile.getType()) 
+				|| Utils.isBUFS(tile.getType())) {
 			return true;
 		} else {
 			return false;
@@ -108,7 +109,7 @@ public class Architecture {
 			List<Tile> columnTiles = this.device.getTilesInColumn(i);
 			columnType = null;
 			for(Tile tile : columnTiles){
-				System.out.println(tile.getName());
+				//System.out.println(tile.getName());
 				columnType = isNewColumnType(tile);
 				if(columnType != null){
 					int t = tile.getTileXCoordinate();
@@ -121,8 +122,15 @@ public class Architecture {
 					}
 				}
 			}
-			System.out.println(layout.get(currentLocalCol).getName());
+			//System.out.println(layout.get(currentLocalCol).getName());
 			currentColumn.addTiles(columnTiles);
+			
+			//Add the final column of the device
+			if(i == numGlobalColumns - 1){
+				columnType = layout.get(currentLocalCol).getName();
+				currentColumn.setColumnType(columnType);
+				columns.add(currentColumn);
+			}
 		}
 	}
 	
