@@ -44,6 +44,9 @@ public class Utils{
 	
 	private static HashSet<TileType> bufs;
 	
+	private static HashSet<TileType> ignores;
+	
+	private static HashSet<TileType> miscellaneous;
 	/**
 	 * Returns a PrimitiveType enum based on the given string. If such
 	 * an enum does not exist, it will return null.
@@ -119,7 +122,29 @@ public class Utils{
 	public static boolean isBUFS(TileType type){
 		return bufs.contains(type);
 	}
+	
+	public static boolean isIGNORE(TileType type){
+		return ignores.contains(type);
+	}
+	
+	public static boolean isMiscellaneousPrimaryType(TileType type){
+		return miscellaneous.contains(type);
+	}
 
+	public static boolean isPrimaryTile(TileType type) {
+		if (isCLB(type) || isBRAM(type)
+				|| isDSP(type)
+				|| isSwitchBox(type)
+				|| isCNFG(type) || isIOB(type)
+				|| isCLK(type) 
+				|| isBUFS(type)
+				|| isMiscellaneousPrimaryType(type)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	static{
 		clbs = new HashSet<TileType>();
 		clbs.add(TileType.CLB);
@@ -170,25 +195,19 @@ public class Utils{
 		ints.add(TileType.INT_TERM_BRK);
 		ints.add(TileType.LIOI_INT);
 		ints.add(TileType.LIOI_INT_BRK);
+		ints.add(TileType.L_TERM_INT);
+		ints.add(TileType.R_TERM_INT);
+		ints.add(TileType.INT_INTERFACE);
 		
 		cnfgs = new HashSet<TileType>();
-//		cnfgs.add(TileType.CFG_CENTER);
-//		cnfgs.add(TileType.CFG_CENTER_0);
-//		cnfgs.add(TileType.CFG_CENTER_1);
-//		cnfgs.add(TileType.CFG_CENTER_2);
-//		cnfgs.add(TileType.CFG_CENTER_3);
-//		cnfgs.add(TileType.CFG_HCLK_INTERFACE);
-//		cnfgs.add(TileType.CFG_PPC_DL_BUFS);
-//		cnfgs.add(TileType.CFG_PPC_R_VBRK);
-//		cnfgs.add(TileType.CFG_PPC_VBRK);
 		cnfgs.add(TileType.CFG_VBRK);
-		//cnfgs.add(TileType.CFG_VBRK_FRAME);
 		
 		iob = new HashSet<TileType>();
 		iob.add(TileType.BIOB);
 		iob.add(TileType.CIOB);
 		iob.add(TileType.LIOB);
 		iob.add(TileType.RIOB);
+		iob.add(TileType.IOI);
 		
 		clk = new HashSet<TileType>();
 		clk.add(TileType.CLKV);
@@ -197,5 +216,141 @@ public class Utils{
 		bufs.add(TileType.INT_BUFS_L);
 		bufs.add(TileType.INT_BUFS_R);
 		
+		
+		miscellaneous = new HashSet<TileType>();
+		miscellaneous.add(TileType.PCIE_INT_INTERFACE);
+		miscellaneous.add(TileType.EMAC_INT_INTERFACE);
+		miscellaneous.add(TileType.EMAC);
+		miscellaneous.add(TileType.GTP_INT_INTERFACE);
+		//miscellaneous.add(TileType.PCIE_BRKH);
+		miscellaneous.add(TileType.PCIE_T);
+		miscellaneous.add(TileType.PCIE_B);
+		
+		
+		ignores = new HashSet<TileType>();
+		ignores.add(TileType.NULL);
+		ignores.add(TileType.HCLK);
+		ignores.add(TileType.HCLK_BRAM);
+		ignores.add(TileType.HCLK_BRAM_FEEDTHRU);
+		ignores.add(TileType.HCLK_BRAM_FEEDTHRU_FOLD);
+		ignores.add(TileType.HCLK_BRAM_FX);
+		ignores.add(TileType.HCLK_BRAM_MGT);
+		ignores.add(TileType.HCLK_BRAM_MGT_LEFT);
+		ignores.add(TileType.HCLK_CENTER);
+		ignores.add(TileType.HCLK_CENTER_ABOVE_CFG);
+		ignores.add(TileType.HCLK_CLB);
+		ignores.add(TileType.HCLK_CLBLL);
+		ignores.add(TileType.HCLK_CLBLM);
+		ignores.add(TileType.HCLK_CLBLM_MGT);
+		ignores.add(TileType.HCLK_CLBLM_MGT_LEFT);
+		ignores.add(TileType.HCLK_CLB_XL_CLE);
+		ignores.add(TileType.HCLK_CLB_XL_CLE_FOLD);
+		ignores.add(TileType.HCLK_CLB_XL_INT);
+		ignores.add(TileType.HCLK_CLB_XL_INT_FOLD);
+		ignores.add(TileType.HCLK_CLB_XM_CLE);
+		ignores.add(TileType.HCLK_CLB_XM_CLE_FOLD);
+		ignores.add(TileType.HCLK_CLB_XM_INT);
+		ignores.add(TileType.HCLK_CLB_XM_INT_FOLD);
+		ignores.add(TileType.HCLK_CMT_BOT);
+		ignores.add(TileType.HCLK_CMT_CMT);
+		ignores.add(TileType.HCLK_CMT_CMT_MGT);
+		ignores.add(TileType.HCLK_CMT_IOI);
+		ignores.add(TileType.HCLK_CMT_TOP);
+		ignores.add(TileType.HCLK_DCM);
+		ignores.add(TileType.HCLK_DCMIOB);
+		ignores.add(TileType.HCLK_DSP);
+		ignores.add(TileType.HCLK_FT);
+		ignores.add(TileType.HCLK_GT3);
+		ignores.add(TileType.HCLK_GTH);
+		ignores.add(TileType.HCLK_GTH_LEFT);
+		ignores.add(TileType.HCLK_GTX);
+		ignores.add(TileType.HCLK_GTX_DUMMY);
+		ignores.add(TileType.HCLK_GTX_LEFT);
+		ignores.add(TileType.HCLK_GT_EMP);
+		ignores.add(TileType.HCLK_INNER_IOI);
+		ignores.add(TileType.HCLK_INT_INTERFACE);
+		ignores.add(TileType.HCLK_IOB);
+		ignores.add(TileType.HCLK_IOBDCM);
+		ignores.add(TileType.HCLK_IOB_CMT_BOT);
+		ignores.add(TileType.HCLK_IOB_CMT_BOT_MGT);
+		ignores.add(TileType.HCLK_IOB_CMT_MID);
+		ignores.add(TileType.HCLK_IOB_CMT_MID_MGT);
+		ignores.add(TileType.HCLK_IOB_CMT_TOP);
+		ignores.add(TileType.HCLK_IOB_CMT_TOP_MGT);
+		ignores.add(TileType.HCLK_IOI);
+		ignores.add(TileType.HCLK_IOIL_BOT_DN);
+		ignores.add(TileType.HCLK_IOIL_BOT_SPLIT);
+		ignores.add(TileType.HCLK_IOIL_BOT_UP);
+		ignores.add(TileType.HCLK_IOIL_EMP);
+		ignores.add(TileType.HCLK_IOIL_INT);
+		ignores.add(TileType.HCLK_IOIL_INT_FOLD);
+		ignores.add(TileType.HCLK_IOIL_TOP_DN);
+		ignores.add(TileType.HCLK_IOIL_TOP_SPLIT);
+		ignores.add(TileType.HCLK_IOIL_TOP_UP);
+		ignores.add(TileType.HCLK_IOIR_BOT_DN);
+		ignores.add(TileType.HCLK_IOIR_BOT_SPLIT);
+		ignores.add(TileType.HCLK_IOIR_BOT_UP);
+		ignores.add(TileType.HCLK_IOIR_EMP);
+		ignores.add(TileType.HCLK_IOIR_INT);
+		ignores.add(TileType.HCLK_IOIR_INT_FOLD);
+		ignores.add(TileType.HCLK_IOIR_TOP_DN);
+		ignores.add(TileType.HCLK_IOIR_TOP_SPLIT);
+		ignores.add(TileType.HCLK_IOIR_TOP_UP);
+		ignores.add(TileType.HCLK_IOIS_DCI);
+		ignores.add(TileType.HCLK_IOIS_LVDS);
+		ignores.add(TileType.HCLK_IOI_BOTCEN);
+		ignores.add(TileType.HCLK_IOI_BOTCEN_MGT);
+		ignores.add(TileType.HCLK_IOI_CENTER);
+		ignores.add(TileType.HCLK_IOI_CMT);
+		ignores.add(TileType.HCLK_IOI_CMT_MGT);
+		ignores.add(TileType.HCLK_IOI_LTERM);
+		ignores.add(TileType.HCLK_IOI_LTERM_BOT25);
+		ignores.add(TileType.HCLK_IOI_RTERM);
+		ignores.add(TileType.HCLK_IOI_RTERM_BOT25);
+		ignores.add(TileType.HCLK_IOI_TOPCEN);
+		ignores.add(TileType.HCLK_IOI_TOPCEN_MGT);
+		ignores.add(TileType.HCLK_LIOB);
+		ignores.add(TileType.HCLK_MGT);
+		ignores.add(TileType.HCLK_OUTER_IOI);
+		ignores.add(TileType.HCLK_PCIE_BRAM);
+		ignores.add(TileType.HCLK_PPC);
+		ignores.add(TileType.HCLK_PPC_TERM);
+		ignores.add(TileType.HCLK_QBUF_L);
+		ignores.add(TileType.HCLK_QBUF_R);
+		ignores.add(TileType.HCLK_TERM);
+		ignores.add(TileType.HCLK_TERM_L);
+		ignores.add(TileType.HCLK_TERM_R);
+		ignores.add(TileType.HCLK_VBRK);
+		ignores.add(TileType.HCLK_VBRK_R);
+		ignores.add(TileType.HCLK_VFRAME);
+		ignores.add(TileType.BRKH);
+		ignores.add(TileType.T_TERM_INT);
+		ignores.add(TileType.T_TERM_INT_D);
+		ignores.add(TileType.B_TERM_INT_D);
+		ignores.add(TileType.CFG_HCLK_INTERFACE);
+		ignores.add(TileType.BRKH_IOI);
+		ignores.add(TileType.BRKH_CLB);
+		ignores.add(TileType.BRKH_BRAM);
+		ignores.add(TileType.BRKH_DSP);
+		ignores.add(TileType.INT_HCLK_BUFS);
+		ignores.add(TileType.SITE_FEEDTHRU);
+		ignores.add(TileType.CMT_BOT);
+		ignores.add(TileType.CFG_CENTER);
+		ignores.add(TileType.CLK_TERM_TOP);
+		ignores.add(TileType.CLKV_MC);
+		ignores.add(TileType.CLK_HROW);
+		ignores.add(TileType.CLK_BUFGMUX);
+		ignores.add(TileType.CLK_HROW);
+		ignores.add(TileType.CLKV_MC);
+		ignores.add(TileType.GBRKC);
+		ignores.add(TileType.CLK_IOB_B);
+		ignores.add(TileType.CLK_HROW);
+		ignores.add(TileType.CLK_CMT_BOT);
+		ignores.add(TileType.CLK_TERM_BOT);
+		ignores.add(TileType.PCIE_BRAM);
+		ignores.add(TileType.PCIE_BRAM);
+		ignores.add(TileType.GT3);
+		ignores.add(TileType.BRKH_GT3);
+		ignores.add(TileType.PCIE_BRKH);
 	}
 }

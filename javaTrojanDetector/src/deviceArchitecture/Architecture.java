@@ -9,6 +9,7 @@ import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.BlockSub
 import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.XilinxConfigurationSpecification;
 import edu.byu.ece.rapidSmith.device.Device;
 import edu.byu.ece.rapidSmith.device.Tile;
+import edu.byu.ece.rapidSmith.device.TileType;
 import edu.byu.ece.rapidSmith.device.Utils;
 
 public class Architecture {
@@ -19,6 +20,8 @@ public class Architecture {
 	DeviceColumnInfo deviceInfo;
 	Tile[][] tiles;
 	int maxLocalX, maxLocalY, numGlobalColumns, numGlobalRows;
+	List<Column> columns;
+	
 	public Architecture(Device device, XilinxConfigurationSpecification spec) {
 		this.device = device;
 		this.spec = spec;
@@ -29,6 +32,8 @@ public class Architecture {
 		this.maxLocalY = 0;
 		this.numGlobalColumns = this.device.getColumns();
 		this.numGlobalRows = this.device.getRows();
+		this.columns = new ArrayList<>();
+		
 	}
 	
 	private void incrementFar(){
@@ -41,31 +46,12 @@ public class Architecture {
 		}
 	}
 	
-	private List<Column> parseGlobalColumn(List<Tile> columnTiles, BlockSubType currentSubType){
-		int numOfRows = this.spec.getTopNumberOfRows() + this.spec.getBottomNumberOfRows();
-		List<Column> speratedColumns = new ArrayList<>();
-		List<Tile> regionTiles = new ArrayList<>();
-		Column col = new Column();
-		if(currentSubType.getName().equals("CLB")){
-			for(Tile tile : columnTiles){
-				System.out.println(tile.getType());
-			}
-		}
-		return speratedColumns;
-	}
-
-	private boolean isPrimaryTile(Tile tile) {
-		if (Utils.isCLB(tile.getType()) || Utils.isBRAM(tile.getType())
-				|| Utils.isDSP(tile.getType())
-				|| Utils.isSwitchBox(tile.getType())
-				|| Utils.isCNFG(tile.getType()) || Utils.isIOB(tile.getType())
-				|| Utils.isCLK(tile.getType()) 
-				|| Utils.isBUFS(tile.getType())) {
-			return true;
-		} else {
-			return false;
+	public void removeUnconfigurableTiles(){
+		for(Column col : columns){
+			col.removeUnconfiguredTiles();
 		}
 	}
+	
 	private String isNewColumnType(Tile tile){
 		String tileType = null;
 		if(Utils.isCLB(tile.getType())){
@@ -92,16 +78,22 @@ public class Architecture {
 		else if(Utils.isBUFS(tile.getType())){
 			tileType = "BUFS";
 		}
-		else{
+		else if(Utils.isMiscellaneousPrimaryType(tile.getType())){
+			tileType = "miscellaneous";
+		}
+		else if (Utils.isIGNORE(tile.getType())){
 			tileType = null;
+		}
+		else{
+			System.err.println("Unexpected Tile Type, Add: ignores.add(TileType." + tile.getType()+");  Name: " + tile.getName());
+			//System.err.println("ignores.add(TileType." + tile.getType()+");");
+			System.exit(-1);
 		}
 		return tileType;
 	}
 	
 	public void loadArchitecture() {
-		List<BlockSubType> layout = this.spec.getOverallColumnLayout();
-		List<Column> columns = new ArrayList<>();
-		
+		List<BlockSubType> layout = this.spec.getOverallColumnLayout();		
 		int currentLocalCol = 0;
 		String columnType = null;
 		Column currentColumn = new Column();
@@ -109,7 +101,8 @@ public class Architecture {
 			List<Tile> columnTiles = this.device.getTilesInColumn(i);
 			columnType = null;
 			for(Tile tile : columnTiles){
-				//System.out.println(tile.getName());
+				
+				System.out.println(tile.getName());
 				columnType = isNewColumnType(tile);
 				if(columnType != null){
 					int t = tile.getTileXCoordinate();
@@ -122,7 +115,7 @@ public class Architecture {
 					}
 				}
 			}
-			//System.out.println(layout.get(currentLocalCol).getName());
+			System.out.println(layout.get(currentLocalCol).getName() + "\n");
 			currentColumn.addTiles(columnTiles);
 			
 			//Add the final column of the device
@@ -132,6 +125,7 @@ public class Architecture {
 				columns.add(currentColumn);
 			}
 		}
+		removeUnconfigurableTiles();
 	}
 	
 }

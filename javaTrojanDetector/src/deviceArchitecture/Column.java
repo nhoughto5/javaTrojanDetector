@@ -2,9 +2,12 @@ package deviceArchitecture;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import edu.byu.ece.rapidSmith.device.Tile;
+import edu.byu.ece.rapidSmith.device.Utils;
 
 public class Column {
 	private HashMap<String, List<SubColumn>> subColumns;
@@ -17,6 +20,26 @@ public class Column {
 		subColumns = new HashMap<>();
 	}
 
+	public void removeUnconfiguredTiles(){
+		Iterator it = tiles.entrySet().iterator();
+		System.out.println(columnType);
+		while(it.hasNext()){
+			Map.Entry pair = (Map.Entry)it.next();
+			List<Tile> currentSubColumn = (List<Tile>) pair.getValue();
+			for(Iterator<Tile> iter = currentSubColumn.listIterator(); iter.hasNext(); ){
+				Tile currentTile = iter.next();
+				if(!Utils.isPrimaryTile(currentTile.getType())){
+					iter.remove();
+				}
+				else{
+					System.out.println(currentTile.getName());
+				}
+			}
+			System.out.println("===============");
+		}
+		System.out.println("==============================");
+	}
+	
 	public void Clear(){
 		row = column = 0;
 		tiles.clear();
