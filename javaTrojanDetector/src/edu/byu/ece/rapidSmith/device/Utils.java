@@ -36,6 +36,14 @@ public class Utils{
 	
 	private static HashSet<TileType> ints;
 	
+	private static HashSet<TileType> cnfgs;
+	
+	private static HashSet<TileType> iob;
+	
+	private static HashSet<TileType> clk;
+	
+	private static HashSet<TileType> bufs;
+	
 	/**
 	 * Returns a PrimitiveType enum based on the given string. If such
 	 * an enum does not exist, it will return null.
@@ -95,6 +103,22 @@ public class Utils{
 	public static boolean isSwitchBox(TileType type){
 		return ints.contains(type);
 	}
+	
+	public static boolean isCNFG(TileType type){
+		return cnfgs.contains(type);
+	}
+	
+	public static boolean isIOB(TileType type){
+		return iob.contains(type);
+	}
+	
+	public static boolean isCLK(TileType type){
+		return clk.contains(type);
+	}
+	
+	public static boolean isBUFS(TileType type){
+		return bufs.contains(type);
+	}
 
 	static{
 		clbs = new HashSet<TileType>();
@@ -146,6 +170,32 @@ public class Utils{
 		ints.add(TileType.INT_TERM_BRK);
 		ints.add(TileType.LIOI_INT);
 		ints.add(TileType.LIOI_INT_BRK);
+		
+		cnfgs = new HashSet<TileType>();
+//		cnfgs.add(TileType.CFG_CENTER);
+//		cnfgs.add(TileType.CFG_CENTER_0);
+//		cnfgs.add(TileType.CFG_CENTER_1);
+//		cnfgs.add(TileType.CFG_CENTER_2);
+//		cnfgs.add(TileType.CFG_CENTER_3);
+//		cnfgs.add(TileType.CFG_HCLK_INTERFACE);
+//		cnfgs.add(TileType.CFG_PPC_DL_BUFS);
+//		cnfgs.add(TileType.CFG_PPC_R_VBRK);
+//		cnfgs.add(TileType.CFG_PPC_VBRK);
+		cnfgs.add(TileType.CFG_VBRK);
+		//cnfgs.add(TileType.CFG_VBRK_FRAME);
+		
+		iob = new HashSet<TileType>();
+		iob.add(TileType.BIOB);
+		iob.add(TileType.CIOB);
+		iob.add(TileType.LIOB);
+		iob.add(TileType.RIOB);
+		
+		clk = new HashSet<TileType>();
+		clk.add(TileType.CLKV);
+		
+		bufs = new HashSet<TileType>();
+		bufs.add(TileType.INT_BUFS_L);
+		bufs.add(TileType.INT_BUFS_R);
 		
 	}
 }
