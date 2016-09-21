@@ -145,6 +145,45 @@ public class Utils{
 		}
 	}
 	
+	public static String getColumnSubType(Tile tile){
+		String tileType = null;
+		if(isCLB(tile.getType())){
+			tileType = "CLB";
+		}
+		else if(isBRAM(tile.getType())){
+			tileType = "BRAM";
+		}
+		else if(isDSP(tile.getType())){
+			tileType = "DSP";
+		}
+		else if(isSwitchBox(tile.getType())){
+			tileType = "INT";
+		}
+		else if(isCNFG(tile.getType())){
+			tileType = "CFG";
+		}
+		else if(isIOB(tile.getType())){
+			tileType = "IOB";
+		}
+		else if(isCLK(tile.getType())){
+			tileType = "CLK";
+		}
+		else if(isBUFS(tile.getType())){
+			tileType = "BUFS";
+		}
+		else if(isMiscellaneousPrimaryType(tile.getType())){
+			tileType = "miscellaneous";
+		}
+		else if (isIGNORE(tile.getType())){
+			tileType = null;
+		}
+		else{
+			System.err.println("Unexpected Tile Type, Add: ignores.add(TileType." + tile.getType()+");  Name: " + tile.getName());
+			System.exit(-1);
+		}
+		return tileType;
+	}
+	
 	static{
 		clbs = new HashSet<TileType>();
 		clbs.add(TileType.CLB);

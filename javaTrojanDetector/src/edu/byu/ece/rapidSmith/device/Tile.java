@@ -65,6 +65,7 @@ public class Tile implements Serializable{
 	/** Reference to this tile's device object */
 	private Device dev;
 
+	private boolean configurable;
 	/**
 	 * Constructor for the tile class, initializes all the private variables to empty 
 	 * data structures.
@@ -426,5 +427,13 @@ public class Tile implements Serializable{
 	@Override
 	public int hashCode(){
 		return this.name.hashCode();
+	}
+
+	public boolean isConfigurable() {
+		return configurable;
+	}
+
+	public void setConfigurable(boolean configurable) {
+		this.configurable = configurable;
 	}
 }
