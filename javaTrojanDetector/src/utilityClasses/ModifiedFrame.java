@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import deviceArchitecture.Column;
 import edu.byu.ece.rapidSmith.bitstreamTools.configuration.Frame;
 import edu.byu.ece.rapidSmith.bitstreamTools.configuration.FrameAddressRegister;
 import edu.byu.ece.rapidSmith.bitstreamTools.configuration.FrameData;
@@ -20,8 +21,8 @@ public class ModifiedFrame {
 	protected XilinxConfigurationSpecification configSpec;
 	protected int top_bottom;
 	protected int blockType;
-	protected int row;
-	protected int column;
+	protected int rowNum;
+	protected int columnNum;
 	protected int minor, address, numberOfWordsPerTile;
 	protected String hexAddress, printOut, columnBlockType, familyName;
 	protected BlockSubType columnFrameBlockSubType;
@@ -29,14 +30,15 @@ public class ModifiedFrame {
 	protected XilinxConfigurationSpecification spec;
 	protected boolean isFrameTop;
 	protected HashSet<Tile> tiles;
+	private Column column;
 	
 	public ModifiedFrame(Frame goldenFrame, Frame targetFrame, FrameAddressRegister frameAddressRegister, XilinxConfigurationSpecification spec) {
 		this.goldenFrame = goldenFrame;
 		this.targetFrame = targetFrame;
 		this.top_bottom = frameAddressRegister.getTopBottom();
 		this.blockType = frameAddressRegister.getBlockType(); 
-		this.row = frameAddressRegister.getRow();
-		this.column = frameAddressRegister.getColumn();
+		this.rowNum = frameAddressRegister.getRow();
+		this.columnNum = frameAddressRegister.getColumn();
 		this.minor = frameAddressRegister.getMinor();
 		this.address = frameAddressRegister.getAddress();
 		this.hexAddress = frameAddressRegister.getHexAddress();
@@ -46,6 +48,14 @@ public class ModifiedFrame {
 		this.spec = spec;
 		this.isFrameTop = frameAddressRegister.isFrameTop();
 		this.selector = new DeviceColumnInfo(this.spec.getDeviceFamily());
+	}
+	
+	public void mapTiles(Column column){
+		this.column = column;
+		if(this.column.getColumn() != this.columnNum){
+			System.err.println("Wrong Column Number");
+			System.exit(-1);
+		}
 	}
 	
 	public void createYCoordinateDifferenceseList(Device readDevice){
@@ -64,17 +74,17 @@ public class ModifiedFrame {
 			for(int i = 0; i < goldenData.size(); ++i){
 				if(goldenData.get(i) != targetData.get(i)){
 					if(this.isFrameTop){
-						numLowerTiles = numBottomRows + this.row;
+						numLowerTiles = numBottomRows + this.rowNum;
 					}
 					else{
-						numLowerTiles = numBottomRows - this.row - 1;
+						numLowerTiles = numBottomRows - this.rowNum - 1;
 					}
 					//TODO is this necessary?
 					numLowerTiles = (numLowerTiles < 0) ? 0 : numLowerTiles;
 					int rowNum = (numLowerTiles * this.selector.getNumberOfTilesInCLBColumn()) + ((int) i / this.numberOfWordsPerTile);
-					Tile tempTile = readDevice.getCLBTileByLocalCoordinates(rowNum, this.column, this.selector.clbFrameSubType(this.minor));
+					Tile tempTile = readDevice.getCLBTileByLocalCoordinates(rowNum, this.columnNum, this.selector.clbFrameSubType(this.minor));
 					if(tempTile == null){
-						System.err.println("Tile at row: " + rowNum + " col: " + this.column + " does not exist");
+						System.err.println("Tile at row: " + rowNum + " col: " + this.columnNum + " does not exist");
 					}
 					else{
 						tiles.add(tempTile);
@@ -159,18 +169,31 @@ public class ModifiedFrame {
 	public void setBlockType(int blockType) {
 		this.blockType = blockType;
 	}
-	public int getRow() {
-		return row;
+	
+	public int getRowNum() {
+		return rowNum;
 	}
-	public void setRow(int row) {
-		this.row = row;
+
+	public void setRowNum(int rowNum) {
+		this.rowNum = rowNum;
 	}
-	public int getColumn() {
+
+	public int getColumnNum() {
+		return columnNum;
+	}
+
+	public void setColumnNum(int columnNum) {
+		this.columnNum = columnNum;
+	}
+
+	public Column getColumn() {
 		return column;
 	}
-	public void setColumn(int column) {
+
+	public void setColumn(Column column) {
 		this.column = column;
 	}
+
 	public int getMinor() {
 		return minor;
 	}

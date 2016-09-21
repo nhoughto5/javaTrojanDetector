@@ -31,9 +31,10 @@ public class Architecture {
 		this.numGlobalColumns = this.device.getColumns();
 		this.numGlobalRows = this.device.getRows();
 		this.columns = new ArrayList<>();
+		this.loadArchitecture();
 	}
 	
-	public void loadArchitecture() {
+	private void loadArchitecture() {
 		List<BlockSubType> layout = this.spec.getOverallColumnLayout();		
 		int currentLocalCol = 0, colCount = 0;
 		String columnType = null;
@@ -66,4 +67,7 @@ public class Architecture {
 		}
 	}
 	
+	public Column getColumn(int col){
+		return this.columns.get(col);
+	}
 }

@@ -18,9 +18,8 @@ public class TrojanDetector {
 		diff = new BitstreamDiff();
 		this.readDevice = selectedDevice();
 		modifiedFrames = diff.findDifferences(args);
-		architecture = new Architecture(this.readDevice, diff.getDeviceType());
-		architecture.loadArchitecture();
-		matchFramesToTiles(args);
+		this.architecture = new Architecture(this.readDevice, diff.getDeviceType());
+		matchFramesToTiles();
 		return;
 	}
 	
@@ -30,9 +29,10 @@ public class TrojanDetector {
 		return device;
 	}
 	
-	private void matchFramesToTiles(String[] args){
+	private void matchFramesToTiles(){
 		for(ModifiedFrame mF : modifiedFrames){
-			mF.createYCoordinateDifferenceseList(this.readDevice);
+			mF.mapTiles(this.architecture.getColumn(mF.getColumnNum()));
+			//mF.createYCoordinateDifferenceseList(this.readDevice);
 		}
 	}
 }
