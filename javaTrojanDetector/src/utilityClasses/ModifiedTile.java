@@ -6,12 +6,12 @@ import edu.byu.ece.rapidSmith.device.Tile;
 
 public class ModifiedTile {
 	private Tile tile;
-	private List<Integer> goldenWords, targetWords;
+	private List<TileWord> goldenWords, targetWords;
 	int numWordsPerTile;
 	
 	
 	
-	public ModifiedTile(Tile tile, List<Integer> goldenWords,List<Integer> targetWords, int numWordsPerTile) {
+	public ModifiedTile(Tile tile, List<TileWord> goldenWords,List<TileWord> targetWords, int numWordsPerTile) {
 		this.tile = tile;
 		this.goldenWords = goldenWords;
 		this.targetWords = targetWords;
@@ -23,16 +23,16 @@ public class ModifiedTile {
 	public void setTile(Tile tile) {
 		this.tile = tile;
 	}
-	public List<Integer> getGoldenWords() {
+	public List<TileWord> getGoldenWords() {
 		return goldenWords;
 	}
-	public void setGoldenWords(List<Integer> goldenWords) {
+	public void setGoldenWords(List<TileWord> goldenWords) {
 		this.goldenWords = goldenWords;
 	}
-	public List<Integer> getTargetWords() {
+	public List<TileWord> getTargetWords() {
 		return targetWords;
 	}
-	public void setTargetWords(List<Integer> targetWords) {
+	public void setTargetWords(List<TileWord> targetWords) {
 		this.targetWords = targetWords;
 	}
 	public int getNumWordsPerTile() {
@@ -42,4 +42,8 @@ public class ModifiedTile {
 		this.numWordsPerTile = numWordsPerTile;
 	}
 	
+	@Override
+	public int hashCode(){
+		return this.tile.getName().hashCode();
+	}
 }

@@ -2,27 +2,24 @@ package TrojanDetector;
 
 import java.util.HashSet;
 import java.util.List;
-
-import edu.byu.ece.rapidSmith.device.Tile;
+import utilityClasses.ModifiedTile;
 
 public class Trojan {
-	public HashSet<Tile> affectedTiles;
+	public HashSet<ModifiedTile> affectedTiles;
 
-	
-	
 	public Trojan() {
 		affectedTiles = new HashSet<>();
 	}
 
-	public HashSet<Tile> getAffectedTiles() {
+	public HashSet<ModifiedTile> getAffectedTiles() {
 		return affectedTiles;
 	}
 
-	public void setAffectedTiles(HashSet<Tile> affectedTiles) {
+	public void setAffectedTiles(HashSet<ModifiedTile> affectedTiles) {
 		this.affectedTiles = affectedTiles;
 	}
 	
-	public void addTiles(List<Tile> newTiles){
+	public void addTiles(List<ModifiedTile> newTiles){
 		affectedTiles.addAll(newTiles);
 	}
 	

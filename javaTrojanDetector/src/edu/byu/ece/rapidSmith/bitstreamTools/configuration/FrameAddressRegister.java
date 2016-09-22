@@ -324,6 +324,21 @@ public class FrameAddressRegister {
 			return false;
 		}
 	}
+	
+	public boolean isFrameTopFromAddress(int address){
+		String ret = AbstractConfigurationSpecification.getTopBottom(getTopBottomFromAddress(address));
+		if(ret.equals("top")){
+			return true;
+		}
+		else if(ret.equals("bottom")){
+			return false;
+		}
+		else{
+			System.err.println("Failed to determine whether frame is in top or bottom");
+			System.exit(1);
+			return false;
+		}
+	}
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	// Static Methods
 	//////////////////////////////////////////////////////////////////////////////////////////////

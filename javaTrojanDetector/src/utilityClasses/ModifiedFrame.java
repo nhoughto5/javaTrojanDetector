@@ -113,8 +113,8 @@ public class ModifiedFrame {
 					i, numberOfWordsPerTile);
 			this.affectedTiles.add(new ModifiedTile(regionTilesInColumn
 					.get(getTileId(i, numberOfWordsPerTile,
-							regionTilesInColumn.size())), goldenData.subList(
-					subListStart, subListEnd), targetData.subList(subListStart,
+							regionTilesInColumn.size())), getTileWords(goldenData,
+					subListStart, subListEnd), getTileWords(targetData,subListStart,
 					subListEnd), numberOfWordsPerTile));
 		}
 	}
@@ -137,6 +137,16 @@ public class ModifiedFrame {
 	private void mapBRAMColumn(){
 		
 	}
+	
+	private List<TileWord> getTileWords(List<Integer> data, int from, int to){
+		List<TileWord> words = new ArrayList<>();
+		List<Integer> tempWords = data.subList(from, to+1);
+		for(Integer i : tempWords){
+			words.add(new TileWord(i, this.address));
+		}
+		return words;
+	}
+	
 	private int getTileStartWordNumber(int ret, int numWordsPerTile){
 		while((ret % numWordsPerTile) != 0){
 			ret--;
