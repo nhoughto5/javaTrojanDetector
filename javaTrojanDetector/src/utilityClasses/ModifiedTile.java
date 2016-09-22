@@ -9,8 +9,6 @@ public class ModifiedTile {
 	private List<TileWord> goldenWords, targetWords;
 	int numWordsPerTile;
 	
-	
-	
 	public ModifiedTile(Tile tile, List<TileWord> goldenWords,List<TileWord> targetWords, int numWordsPerTile) {
 		this.tile = tile;
 		this.goldenWords = goldenWords;
@@ -40,6 +38,17 @@ public class ModifiedTile {
 	}
 	public void setNumWordsPerTile(int numWordsPerTile) {
 		this.numWordsPerTile = numWordsPerTile;
+	}
+	
+	@Override
+	public boolean equals(Object obj){
+		if (this==obj)
+			return true;
+		else if( (obj == null) || (obj.getClass() != this.getClass())){
+			return false;
+		}
+		ModifiedTile tile = (ModifiedTile) obj;
+		return (tile.getTile().getName() == tile.getTile().getName());
 	}
 	
 	@Override

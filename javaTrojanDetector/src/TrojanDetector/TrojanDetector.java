@@ -33,6 +33,9 @@ public class TrojanDetector {
 	private void matchFramesToTiles(){
 		for(ModifiedFrame mF : modifiedFrames){
 			mF.mapTiles(this.architecture.getColumn(mF.getColumnNum()));
+			trojan.addTiles(mF.getAffectedTiles());
 		}
+		trojan.printTileNames();
+		return;
 	}
 }

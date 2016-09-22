@@ -11,6 +11,12 @@ public class Trojan {
 		affectedTiles = new HashSet<>();
 	}
 
+	public void printTileNames(){
+		System.out.println("Affected Tiles");
+		for(ModifiedTile m : affectedTiles){
+			System.out.println(m.getTile().getName());
+		}
+	}
 	public HashSet<ModifiedTile> getAffectedTiles() {
 		return affectedTiles;
 	}
