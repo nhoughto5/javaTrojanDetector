@@ -17,6 +17,18 @@ public class Column {
 		subColumns = new ArrayList<>();
 	}
 	
+	public SubColumn getSubColumnByType(String type){
+		SubColumn ret = null;
+		for(SubColumn sC: subColumns){
+			if(sC.getSubColumnType().equals(type)){
+				return sC;
+			}
+		}
+		System.err.println("SubColumn Type: " + type + " not found");
+		System.exit(-1);
+		return ret; //Should never be reached
+	}
+	
 	public void Clear(){
 		row = column = 0;
 		subColumns.clear();

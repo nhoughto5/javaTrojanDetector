@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import deviceArchitecture.Column;
+import deviceArchitecture.SubColumn;
 import edu.byu.ece.rapidSmith.bitstreamTools.configuration.Frame;
 import edu.byu.ece.rapidSmith.bitstreamTools.configuration.FrameAddressRegister;
 import edu.byu.ece.rapidSmith.bitstreamTools.configuration.FrameData;
@@ -31,6 +32,7 @@ public class ModifiedFrame {
 	protected boolean isFrameTop;
 	protected HashSet<Tile> tiles;
 	private Column column;
+	private SubColumn subColumn;
 	
 	public ModifiedFrame(Frame goldenFrame, Frame targetFrame, FrameAddressRegister frameAddressRegister, XilinxConfigurationSpecification spec) {
 		this.goldenFrame = goldenFrame;
@@ -55,6 +57,72 @@ public class ModifiedFrame {
 		if(this.column.getColumn() != this.columnNum){
 			System.err.println("Wrong Column Number");
 			System.exit(-1);
+		}		
+		String colType = column.getColumnType();
+		switch(colType){
+			case "CLB":
+				mapCLBColumn();
+				break;
+			case "DSP":
+				mapDSPColumn();
+				break;
+			case "IOB":
+				mapIOBColumn();
+				break;
+			case "BRAMINTERCONNECT":
+				mapBRAMColumn();
+				break;
+			case "CLK":
+				mapCLKColumn();
+				break;
+			default:
+				System.err.println("Modified Frame does not match know Column Type: " + colType + ": " + this.column.getColumn());
+				System.exit(-1);
+			break;
+		}
+	}
+	
+	private void mapCLBColumn(){
+		int totalNumRows = this.spec.getTopNumberOfRows() + this.spec.getBottomNumberOfRows();
+		//This frame configures the Interconnect of the CLB column
+		if(this.minor <= this.selector.getMaxIRFrameNumber()){
+			this.subColumn = this.column.getSubColumnByType("INT");
+			List<Tile> affectedTiles = this.subColumn.getAffecctedTiles(totalNumRows, this.getNaturalRegionRowNumber());
+		}
+		//This frame configures the actual CLB of the CLB column
+		else if((this.selector.getMaxIRFrameNumber() < this.minor) && (this.minor <= this.selector.getNumberOfFrames_CLBColumn())){
+			this.subColumn = this.column.getSubColumnByType("CLB");
+			List<Tile> affectedTiles = this.subColumn.getAffecctedTiles(totalNumRows, this.getNaturalRegionRowNumber());
+		}
+		else{
+			System.err.println("Mismatch frame address with column type");
+			System.exit(-1);
+		}
+	}
+	
+	private void mapIOBColumn(){
+		
+	}
+	
+	private void mapDSPColumn(){
+		
+	}
+	
+	private void mapCLKColumn(){
+		
+	}
+	
+	private void mapBRAMColumn(){
+		
+	}
+	
+	//Returns which row the frame is in a more natural semantic.
+	//Rows begin at the bottom of the device at 0.
+	private int getNaturalRegionRowNumber() {
+		if (this.isFrameTop) {
+			return this.spec.getBottomNumberOfRows() + this.rowNum + 1;
+		} else {
+			return this.spec.getBottomNumberOfRows() - rowNum;
 		}
 	}
 	

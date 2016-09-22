@@ -47,9 +47,8 @@ public class Architecture {
 				if(columnType != null){
 					int t = tile.getTileXCoordinate();
 					if(t > currentLocalCol){
-						columnType = layout.get(currentLocalCol).getName() + ", SubColumnType: " + columnType;
 						currentLocalCol = t;
-						currentColumn.setColumnType(columnType);
+						currentColumn.setColumnType(layout.get(currentLocalCol).getName());
 						columns.add(currentColumn);
 						currentColumn = new Column();
 						colCount++;

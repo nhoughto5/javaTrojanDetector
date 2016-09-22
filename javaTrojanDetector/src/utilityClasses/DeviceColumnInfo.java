@@ -4,6 +4,12 @@ public class DeviceColumnInfo {
 	private int maxIRFrameNumber, maxInterfaceFrameNumber, numberOfFrames_CLBColumn, numberOfTilesInCLBColumn,
 		numberOfClockWordsPerFrame, numberOfFrames_IOBColumn, numberOfFrames_DSPColumn, numberOfFrames_BRAMColumn, numberOfFrames_CLKColumn;
 	public DeviceColumnInfo(String deviceName) {
+		
+		/*According to Ug_191: The frames are numbered from left to right, starting with 0. For each block, except the clock
+		column, frames numbered 0 to 25 access the Interconnect for that column. For all blocks,
+		except the CLB and the clock column, frames numbered 26 and 27 access the Interface for
+		that column. All other frames are specific to that block.*/
+		//Refer to Table 16-6, page 133 of ug191_Virtex5_ConfigGuide
 		if(deviceName.equalsIgnoreCase("VIRTEX5")){
 			this.maxIRFrameNumber = 25;
 			this.maxInterfaceFrameNumber = 27;

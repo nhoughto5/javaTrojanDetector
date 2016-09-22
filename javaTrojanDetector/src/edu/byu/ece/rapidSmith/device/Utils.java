@@ -151,7 +151,7 @@ public class Utils{
 			tileType = "CLB";
 		}
 		else if(isBRAM(tile.getType())){
-			tileType = "BRAM";
+			tileType = "BRAMINTERCONNECT";
 		}
 		else if(isDSP(tile.getType())){
 			tileType = "DSP";
