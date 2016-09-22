@@ -12,8 +12,9 @@ public class TrojanDetector {
 	ArrayList<ModifiedFrame> modifiedFrames;
 	Device readDevice;
 	Architecture architecture;
-
+	Trojan trojan;
 	public void performDetection(File goldenBitFile, File targetBitFile){
+		this.trojan = new Trojan();
 		String[] args = {"-i", goldenBitFile.getAbsolutePath(), "-c", targetBitFile.getAbsolutePath()};
 		diff = new BitstreamDiff();
 		this.readDevice = selectedDevice();

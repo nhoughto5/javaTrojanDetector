@@ -37,7 +37,7 @@ public class SubColumn {
 		
 	}
 	
-	public List<Tile> getAffecctedTiles(int totalNumRows, int rowNum){
+	public List<Tile> getAffectedTiles(int totalNumRows, int rowNum){
 		List<Tile> ret = new ArrayList<>();
 		int numConfigureable = getNumOfConfigurableTilesInSubColumn();
 		if((numConfigureable % totalNumRows) == 0){
