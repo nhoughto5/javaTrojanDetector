@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import utilityClasses.Error;
 import edu.byu.ece.rapidSmith.device.Tile;
 import edu.byu.ece.rapidSmith.device.Utils;
 
@@ -19,14 +20,23 @@ public class Column {
 	
 	public SubColumn getSubColumnByType(String type){
 		SubColumn ret = null;
+		int typeCount = 0;
 		for(SubColumn sC: subColumns){
 			if(sC.getSubColumnType().equals(type)){
-				return sC;
+				ret = sC;
+				++typeCount;
 			}
 		}
-		System.err.println("SubColumn Type: " + type + " not found");
-		System.exit(-1);
-		return ret; //Should never be reached
+		if(typeCount > 1){
+			Error.printError("Multiple SubColumns of type " + type, new Exception().getStackTrace()[0]);
+		}
+		if(ret == null){
+			Error.printError("SubColumn Type: " + type + " not found", new Exception().getStackTrace()[0]);	
+			return ret;
+		}
+		else{
+			return ret;
+		}
 	}
 	
 	public void Clear(){
@@ -55,6 +65,14 @@ public class Column {
 
 	public String getColumnType() {
 		return columnType;
+	}
+
+	public List<SubColumn> getSubColumns() {
+		return subColumns;
+	}
+
+	public void setSubColumns(List<SubColumn> subColumns) {
+		this.subColumns = subColumns;
 	}
 
 	public void setColumnType(String columnType) {

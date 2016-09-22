@@ -22,6 +22,8 @@ package edu.byu.ece.rapidSmith.device;
 
 import java.util.HashSet;
 
+import utilityClasses.Error;
+
 /**
  * This is a helper class for creating PrimitiveTypes and TileTypes
  * as well as helping to categorize TileTypes. 
@@ -43,6 +45,8 @@ public class Utils{
 	private static HashSet<TileType> clk;
 	
 	private static HashSet<TileType> bufs;
+	
+	private static HashSet<TileType> interfaces;
 	
 	private static HashSet<TileType> ignores;
 	
@@ -130,6 +134,10 @@ public class Utils{
 	public static boolean isMiscellaneousPrimaryType(TileType type){
 		return miscellaneous.contains(type);
 	}
+	
+	public static boolean isInterconnect(TileType type){
+		return interfaces.contains(type);
+	}
 
 	public static boolean isPrimaryTile(TileType type) {
 		if (isCLB(type) || isBRAM(type)
@@ -157,7 +165,7 @@ public class Utils{
 			tileType = "DSP";
 		}
 		else if(isSwitchBox(tile.getType())){
-			tileType = "INT";
+			tileType = "INTERCONNECT";
 		}
 		else if(isCNFG(tile.getType())){
 			tileType = "CFG";
@@ -174,12 +182,14 @@ public class Utils{
 		else if(isMiscellaneousPrimaryType(tile.getType())){
 			tileType = "miscellaneous";
 		}
+		else if(isInterconnect(tile.getType())){
+			tileType = "INTERFACE";
+		}
 		else if (isIGNORE(tile.getType())){
 			tileType = null;
 		}
 		else{
-			System.err.println("Unexpected Tile Type, Add: ignores.add(TileType." + tile.getType()+");  Name: " + tile.getName());
-			System.exit(-1);
+			Error.printError("Unexpected Tile Type, Add: ignores.add(TileType." + tile.getType()+");  Name: " + tile.getName(), new Exception().getStackTrace()[0]);
 		}
 		return tileType;
 	}
@@ -234,9 +244,6 @@ public class Utils{
 		ints.add(TileType.INT_TERM_BRK);
 		ints.add(TileType.LIOI_INT);
 		ints.add(TileType.LIOI_INT_BRK);
-		ints.add(TileType.L_TERM_INT);
-		ints.add(TileType.R_TERM_INT);
-		ints.add(TileType.INT_INTERFACE);
 		
 		cnfgs = new HashSet<TileType>();
 		cnfgs.add(TileType.CFG_VBRK);
@@ -246,7 +253,9 @@ public class Utils{
 		iob.add(TileType.CIOB);
 		iob.add(TileType.LIOB);
 		iob.add(TileType.RIOB);
-		iob.add(TileType.IOI);
+		
+		interfaces = new HashSet<TileType>();
+		interfaces.add(TileType.INT_INTERFACE);
 		
 		clk = new HashSet<TileType>();
 		clk.add(TileType.CLKV);
@@ -261,10 +270,11 @@ public class Utils{
 		miscellaneous.add(TileType.EMAC_INT_INTERFACE);
 		miscellaneous.add(TileType.EMAC);
 		miscellaneous.add(TileType.GTP_INT_INTERFACE);
-		//miscellaneous.add(TileType.PCIE_BRKH);
 		miscellaneous.add(TileType.PCIE_T);
 		miscellaneous.add(TileType.PCIE_B);
-		
+		miscellaneous.add(TileType.IOI);
+		miscellaneous.add(TileType.L_TERM_INT);
+		miscellaneous.add(TileType.R_TERM_INT);
 		
 		ignores = new HashSet<TileType>();
 		ignores.add(TileType.NULL);

@@ -48,7 +48,7 @@ public class Architecture {
 					int t = tile.getTileXCoordinate();
 					if(t > currentLocalCol){
 						currentLocalCol = t;
-						currentColumn.setColumnType(layout.get(currentLocalCol).getName());
+						currentColumn.setColumnType(layout.get(colCount).getName());
 						columns.add(currentColumn);
 						currentColumn = new Column();
 						colCount++;
@@ -56,7 +56,7 @@ public class Architecture {
 				}
 			}
 			currentColumn.setColumn(colCount);
-			currentColumn.addSubColumns(layout.get(currentLocalCol).getName(), columnTiles);
+			currentColumn.addSubColumns(layout.get(colCount).getName(), columnTiles);
 			//Add the final column of the device
 			if(i == numGlobalColumns - 1){
 				columnType = layout.get(currentLocalCol).getName();

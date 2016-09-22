@@ -57,7 +57,7 @@ public class ModifiedFrame {
 	public void mapTiles(Column column){
 		this.column = column;
 		if(this.column.getColumn() != this.columnNum){
-			System.err.println("Wrong Column Number");
+			Error.printError("Wrong Column Number", new Exception().getStackTrace()[0]);
 			System.exit(-1);
 		}		
 		String colType = column.getColumnType();
@@ -78,52 +78,27 @@ public class ModifiedFrame {
 				mapCLKColumn();
 				break;
 			default:
-				System.err.println("Modified Frame does not match know Column Type: " + colType + ": " + this.column.getColumn());
-				System.exit(-1);
+				Error.printError("Modified Frame does not match know Column Type: " + colType + ": " + this.column.getColumn(), new Exception().getStackTrace()[0]);
 			break;
 		}
 	}
-	
-	private void mapCLBColumn(){
-		int totalNumRows = this.spec.getTopNumberOfRows() + this.spec.getBottomNumberOfRows();
-		//This frame configures the Interconnect of the CLB column
-		if(this.minor <= this.selector.getMaxIRFrameNumber()){
-			this.subColumn = this.column.getSubColumnByType("INT");			
-		}
-		//This frame configures the actual CLB of the CLB column
-		else if((this.selector.getMaxIRFrameNumber() < this.minor) && (this.minor <= this.selector.getNumberOfFrames_CLBColumn())){
-			this.subColumn = this.column.getSubColumnByType("CLB");
-		}
-		else{
-			System.err.println("Mismatch frame address with column type");
-			System.exit(-1);
-		}
-		
-		List<Tile> regionTilesInColumn = this.subColumn.getAffectedTiles(totalNumRows, this.getNaturalRegionRowNumber());
-		if(this.selector.getNumberOfTilesInCLBColumn() != regionTilesInColumn.size()){
-			System.err.println("Unexpected number of Tiles returned");
-			System.exit(-1);
-		}
-		int numberOfWordsPerTile = (this.spec.getFrameSize() - this.selector.getNumberOfClockWordsPerFrame()) / this.selector.getNumberOfTilesInCLBColumn();
-		this.modifiedFrameWordNumbers = this.getModifiedWordNumbers();
-		List<Integer> goldenData = goldenFrame.getData().getAllFrameWords();
-		List<Integer> targetData = targetFrame.getData().getAllFrameWords();
-		for (Integer i : this.modifiedFrameWordNumbers) {
-			int subListStart = getTileStartWordNumber(i, numberOfWordsPerTile), subListEnd = getTileEndWordNumber(
-					i, numberOfWordsPerTile);
-			this.affectedTiles.add(new ModifiedTile(regionTilesInColumn
-					.get(getTileId(i, numberOfWordsPerTile,
-							regionTilesInColumn.size())), getTileWords(goldenData,
-					subListStart, subListEnd), getTileWords(targetData,subListStart,
-					subListEnd), numberOfWordsPerTile));
-		}
-	}
-	
-	private int getTileId(int i, int numberOfWordsPerTile, int numberOfTiles){	
-		return numberOfWordsPerTile - ((int) i / numberOfTiles);
-	}
 	private void mapIOBColumn(){
 		
+		//This frame configures the interconnect tiles of the IOB column
+		if(this.minor <= this.selector.getMaxIRFrameNumber()){
+			this.subColumn = this.column.getSubColumnByType("INTERCONNECT");
+		}
+		else if((this.minor > this.selector.getMaxIRFrameNumber()) && (this.minor <= this.selector.getMaxInterfaceFrameNumber())){
+			this.subColumn = this.column.getSubColumnByType("INTERFACE");
+		}
+		else if((this.minor > this.selector.getMaxInterfaceFrameNumber()) && (this.minor <= this.selector.getNumberOfFrames_IOBColumn())){
+			this.subColumn = this.column.getSubColumnByType("IOB");
+		}
+		else{
+			Error.printError("Mismatch frame address with column type: IOB", new Exception().getStackTrace()[0]);
+			System.exit(-1);
+		}
+		findModifiedTiles();
 	}
 	
 	private void mapDSPColumn(){
@@ -137,35 +112,91 @@ public class ModifiedFrame {
 	private void mapBRAMColumn(){
 		
 	}
+	private void mapCLBColumn(){
+		
+		//This frame configures the Interconnect of the CLB column
+		if(this.minor <= this.selector.getMaxIRFrameNumber()){
+			this.subColumn = this.column.getSubColumnByType("INTERCONNECT");			
+		}
+		//This frame configures the actual CLB of the CLB column
+		else if((this.selector.getMaxIRFrameNumber() < this.minor) && (this.minor <= this.selector.getNumberOfFrames_CLBColumn())){
+			this.subColumn = this.column.getSubColumnByType("CLB");
+		}
+		else{
+			Error.printError("Mismatch frame address with column type: CLB", new Exception().getStackTrace()[0]);
+		}
+		findModifiedTiles();
+	}
+	
+	private void findModifiedTiles(){
+		int totalNumRows = this.spec.getTopNumberOfRows() + this.spec.getBottomNumberOfRows();
+		List<Tile> regionTilesInColumn = this.subColumn.getAffectedTiles(totalNumRows, this.getNaturalRegionRowNumber());
+		if(((this.spec.getFrameSize() - this.selector.getNumberOfClockWordsPerFrame()) % regionTilesInColumn.size()) != 0){
+			Error.printError("Unbalanced number of tiles to config words", new Exception().getStackTrace()[0]);
+		}
+		int numOfTilesMinusClockTile = (this.spec.getFrameSize() - this.selector.getNumberOfClockWordsPerFrame());
+		int numberOfWordsPerTile = numOfTilesMinusClockTile / regionTilesInColumn.size();
+		this.modifiedFrameWordNumbers = this.getModifiedWordNumbers();
+		List<Integer> goldenData = goldenFrame.getData().getAllFrameWords();
+		List<Integer> targetData = targetFrame.getData().getAllFrameWords();
+		for (Integer i : this.modifiedFrameWordNumbers) {
+			int subListStart = getTileStartWordNumber(i, numberOfWordsPerTile, numOfTilesMinusClockTile);
+			int subListEnd = getTileEndWordNumber(i, numberOfWordsPerTile, numOfTilesMinusClockTile);
+			this.affectedTiles.add(new ModifiedTile(regionTilesInColumn
+					.get(getTileId(i, numberOfWordsPerTile,
+							regionTilesInColumn.size())), getTileWords(goldenData,
+					subListStart, subListEnd), getTileWords(targetData,subListStart,
+					subListEnd), numberOfWordsPerTile));
+		}
+	}
+	
+	private int getTileId(int i, int numberOfWordsPerTile, int numberOfTiles){	
+		return numberOfWordsPerTile - ((int) i / numberOfTiles);
+	}
 	
 	private List<TileWord> getTileWords(List<Integer> data, int from, int to){
 		List<TileWord> words = new ArrayList<>();
-		List<Integer> tempWords = data.subList(from, to+1);
+		List<Integer> tempWords = new ArrayList<>();
+		try {
+			tempWords = data.subList(from, to+1);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		for(Integer i : tempWords){
 			words.add(new TileWord(i, this.address));
 		}
 		return words;
 	}
 	
-	private int getTileStartWordNumber(int ret, int numWordsPerTile){
-		while((ret % numWordsPerTile) != 0){
-			ret--;
+	private int getTileStartWordNumber(int ret, int numWordsPerTile, int maxWordNum){
+		if(ret == maxWordNum){
+			ret = ret - numWordsPerTile + 1;
+		}
+		else{
+			while((ret % numWordsPerTile) != 0){
+				ret--;
+			}
 		}
 		return ret;
 	}
-	private int getTileEndWordNumber(int ret, int numWordsPerTile){
-		while((ret % numWordsPerTile) != 0){
-			ret--;
+	private int getTileEndWordNumber(int ret, int numWordsPerTile, int maxWordNum){
+		if(ret == maxWordNum){
+			return ret;
 		}
-		return ret + numWordsPerTile - 1;
+		else{
+			while((ret % numWordsPerTile) != 0){
+				ret--;
+			}
+			return ret + numWordsPerTile - 1;
+		}
 	}
 	private List<Integer> getModifiedWordNumbers(){
 		List<Integer> ret = new ArrayList<>();
 		List<Integer> goldenData = goldenFrame.getData().getAllFrameWords();
 		List<Integer> targetData = targetFrame.getData().getAllFrameWords();
 		if(goldenData.size() != targetData.size()){
-			System.err.println("Target and Golden frame data length do not match!");
-			System.exit(1);
+			Error.printError("Target and Golden frame data length do not match!", new Exception().getStackTrace()[0]);
 		}
 		for(int i = 0; i < goldenData.size(); ++i){
 			if(goldenData.get(i) != targetData.get(i)){

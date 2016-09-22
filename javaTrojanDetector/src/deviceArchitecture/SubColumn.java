@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import utilityClasses.Error;
 import edu.byu.ece.rapidSmith.device.Tile;
 import edu.byu.ece.rapidSmith.device.Utils;
 
@@ -53,8 +54,7 @@ public class SubColumn {
 			}
 		}
 		else{
-			System.err.println("The number of configurable tiles in the subcolumn "+ this.primaryColumnType +": " + this.column + " - " + this.subColumnType +" is not divisible by the number of Rows");
-			System.exit(-1);
+			Error.printError("The number of configurable tiles in the subcolumn "+ this.primaryColumnType +": " + this.column + " - " + this.subColumnType +" is not divisible by the number of Rows", new Exception().getStackTrace()[0]);
 		}
 		return ret;
 	}
