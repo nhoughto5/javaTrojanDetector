@@ -35,7 +35,8 @@ public class Architecture {
 	}
 	
 	private void loadArchitecture() {
-		List<BlockSubType> layout = this.spec.getOverallColumnLayout();		
+		List<BlockSubType> layout = this.spec.getOverallColumnLayout();
+		//this.far.initFAR();
 		int currentLocalCol = 0, colCount = 0;
 		String columnType = null;
 		Column currentColumn = new Column();
@@ -45,6 +46,7 @@ public class Architecture {
 			for(Tile tile : columnTiles){
 				columnType = Utils.getColumnSubType(tile);
 				if(columnType != null){
+					System.out.println(tile.getName());
 					int t = tile.getTileXCoordinate();
 					if(t > currentLocalCol){
 						currentLocalCol = t;
@@ -55,8 +57,10 @@ public class Architecture {
 					}
 				}
 			}
+			
 			currentColumn.setColumn(colCount);
 			currentColumn.addSubColumns(layout.get(colCount).getName(), columnTiles);
+			System.out.println("==============================");
 			//Add the final column of the device
 			if(i == numGlobalColumns - 1){
 				columnType = layout.get(currentLocalCol).getName();

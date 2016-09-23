@@ -56,12 +56,15 @@ public class ModifiedFrame {
 	
 	public void mapTiles(Column column){
 		this.column = column;
+		BlockSubType bST = this.spec.getBlockSubtype(this.spec, new FrameAddressRegister(this.spec, this.address));
 		if(this.column.getColumn() != this.columnNum){
 			Error.printError("Wrong Column Number", new Exception().getStackTrace()[0]);
-			System.exit(-1);
-		}		
+		}
+		if(!this.column.getColumnType().equals(bST.getName())){
+			Error.printError("Wrong Column Type, Col Number (" + this.columnNum + ")", new Exception().getStackTrace()[0]);
+		}
 		String colType = column.getColumnType();
-		switch(colType){
+		switch(bST.getName()){
 			case "CLB":
 				mapCLBColumn();
 				break;

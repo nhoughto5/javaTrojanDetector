@@ -128,18 +128,21 @@ public class MainWindow {
 		JButton btnFindModifiedFrames = new JButton("Find Modified Frames");
 		btnFindModifiedFrames.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(targetBitFile != null && goldenBitFile != null){
-					trojanDetector.performDetection(goldenBitFile, targetBitFile);
-				}
-				else if(targetBitFile == null && goldenBitFile != null){
-					trojanTextArea.setText("Error: Please select a target bit file.");
-				}
-				else if(targetBitFile != null && goldenBitFile == null){
-					trojanTextArea.setText("Error: Please select a golden chip bit file.");
-				}
-				else{
-					trojanTextArea.setText("Error: Please select a target and golden bit file.");
-				}
+				goldenBitFile = new File("C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles/itemDefault.bit");
+				targetBitFile = new File("C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles/item18.bit");
+				trojanDetector.performDetection(goldenBitFile, targetBitFile);
+//				if(targetBitFile != null && goldenBitFile != null){
+//					trojanDetector.performDetection(goldenBitFile, targetBitFile);
+//				}
+//				else if(targetBitFile == null && goldenBitFile != null){
+//					trojanTextArea.setText("Error: Please select a target bit file.");
+//				}
+//				else if(targetBitFile != null && goldenBitFile == null){
+//					trojanTextArea.setText("Error: Please select a golden chip bit file.");
+//				}
+//				else{
+//					trojanTextArea.setText("Error: Please select a target and golden bit file.");
+//				}
 			}
 		});
 		btnFindModifiedFrames.setBounds(10, 11, 153, 23);
