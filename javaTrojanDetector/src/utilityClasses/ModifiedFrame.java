@@ -145,11 +145,17 @@ public class ModifiedFrame {
 		for (Integer i : this.modifiedFrameWordNumbers) {
 			int subListStart = getTileStartWordNumber(i, numberOfWordsPerTile, numOfTilesMinusClockTile);
 			int subListEnd = getTileEndWordNumber(i, numberOfWordsPerTile, numOfTilesMinusClockTile);
-			this.affectedTiles.add(new ModifiedTile(regionTilesInColumn
-					.get(getTileId(i, numberOfWordsPerTile,
-							regionTilesInColumn.size())), getTileWords(goldenData,
-					subListStart, subListEnd), getTileWords(targetData,subListStart,
-					subListEnd), numberOfWordsPerTile));
+			
+			int tileID = getTileId(i, numberOfWordsPerTile,regionTilesInColumn.size());
+			Tile t = regionTilesInColumn.get(tileID);
+			List<TileWord> tWords= getTileWords(goldenData, subListStart, subListEnd);
+			List<TileWord> tWords2 = getTileWords(targetData,subListStart,subListEnd);
+			this.affectedTiles.add(new ModifiedTile(t, tWords, tWords2, numberOfWordsPerTile));
+//			this.affectedTiles.add(new ModifiedTile(regionTilesInColumn
+//					.get(getTileId(i, numberOfWordsPerTile,
+//							regionTilesInColumn.size())), getTileWords(goldenData,
+//					subListStart, subListEnd), getTileWords(targetData,subListStart,
+//					subListEnd), numberOfWordsPerTile));
 		}
 	}
 	

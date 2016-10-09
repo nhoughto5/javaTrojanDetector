@@ -128,8 +128,8 @@ public class MainWindow {
 		JButton btnFindModifiedFrames = new JButton("Find Modified Frames");
 		btnFindModifiedFrames.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				goldenBitFile = new File("C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles/itemDefault.bit");
-				targetBitFile = new File("C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles/item18.bit");
+				goldenBitFile = new File("C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles/aes/aes_T100Clean.bit");
+				targetBitFile = new File("C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles/aes/aes_T100Trojan.bit");
 				trojanDetector.performDetection(goldenBitFile, targetBitFile);
 //				if(targetBitFile != null && goldenBitFile != null){
 //					trojanDetector.performDetection(goldenBitFile, targetBitFile);

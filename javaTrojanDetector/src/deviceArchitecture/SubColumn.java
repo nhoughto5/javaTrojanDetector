@@ -20,7 +20,7 @@ public class SubColumn {
 		this.column = column;
 		setConfigurable();
 		findSubColumnType();
-		System.out.println("P: " + primaryColumnType + " - " + "Sub: " + subColumnType + " Number: " + this.column);
+		//System.out.println("P: " + primaryColumnType + " - " + "Sub: " + subColumnType + " Number: " + this.column);
 	}
 	
 	private void setConfigurable(){

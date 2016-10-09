@@ -22,6 +22,7 @@ package edu.byu.ece.rapidSmith.bitstreamTools.configuration;
 
 import java.util.List;
 
+import utilityClasses.Error;
 import edu.byu.ece.rapidSmith.bitstreamTools.bitstream.BitstreamUtils;
 import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.AbstractConfigurationSpecification;
 import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.BlockSubType;
@@ -69,6 +70,38 @@ public class FrameAddressRegister {
 		minor = getMinorFromAddress(address);
 	}
 
+	public int getTotalNumberOfRows(){
+		return configSpec.getTopNumberOfRows() + configSpec.getBottomNumberOfRows();
+	}
+	public int getClockRegionY(){
+		if(isFrameTop()){
+			int currentRow = getRow();
+			int btm = configSpec.getBottomNumberOfRows();
+			return (configSpec.getBottomNumberOfRows() + getRow());
+		}
+		else{
+			int currentRow = getRow();
+			int btm = configSpec.getBottomNumberOfRows();
+			return (configSpec.getBottomNumberOfRows() - getRow() - 1);
+		}
+	}
+	public int getClockRegionX(){
+		int totalCols = getTotalNumColumns();
+		if(totalCols % 2 != 0){
+			Error.printError("Uneven number of Columns", new Exception().getStackTrace()[0]);
+			return -1;
+		}
+		else{
+			int currentCol = getColumn();
+			if(getColumn() >= (totalCols / 2)){
+				return 1;
+			}
+			else return 0;
+		}
+	}
+	public int getTotalNumColumns(){
+		return configSpec.getOverallColumnLayout().size();
+	}
 	/**
 	 * This function will increment the Frame Address Register (FAR) to the next address.
 	 * The frame address register does not follow a sequential increment pattern.  Instead,

@@ -189,6 +189,7 @@ public class Utils{
 			tileType = null;
 		}
 		else{
+			//System.out.println("Unexpected Tile Type, Add: ignores.add(TileType." + tile.getType()+");  Name: " + tile.getName());
 			Error.printError("Unexpected Tile Type, Add: ignores.add(TileType." + tile.getType()+");  Name: " + tile.getName(), new Exception().getStackTrace()[0]);
 		}
 		return tileType;
@@ -275,6 +276,13 @@ public class Utils{
 		miscellaneous.add(TileType.IOI);
 		miscellaneous.add(TileType.L_TERM_INT);
 		miscellaneous.add(TileType.R_TERM_INT);
+		miscellaneous.add(TileType.CMT_BOT);
+		miscellaneous.add(TileType.CMT_TOP);
+		miscellaneous.add(TileType.CLK_MGT_BOT);
+		miscellaneous.add(TileType.CLK_IOB_T);
+		miscellaneous.add(TileType.CLK_CMT_TOP);
+		miscellaneous.add(TileType.CLK_MGT_TOP);
+		miscellaneous.add(TileType.CLK_IOB_T);
 		
 		ignores = new HashSet<TileType>();
 		ignores.add(TileType.NULL);
