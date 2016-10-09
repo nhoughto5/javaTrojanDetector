@@ -52,7 +52,7 @@ public class Architecture {
 		this.far.initFAR();
 		int Row = this.far.getClockRegionY(), Col = this.far.getClockRegionX(), minors = 0;
 		System.out.println("CR_X" + this.far.getClockRegionX() + "Y" + this.far.getClockRegionY());
-		ClockRegion tempCR = new ClockRegion(this.far.getClockRegionX(),this.far.getClockRegionY());
+		ClockRegion tempCR = new ClockRegion(this.far.getClockRegionX(),this.far.getClockRegionY(), this.spec, this.device);
 		HashSet<String> CRs = new HashSet<>();
 		for(; this.far.validFARAddress(); this.far.incrementFAR()){
 			if(this.far.getBlockType() == 0){
@@ -67,7 +67,7 @@ public class Architecture {
 					minors = 0;
 					Row = this.far.getClockRegionY();
 					Col = this.far.getClockRegionX();
-					tempCR = new ClockRegion(Col, Row);
+					tempCR = new ClockRegion(Col, Row, this.spec, this.device);
 				}
 				else{
 					tempCR.addAddress(this.far.getAddress());
