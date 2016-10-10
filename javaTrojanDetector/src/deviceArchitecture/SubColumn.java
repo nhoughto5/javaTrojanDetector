@@ -53,7 +53,7 @@ public class SubColumn {
 	private void setConfigurable(){
 		for(int i = 0; i < tiles.size(); ++i){
 			Tile currentTile = tiles.get(i);
-			if(!Utils.isPrimaryTile(currentTile.getType())){
+			if(!Utils.isPrimaryTile(currentTile.getType()) && !Utils.isHorizontalClockTile(currentTile.getType())){
 				currentTile.setConfigurable(false);
 				tiles.set(i, currentTile);
 			}
@@ -72,28 +72,10 @@ public class SubColumn {
 		int numRowsPerRow = numPrimaryTilesPerRow + 2;
 		for(int i = 0; i < numRowsPerRow; ++i){
 			Tile currentTile = tiles.get(i + (rowNum * numRowsPerRow));
-			if(currentTile.isPrimarySeat() && currentTile.isConfigurable()){
+			if(currentTile.isPrimarySeat() || currentTile.isConfigurable()){
 				ret.add(currentTile);
 			}
 		}
-		
-		
-//		int numConfigureable = getNumOfConfigurableTilesInSubColumn();
-//		if((numConfigureable % totalNumRows) == 0){
-//			List<Tile> configurableTiles = getOnlyConfigurableTiles();
-//			rowNum = totalNumRows - rowNum; //Account for the reverse order of the list
-//			int numToReturn = numConfigureable / totalNumRows;
-//			int top = numToReturn * rowNum;
-//			int bottom = numToReturn * (rowNum + 1);
-//			for(int i = 0; i <  configurableTiles.size(); ++i){
-//				if((i >= top) && (i < bottom)){
-//					ret.add(configurableTiles.get(i));
-//				}
-//			}
-//		}
-//		else{
-//			Error.printError("The number of configurable tiles in the subcolumn "+ this.primaryColumnType +": " + this.column + " - " + this.subColumnType +" is not divisible by the number of Rows", new Exception().getStackTrace()[0]);
-//		}
 		return ret;
 	}
 	private List<Tile> getOnlyConfigurableTiles(){
@@ -117,8 +99,8 @@ public class SubColumn {
 	private void findSubColumnType(){
 		HashMap<String, Integer> map = new HashMap<>();
 		for(Tile t : this.tiles){
-			Integer val = map.get(t);
 			if(Utils.getColumnSubType(t) != null){
+				Integer val = map.get(Utils.getColumnSubType(t));
 				map.put(Utils.getColumnSubType(t), val == null ? 1 : val + 1);
 			}
 		}
