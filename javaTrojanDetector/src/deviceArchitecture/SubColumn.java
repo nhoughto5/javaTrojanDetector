@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import utilityClasses.DeviceColumnInfo;
 import utilityClasses.Error;
+import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.XilinxConfigurationSpecification;
 import edu.byu.ece.rapidSmith.device.Tile;
 import edu.byu.ece.rapidSmith.device.Utils;
 
@@ -13,16 +15,43 @@ public class SubColumn {
 	List<Tile> tiles;
 	String subColumnType, primaryColumnType;
 	int column;
-	
-	public SubColumn(String primaryColumnType, List<Tile> tiles, int column) {
+	private XilinxConfigurationSpecification spec;
+	private DeviceColumnInfo deviceInfo;
+	public SubColumn(String primaryColumnType, List<Tile> tiles, int column, XilinxConfigurationSpecification spec, DeviceColumnInfo deviceInfo) {
 		this.tiles = tiles;
 		this.primaryColumnType = primaryColumnType;
 		this.column = column;
+		this.spec = spec;
+		this.deviceInfo = deviceInfo;
 		setConfigurable();
+		setIsPrimarySeat();
 		findSubColumnType();
-		//System.out.println("P: " + primaryColumnType + " - " + "Sub: " + subColumnType + " Number: " + this.column);
 	}
 	
+	//A gate-array is organized into a regular structure. 
+	//Set a flag for tiles which sit in a primary configurable location in the column.
+	private void setIsPrimarySeat(){
+		int totalNumRows = this.spec.getTopNumberOfRows() + this.spec.getBottomNumberOfRows();
+		int numPrimaryTilesPerRow = this.deviceInfo.getNumberOfPrimaryTilesInColumn();
+		
+		//Add for clock tile and starting null tile
+		int numRowsPerRow = numPrimaryTilesPerRow + 2;
+		for(int row = 0; row < totalNumRows; ++row){
+			for(int i = 0; i < numRowsPerRow; ++i){
+				Tile currentTile = tiles.get(i + (row * numRowsPerRow));
+				if(i != 0 && i != ((numPrimaryTilesPerRow / 2) + 1)){
+					currentTile.setPrimarySeat(true);
+				
+				}
+				System.out.println(currentTile.getName() + "    " + currentTile.isPrimarySeat());
+			}
+		}
+		//Get the very last tile, this isn't necessary but do it to be verbose
+		Tile currentTile = tiles.get(tiles.size() - 1);
+		currentTile.setPrimarySeat(false);
+		System.out.println(currentTile.getName() + "    " + currentTile.isPrimarySeat());
+		
+	}
 	private void setConfigurable(){
 		for(int i = 0; i < tiles.size(); ++i){
 			Tile currentTile = tiles.get(i);

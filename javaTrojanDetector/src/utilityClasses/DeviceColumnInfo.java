@@ -1,7 +1,7 @@
 package utilityClasses;
 
 public class DeviceColumnInfo {
-	private int maxIRFrameNumber, maxInterfaceFrameNumber, numberOfFrames_CLBColumn, numberOfTilesInCLBColumn,
+	private int maxIRFrameNumber, maxInterfaceFrameNumber, numberOfFrames_CLBColumn, numberOfPrimaryTilesInColumn,
 		numberOfClockWordsPerFrame, numberOfFrames_IOBColumn, numberOfFrames_DSPColumn, numberOfFrames_BRAMColumn, numberOfFrames_CLKColumn;
 	public DeviceColumnInfo(String deviceName) {
 		
@@ -15,7 +15,7 @@ public class DeviceColumnInfo {
 			this.maxInterfaceFrameNumber = 27;
 			this.numberOfFrames_CLBColumn = 36;
 			this.numberOfClockWordsPerFrame = 1;
-			this.numberOfTilesInCLBColumn = 20;
+			this.numberOfPrimaryTilesInColumn = 20;
 			this.numberOfFrames_IOBColumn = 54;
 			this.numberOfFrames_DSPColumn = 28;
 			this.numberOfFrames_BRAMColumn = 30;
@@ -76,12 +76,13 @@ public class DeviceColumnInfo {
 		this.numberOfFrames_CLKColumn = numberOfFrames_CLKColumn;
 	}
 
-	public int getNumberOfTilesInCLBColumn() {
-		return numberOfTilesInCLBColumn;
+	
+	public int getNumberOfPrimaryTilesInColumn() {
+		return numberOfPrimaryTilesInColumn;
 	}
 
-	public void setNumberOfTilesInCLBColumn(int numberOfTilesInCLBColumn) {
-		this.numberOfTilesInCLBColumn = numberOfTilesInCLBColumn;
+	public void setNumberOfPrimaryTilesInColumn(int numberOfPrimaryTilesInColumn) {
+		this.numberOfPrimaryTilesInColumn = numberOfPrimaryTilesInColumn;
 	}
 
 	public int getNumberOfClockWordsPerFrame() {

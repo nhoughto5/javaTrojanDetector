@@ -65,7 +65,7 @@ public class Tile implements Serializable{
 	/** Reference to this tile's device object */
 	private Device dev;
 
-	private boolean configurable;
+	private boolean configurable, primarySeat;
 	/**
 	 * Constructor for the tile class, initializes all the private variables to empty 
 	 * data structures.
@@ -76,8 +76,21 @@ public class Tile implements Serializable{
 		wireConnections = null;
 		sinks = null;
 		dev = null;
+		setPrimarySeat(false);
 	}
 	
+	public boolean isPrimarySeat() {
+		return primarySeat;
+	}
+
+
+
+	public void setPrimarySeat(boolean primarySeat) {
+		this.primarySeat = primarySeat;
+	}
+
+
+
 	/**
 	 * Sets the device which owns this tile.
 	 * @param device The device to set

@@ -48,6 +48,10 @@ public class Utils{
 	
 	private static HashSet<TileType> interfaces;
 	
+	private static HashSet<TileType> gtp;
+	
+	private static HashSet<TileType> logic_Overhead;
+	
 	private static HashSet<TileType> ignores;
 	
 	private static HashSet<TileType> miscellaneous;
@@ -138,15 +142,20 @@ public class Utils{
 	public static boolean isInterconnect(TileType type){
 		return interfaces.contains(type);
 	}
+	
+	public static boolean isGTP(TileType type){
+		return gtp.contains(type);
+	}
+	
+	public static boolean isLogicOverhead(TileType type){
+		return logic_Overhead.contains(type);
+	}
 
 	public static boolean isPrimaryTile(TileType type) {
-		if (isCLB(type) || isBRAM(type)
-				|| isDSP(type)
-				|| isSwitchBox(type)
-				|| isCNFG(type) || isIOB(type)
-				|| isCLK(type) 
-				|| isBUFS(type)
-				|| isMiscellaneousPrimaryType(type)) {
+		if (isCLB(type) || isBRAM(type) || isDSP(type) || isSwitchBox(type)
+				|| isCNFG(type) || isIOB(type) || isCLK(type) || isBUFS(type)
+				|| isMiscellaneousPrimaryType(type) || isGTP(type)
+				|| isLogicOverhead(type)) {
 			return true;
 		} else {
 			return false;
@@ -184,6 +193,12 @@ public class Utils{
 		}
 		else if(isInterconnect(tile.getType())){
 			tileType = "INTERFACE";
+		}
+		else if(isGTP(tile.getType())){
+			tileType = "GTP";
+		}
+		else if(isLogicOverhead(tile.getType())){
+			tileType = "LOGIC_OVERHEAD";
 		}
 		else if (isIGNORE(tile.getType())){
 			tileType = null;
@@ -260,17 +275,26 @@ public class Utils{
 		
 		clk = new HashSet<TileType>();
 		clk.add(TileType.CLKV);
+		clk.add(TileType.CLKV_MC);
+		clk.add(TileType.CLK_HROW);
+		clk.add(TileType.CLK_MGT_TOP);
+		clk.add(TileType.CLK_IOB_T);
+		clk.add(TileType.CLK_MGT_BOT);
 		
 		bufs = new HashSet<TileType>();
 		bufs.add(TileType.INT_BUFS_L);
 		bufs.add(TileType.INT_BUFS_R);
 		
+		gtp = new HashSet<TileType>();
+		gtp.add(TileType.GTP_INT_INTERFACE);
+		
+		logic_Overhead = new HashSet<TileType>();
+		logic_Overhead.add(TileType.R_TERM_INT);
 		
 		miscellaneous = new HashSet<TileType>();
 		miscellaneous.add(TileType.PCIE_INT_INTERFACE);
 		miscellaneous.add(TileType.EMAC_INT_INTERFACE);
 		miscellaneous.add(TileType.EMAC);
-		miscellaneous.add(TileType.GTP_INT_INTERFACE);
 		miscellaneous.add(TileType.PCIE_T);
 		miscellaneous.add(TileType.PCIE_B);
 		miscellaneous.add(TileType.IOI);
@@ -278,14 +302,12 @@ public class Utils{
 		miscellaneous.add(TileType.R_TERM_INT);
 		miscellaneous.add(TileType.CMT_BOT);
 		miscellaneous.add(TileType.CMT_TOP);
-		miscellaneous.add(TileType.CLK_MGT_BOT);
-		miscellaneous.add(TileType.CLK_IOB_T);
-		miscellaneous.add(TileType.CLK_CMT_TOP);
-		miscellaneous.add(TileType.CLK_MGT_TOP);
-		miscellaneous.add(TileType.CLK_IOB_T);
+		
+		
 		
 		ignores = new HashSet<TileType>();
 		ignores.add(TileType.NULL);
+		ignores.add(TileType.CLK_CMT_TOP);
 		ignores.add(TileType.HCLK);
 		ignores.add(TileType.HCLK_BRAM);
 		ignores.add(TileType.HCLK_BRAM_FEEDTHRU);

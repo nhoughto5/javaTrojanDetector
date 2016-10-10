@@ -6,7 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import utilityClasses.DeviceColumnInfo;
 import utilityClasses.Error;
+import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.XilinxConfigurationSpecification;
 import edu.byu.ece.rapidSmith.device.Tile;
 import edu.byu.ece.rapidSmith.device.Utils;
 
@@ -14,8 +16,12 @@ public class Column {
 	private List<SubColumn> subColumns;
 	private int row, column;
 	private String columnType;
-	public Column() {
+	private XilinxConfigurationSpecification spec;
+	private DeviceColumnInfo deviceInfo;
+	public Column(XilinxConfigurationSpecification spec, DeviceColumnInfo deviceInfo) {
 		subColumns = new ArrayList<>();
+		this.spec = spec;
+		this.deviceInfo = deviceInfo;
 	}
 	
 	public SubColumn getSubColumnByType(String type){
@@ -44,7 +50,7 @@ public class Column {
 		subColumns.clear();
 	}
 	public void addSubColumns(String columnType, List<Tile> tiles){
-		subColumns.add(new SubColumn(columnType, tiles, this.column));
+		subColumns.add(new SubColumn(columnType, tiles, this.column, this.spec, this.deviceInfo));
 	}
 
 	public int getRow() {

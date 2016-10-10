@@ -7,8 +7,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import utilityClasses.DeviceColumnInfo;
 import edu.byu.ece.rapidSmith.bitstreamTools.configuration.FrameAddressRegister;
@@ -40,41 +41,9 @@ public class Architecture {
 		this.numGlobalRows = this.device.getRows();
 		this.columns = new ArrayList<>();
 		this.clockRegions = new ArrayList<>();
-		try {
-			makeTileMap();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		this.incrementFAR();
-		//this.loadArchitecture();
+		this.loadArchitecture();
 	}
-	private void makeTileMap() throws IOException{
-		File fout = new File("tileMapFile.txt");
-		FileOutputStream fos = new FileOutputStream(fout);
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
-		
-		this.tiles = this.device.getTiles();
-		int matrixX = 0, matrixY = tiles.length;
-		for(int i = 0; i < matrixY; ++i){
-			matrixX = tiles[i].length;
-			for(int j = 0; j < matrixX; ++j){
-				if(this.tiles[i][j].getTileXCoordinate() > maxLocalX){
-					maxLocalX = this.tiles[i][j].getTileXCoordinate();
-				}
-				if(this.tiles[i][j].getTileYCoordinate() > maxLocalY){
-					maxLocalY = this.tiles[i][j].getTileYCoordinate();
-				}
-			}
-		}
-		for(int row = 0; row < maxLocalY; ++row){
-			for(int col = 0; col < maxLocalX; ++col){
-				bw.write(this.tiles[row][col].getName() + " ");
-			}
-			bw.newLine();
-		}
-		bw.close();
-	}
+
 	private boolean isNewClockRegion(int Row, int Col){
 		if(Row != this.far.getClockRegionY()){
 			return true;
@@ -86,42 +55,13 @@ public class Architecture {
 			return false;
 		}
 	}
-	private void incrementFAR(){
-		this.far.initFAR();
-		int Row = this.far.getClockRegionY(), Col = this.far.getClockRegionX(), minors = 0;
-		System.out.println("CR_X" + this.far.getClockRegionX() + "Y" + this.far.getClockRegionY());
-		ClockRegion tempCR = new ClockRegion(this.far.getClockRegionX(),this.far.getClockRegionY(), this.spec, this.device);
-		HashSet<String> CRs = new HashSet<>();
-		for(; this.far.validFARAddress(); this.far.incrementFAR()){
-			if(this.far.getBlockType() == 0){
-				if(isNewClockRegion(Row, Col)){
-					String answer = "CR_X" + this.far.getClockRegionX() + "Y" + this.far.getClockRegionY();
-					if(!CRs.contains(answer)){
-						System.out.println(answer  + " has " + minors + " minor columns    ");
-						CRs.add(answer);
-					}
-					
-					clockRegions.add(tempCR);
-					minors = 0;
-					Row = this.far.getClockRegionY();
-					Col = this.far.getClockRegionX();
-					tempCR = new ClockRegion(Col, Row, this.spec, this.device);
-				}
-				else{
-					tempCR.addAddress(this.far.getAddress());
-					++minors;
-				}
-			}
-		}
-		clockRegions.add(tempCR);
-	}
-	
+
 	private void loadArchitecture() {
 		List<BlockSubType> layout = this.spec.getOverallColumnLayout();
 		//this.far.initFAR();
 		int currentLocalCol = 0, colCount = 0;
 		String columnType = null;
-		Column currentColumn = new Column();
+		Column currentColumn = new Column(this.spec, this.deviceInfo);
 		for (int i = 0; i < numGlobalColumns; ++i) {	
 			List<Tile> columnTiles = this.device.getTilesInColumn(i);
 			columnType = null;
@@ -134,7 +74,7 @@ public class Architecture {
 						currentLocalCol = t;
 						currentColumn.setColumnType(layout.get(colCount).getName());
 						columns.add(currentColumn);
-						currentColumn = new Column();
+						currentColumn = new Column(this.spec, this.deviceInfo);
 						colCount++;
 					}
 				}
@@ -151,7 +91,66 @@ public class Architecture {
 			}
 		}
 	}
-	
+	private void makeTileMap(){
+		File fout = new File("tileMapFile.txt");
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(fout);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+		
+		this.tiles = this.device.getTiles();
+		int matrixX = 0, matrixY = tiles.length;
+		for(int i = 0; i < matrixY; ++i){
+			matrixX = tiles[i].length;
+			for(int j = 0; j < matrixX; ++j){
+				try {
+					bw.write(this.tiles[i][j].getName() + " ");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			try {
+				bw.newLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		try {
+			bw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	private String getColumnType(List<Tile> columnTiles){
+		List<String> tileTypes = new ArrayList<>();
+		for(Tile Y : columnTiles){
+			tileTypes.add(Utils.getColumnSubType(Y));
+		}
+	    Map<String, Integer> m = new HashMap<String, Integer>();
+
+	    for (String a : tileTypes) {
+	    	Integer freq = m.get(a);
+	        m.put(a, (freq == null) ? 1 : freq + 1);
+	    }
+
+	    int max = -1;
+	    String mostFrequent = "";
+
+	    for (Map.Entry<String, Integer> e : m.entrySet()) {
+	        if (e.getValue() > max) {
+	            mostFrequent = e.getKey();
+	            max = e.getValue();
+	        }
+	    }
+	    return mostFrequent;
+	}
 	public Column getColumn(int col){
 		return this.columns.get(col);
 	}
