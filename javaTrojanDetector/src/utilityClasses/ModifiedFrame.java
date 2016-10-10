@@ -52,37 +52,49 @@ public class ModifiedFrame {
 		this.isFrameTop = frameAddressRegister.isFrameTop();
 		this.selector = new DeviceColumnInfo(this.spec.getDeviceFamily());
 		this.affectedTiles = new ArrayList<ModifiedTile>();
+		this.frameAddressRegister = new FrameAddressRegister(this.spec, this.address);
 	}
 	
 	public void mapTiles(Column column){
 		this.column = column;
-		BlockSubType bST = this.spec.getBlockSubtype(this.spec, new FrameAddressRegister(this.spec, this.address));
-		if(this.column.getColumn() != this.columnNum){
-			Error.printError("Wrong Column Number", new Exception().getStackTrace()[0]);
+		
+		//Logic frames
+		if(this.frameAddressRegister.getBlockType() == 0){
+			BlockSubType bST = this.spec.getBlockSubtype(this.spec, this.frameAddressRegister);
+			if(this.column.getColumn() != this.columnNum){
+				Error.printError("Wrong Column Number", new Exception().getStackTrace()[0]);
+			}
+			if(!this.column.getColumnType().equals(bST.getName())){
+				Error.printError("Wrong Column Type, Col Number (" + this.columnNum + ")", new Exception().getStackTrace()[0]);
+			}
+			String colType = column.getColumnType();
+			switch(bST.getName()){
+				case "CLB":
+					mapCLBColumn();
+					break;
+				case "DSP":
+					mapDSPColumn();
+					break;
+				case "IOB":
+					mapIOBColumn();
+					break;
+				case "BRAMINTERCONNECT":
+					mapBRAMColumn();
+					break;
+				case "CLK":
+					mapCLKColumn();
+					break;
+				default:
+					Error.printError("Modified Frame does not match know Column Type: " + colType + ": " + this.column.getColumn(), new Exception().getStackTrace()[0]);
+				break;
+			}
 		}
-		if(!this.column.getColumnType().equals(bST.getName())){
-			Error.printError("Wrong Column Type, Col Number (" + this.columnNum + ")", new Exception().getStackTrace()[0]);
+		//BRAM Content
+		else if(this.frameAddressRegister.getBlockType() == 1){
+			
 		}
-		String colType = column.getColumnType();
-		switch(bST.getName()){
-			case "CLB":
-				mapCLBColumn();
-				break;
-			case "DSP":
-				mapDSPColumn();
-				break;
-			case "IOB":
-				mapIOBColumn();
-				break;
-			case "BRAMINTERCONNECT":
-				mapBRAMColumn();
-				break;
-			case "CLK":
-				mapCLKColumn();
-				break;
-			default:
-				Error.printError("Modified Frame does not match know Column Type: " + colType + ": " + this.column.getColumn(), new Exception().getStackTrace()[0]);
-			break;
+		else{
+			Error.printError("New block type: " + this.frameAddressRegister.getBlockType(), new Exception().getStackTrace()[0]);
 		}
 	}
 	private void mapIOBColumn(){
@@ -215,13 +227,13 @@ public class ModifiedFrame {
 		return ret;
 	}
 	
-	//Returns which row the frame is in a more natural semantic.
+	//Returns which row the frame is in, in a more natural semantic.
 	//Rows begin at the bottom of the device at 0.
 	private int getNaturalRegionRowNumber() {
 		if (this.isFrameTop) {
-			return this.spec.getBottomNumberOfRows() + this.rowNum + 1;
+			return this.spec.getBottomNumberOfRows() + this.rowNum;
 		} else {
-			return this.spec.getBottomNumberOfRows() - rowNum;
+			return this.spec.getBottomNumberOfRows() - rowNum - 1;
 		}
 	}	
 	

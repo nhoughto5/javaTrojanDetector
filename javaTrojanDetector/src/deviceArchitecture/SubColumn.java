@@ -43,13 +43,11 @@ public class SubColumn {
 					currentTile.setPrimarySeat(true);
 				
 				}
-				System.out.println(currentTile.getName() + "    " + currentTile.isPrimarySeat());
 			}
 		}
 		//Get the very last tile, this isn't necessary but do it to be verbose
 		Tile currentTile = tiles.get(tiles.size() - 1);
 		currentTile.setPrimarySeat(false);
-		System.out.println(currentTile.getName() + "    " + currentTile.isPrimarySeat());
 		
 	}
 	private void setConfigurable(){
@@ -69,22 +67,33 @@ public class SubColumn {
 	
 	public List<Tile> getAffectedTiles(int totalNumRows, int rowNum){
 		List<Tile> ret = new ArrayList<>();
-		int numConfigureable = getNumOfConfigurableTilesInSubColumn();
-		if((numConfigureable % totalNumRows) == 0){
-			List<Tile> configurableTiles = getOnlyConfigurableTiles();
-			rowNum = totalNumRows - rowNum; //Account for the reverse order of the list
-			int numToReturn = numConfigureable / totalNumRows;
-			int top = numToReturn * rowNum;
-			int bottom = numToReturn * (rowNum + 1);
-			for(int i = 0; i <  configurableTiles.size(); ++i){
-				if((i >= top) && (i < bottom)){
-					ret.add(configurableTiles.get(i));
-				}
+		int numPrimaryTilesPerRow = this.deviceInfo.getNumberOfPrimaryTilesInColumn();
+		//Add for clock tile and starting null tile
+		int numRowsPerRow = numPrimaryTilesPerRow + 2;
+		for(int i = 0; i < numRowsPerRow; ++i){
+			Tile currentTile = tiles.get(i + (rowNum * numRowsPerRow));
+			if(currentTile.isPrimarySeat() && currentTile.isConfigurable()){
+				ret.add(currentTile);
 			}
 		}
-		else{
-			Error.printError("The number of configurable tiles in the subcolumn "+ this.primaryColumnType +": " + this.column + " - " + this.subColumnType +" is not divisible by the number of Rows", new Exception().getStackTrace()[0]);
-		}
+		
+		
+//		int numConfigureable = getNumOfConfigurableTilesInSubColumn();
+//		if((numConfigureable % totalNumRows) == 0){
+//			List<Tile> configurableTiles = getOnlyConfigurableTiles();
+//			rowNum = totalNumRows - rowNum; //Account for the reverse order of the list
+//			int numToReturn = numConfigureable / totalNumRows;
+//			int top = numToReturn * rowNum;
+//			int bottom = numToReturn * (rowNum + 1);
+//			for(int i = 0; i <  configurableTiles.size(); ++i){
+//				if((i >= top) && (i < bottom)){
+//					ret.add(configurableTiles.get(i));
+//				}
+//			}
+//		}
+//		else{
+//			Error.printError("The number of configurable tiles in the subcolumn "+ this.primaryColumnType +": " + this.column + " - " + this.subColumnType +" is not divisible by the number of Rows", new Exception().getStackTrace()[0]);
+//		}
 		return ret;
 	}
 	private List<Tile> getOnlyConfigurableTiles(){
