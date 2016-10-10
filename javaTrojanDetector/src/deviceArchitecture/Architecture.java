@@ -1,5 +1,11 @@
 package deviceArchitecture;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -34,8 +40,40 @@ public class Architecture {
 		this.numGlobalRows = this.device.getRows();
 		this.columns = new ArrayList<>();
 		this.clockRegions = new ArrayList<>();
+		try {
+			makeTileMap();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.incrementFAR();
 		//this.loadArchitecture();
+	}
+	private void makeTileMap() throws IOException{
+		File fout = new File("tileMapFile.txt");
+		FileOutputStream fos = new FileOutputStream(fout);
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+		
+		this.tiles = this.device.getTiles();
+		int matrixX = 0, matrixY = tiles.length;
+		for(int i = 0; i < matrixY; ++i){
+			matrixX = tiles[i].length;
+			for(int j = 0; j < matrixX; ++j){
+				if(this.tiles[i][j].getTileXCoordinate() > maxLocalX){
+					maxLocalX = this.tiles[i][j].getTileXCoordinate();
+				}
+				if(this.tiles[i][j].getTileYCoordinate() > maxLocalY){
+					maxLocalY = this.tiles[i][j].getTileYCoordinate();
+				}
+			}
+		}
+		for(int row = 0; row < maxLocalY; ++row){
+			for(int col = 0; col < maxLocalX; ++col){
+				bw.write(this.tiles[row][col].getName() + " ");
+			}
+			bw.newLine();
+		}
+		bw.close();
 	}
 	private boolean isNewClockRegion(int Row, int Col){
 		if(Row != this.far.getClockRegionY()){
