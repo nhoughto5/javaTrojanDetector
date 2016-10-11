@@ -117,22 +117,38 @@ public class ModifiedFrame {
 	}
 	
 	private void mapDSPColumn(){
-		
-	}
-	
-	private void mapCLKColumn(){
-		
-	}
-	
-	private void mapBRAMColumn(){
-		//This frame configures the Interconnect of the CLB column
+		//This frame configures the Interconnect of the BRAM column
 		if(this.minor <= this.deviceInfo.getMaxIRFrameNumber()){
 			this.subColumn = this.column.getSubColumnByType("INTERCONNECT");			
 		}
+		//This frame configures the interface of the BRAM column
 		else if((this.deviceInfo.getMaxIRFrameNumber() < this.minor) && (this.minor <= this.deviceInfo.getMaxInterfaceFrameNumber())){
 			this.subColumn = this.column.getSubColumnByType("INTERFACE");
 		}
-		//This frame configures the actual CLB of the CLB column
+		//This frame configures the actual CLB of the BRAM column
+		else if((this.deviceInfo.getMaxInterfaceFrameNumber() < this.minor) && (this.minor <= this.deviceInfo.getNumberOfFrames_CLBColumn())){
+			this.subColumn = this.column.getSubColumnByType("DSP");
+		}
+		else{
+			Error.printError("Mismatch frame address with column type: CLB", new Exception().getStackTrace()[0]);
+		}
+		findModifiedTiles();
+	}
+	
+	private void mapCLKColumn(){
+		findModifiedTiles();
+	}
+	
+	private void mapBRAMColumn(){
+		//This frame configures the Interconnect of the BRAM column
+		if(this.minor <= this.deviceInfo.getMaxIRFrameNumber()){
+			this.subColumn = this.column.getSubColumnByType("INTERCONNECT");			
+		}
+		//This frame configures the interface of the BRAM column
+		else if((this.deviceInfo.getMaxIRFrameNumber() < this.minor) && (this.minor <= this.deviceInfo.getMaxInterfaceFrameNumber())){
+			this.subColumn = this.column.getSubColumnByType("INTERFACE");
+		}
+		//This frame configures the actual CLB of the BRAM column
 		else if((this.deviceInfo.getMaxInterfaceFrameNumber() < this.minor) && (this.minor <= this.deviceInfo.getNumberOfFrames_CLBColumn())){
 			this.subColumn = this.column.getSubColumnByType("BRAMINTERCONNECT");
 		}
