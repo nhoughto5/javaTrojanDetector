@@ -39,9 +39,8 @@ public class SubColumn {
 		for(int row = 0; row < totalNumRows; ++row){
 			for(int i = 0; i < numRowsPerRow; ++i){
 				Tile currentTile = tiles.get(i + (row * numRowsPerRow));
-				if(i != 0 && i != ((numPrimaryTilesPerRow / 2) + 1)){
+				if(i != 0){
 					currentTile.setPrimarySeat(true);
-				
 				}
 			}
 		}
@@ -53,12 +52,12 @@ public class SubColumn {
 	private void setConfigurable(){
 		for(int i = 0; i < tiles.size(); ++i){
 			Tile currentTile = tiles.get(i);
-			if(!Utils.isPrimaryTile(currentTile.getType()) && !Utils.isHorizontalClockTile(currentTile.getType())){
-				currentTile.setConfigurable(false);
+			if(Utils.isPrimaryTile(currentTile.getType()) || Utils.isHorizontalClockTile(currentTile.getType())){
+				currentTile.setConfigurable(true);
 				tiles.set(i, currentTile);
 			}
 			else{
-				currentTile.setConfigurable(true);
+				currentTile.setConfigurable(false);
 				tiles.set(i, currentTile);
 			}
 		}
@@ -72,7 +71,7 @@ public class SubColumn {
 		int numRowsPerRow = numPrimaryTilesPerRow + 2;
 		for(int i = 0; i < numRowsPerRow; ++i){
 			Tile currentTile = tiles.get(i + (rowNum * numRowsPerRow));
-			if(currentTile.isPrimarySeat() || currentTile.isConfigurable()){
+			if(currentTile.isPrimarySeat() && currentTile.isConfigurable()){
 				ret.add(currentTile);
 			}
 		}

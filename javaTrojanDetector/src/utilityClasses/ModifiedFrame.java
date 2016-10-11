@@ -27,7 +27,7 @@ public class ModifiedFrame {
 	protected int minor, address;
 	protected String hexAddress, printOut, columnBlockType, familyName;
 	protected BlockSubType columnFrameBlockSubType;
-	protected DeviceColumnInfo selector;
+	protected DeviceColumnInfo deviceInfo;
 	protected XilinxConfigurationSpecification spec;
 	protected boolean isFrameTop;
 	private Column column;
@@ -50,7 +50,7 @@ public class ModifiedFrame {
 		this.columnFrameBlockSubType = frameAddressRegister.getFrameBlockSubType();
 		this.spec = spec;
 		this.isFrameTop = frameAddressRegister.isFrameTop();
-		this.selector = new DeviceColumnInfo(this.spec.getDeviceFamily());
+		this.deviceInfo = new DeviceColumnInfo(this.spec.getDeviceFamily());
 		this.affectedTiles = new ArrayList<ModifiedTile>();
 		this.frameAddressRegister = new FrameAddressRegister(this.spec, this.address);
 	}
@@ -100,13 +100,13 @@ public class ModifiedFrame {
 	private void mapIOBColumn(){
 		
 		//This frame configures the interconnect tiles of the IOB column
-		if(this.minor <= this.selector.getMaxIRFrameNumber()){
+		if(this.minor <= this.deviceInfo.getMaxIRFrameNumber()){
 			this.subColumn = this.column.getSubColumnByType("INTERCONNECT");
 		}
-		else if((this.minor > this.selector.getMaxIRFrameNumber()) && (this.minor <= this.selector.getMaxInterfaceFrameNumber())){
+		else if((this.minor > this.deviceInfo.getMaxIRFrameNumber()) && (this.minor <= this.deviceInfo.getMaxInterfaceFrameNumber())){
 			this.subColumn = this.column.getSubColumnByType("INTERFACE");
 		}
-		else if((this.minor > this.selector.getMaxInterfaceFrameNumber()) && (this.minor <= this.selector.getNumberOfFrames_IOBColumn())){
+		else if((this.minor > this.deviceInfo.getMaxInterfaceFrameNumber()) && (this.minor <= this.deviceInfo.getNumberOfFrames_IOBColumn())){
 			this.subColumn = this.column.getSubColumnByType("IOB");
 		}
 		else{
@@ -125,16 +125,30 @@ public class ModifiedFrame {
 	}
 	
 	private void mapBRAMColumn(){
-		
+		//This frame configures the Interconnect of the CLB column
+		if(this.minor <= this.deviceInfo.getMaxIRFrameNumber()){
+			this.subColumn = this.column.getSubColumnByType("INTERCONNECT");			
+		}
+		else if((this.deviceInfo.getMaxIRFrameNumber() < this.minor) && (this.minor <= this.deviceInfo.getMaxInterfaceFrameNumber())){
+			this.subColumn = this.column.getSubColumnByType("INTERFACE");
+		}
+		//This frame configures the actual CLB of the CLB column
+		else if((this.deviceInfo.getMaxInterfaceFrameNumber() < this.minor) && (this.minor <= this.deviceInfo.getNumberOfFrames_CLBColumn())){
+			this.subColumn = this.column.getSubColumnByType("BRAMINTERCONNECT");
+		}
+		else{
+			Error.printError("Mismatch frame address with column type: CLB", new Exception().getStackTrace()[0]);
+		}
+		findModifiedTiles();
 	}
 	private void mapCLBColumn(){
 		
 		//This frame configures the Interconnect of the CLB column
-		if(this.minor <= this.selector.getMaxIRFrameNumber()){
+		if(this.minor <= this.deviceInfo.getMaxIRFrameNumber()){
 			this.subColumn = this.column.getSubColumnByType("INTERCONNECT");			
 		}
 		//This frame configures the actual CLB of the CLB column
-		else if((this.selector.getMaxIRFrameNumber() < this.minor) && (this.minor <= this.selector.getNumberOfFrames_CLBColumn())){
+		else if((this.deviceInfo.getMaxIRFrameNumber() < this.minor) && (this.minor <= this.deviceInfo.getNumberOfFrames_CLBColumn())){
 			this.subColumn = this.column.getSubColumnByType("CLB");
 		}
 		else{
@@ -145,34 +159,43 @@ public class ModifiedFrame {
 	
 	private void findModifiedTiles(){
 		int totalNumRows = this.spec.getTopNumberOfRows() + this.spec.getBottomNumberOfRows();
-		List<Tile> regionTilesInColumn = this.subColumn.getAffectedTiles(totalNumRows, this.getNaturalRegionRowNumber());
-		if(((this.spec.getFrameSize() - this.selector.getNumberOfClockWordsPerFrame()) % regionTilesInColumn.size()) != 0){
+		int naturalRowNum = this.getNaturalRegionRowNumber();
+		List<Tile> regionTilesInColumn = this.subColumn.getAffectedTiles(totalNumRows, naturalRowNum);
+		if(((this.spec.getFrameSize() - this.deviceInfo.getNumberOfClockWordsPerFrame()) % (regionTilesInColumn.size() - this.deviceInfo.getNumberOfClockWordsPerFrame())) != 0){
 			Error.printError("Unbalanced number of tiles to config words", new Exception().getStackTrace()[0]);
 		}
-		int numOfTilesMinusClockTile = (this.spec.getFrameSize() - this.selector.getNumberOfClockWordsPerFrame());
-		int numberOfWordsPerTile = numOfTilesMinusClockTile / regionTilesInColumn.size();
+		int numOfWordsPerFrameMinusClockTile = (this.spec.getFrameSize() - this.deviceInfo.getNumberOfClockWordsPerFrame());
+		int numberOfWordsPerTile = numOfWordsPerFrameMinusClockTile / (regionTilesInColumn.size() - this.deviceInfo.getNumberOfClockWordsPerFrame());
 		this.modifiedFrameWordNumbers = this.getModifiedWordNumbers();
 		List<Integer> goldenData = goldenFrame.getData().getAllFrameWords();
 		List<Integer> targetData = targetFrame.getData().getAllFrameWords();
 		for (Integer i : this.modifiedFrameWordNumbers) {
-			int subListStart = getTileStartWordNumber(i, numberOfWordsPerTile, numOfTilesMinusClockTile);
-			int subListEnd = getTileEndWordNumber(i, numberOfWordsPerTile, numOfTilesMinusClockTile);
+			int subListStart = getTileStartWordNumber(i, numberOfWordsPerTile, numOfWordsPerFrameMinusClockTile);
+			int subListEnd = getTileEndWordNumber(i, numberOfWordsPerTile, numOfWordsPerFrameMinusClockTile);
 			
 			int tileID = getTileId(i, numberOfWordsPerTile,regionTilesInColumn.size());
 			Tile t = regionTilesInColumn.get(tileID);
 			List<TileWord> tWords= getTileWords(goldenData, subListStart, subListEnd);
 			List<TileWord> tWords2 = getTileWords(targetData,subListStart,subListEnd);
+			
 			this.affectedTiles.add(new ModifiedTile(t, tWords, tWords2, numberOfWordsPerTile));
-//			this.affectedTiles.add(new ModifiedTile(regionTilesInColumn
-//					.get(getTileId(i, numberOfWordsPerTile,
-//							regionTilesInColumn.size())), getTileWords(goldenData,
-//					subListStart, subListEnd), getTileWords(targetData,subListStart,
-//					subListEnd), numberOfWordsPerTile));
 		}
 	}
 	
-	private int getTileId(int i, int numberOfWordsPerTile, int numberOfTiles){	
-		return numberOfWordsPerTile - ((int) i / numberOfTiles);
+	private int getTileId(int j, int numberOfWordsPerPrimaryTile, int numberOfTiles){
+		int numberOfClockWords = 1, numWords = this.spec.getFrameSize();
+		int middleClockWord = (numWords - numberOfClockWords) / 2;
+		int tileNum = 0;
+		if(j < middleClockWord){
+			tileNum = (int)(j / numberOfWordsPerPrimaryTile);
+		}
+		else if(j == middleClockWord){
+			tileNum = (numberOfTiles - 1)  / numberOfWordsPerPrimaryTile;
+		}
+		else{
+			tileNum = (int)((j -1) / numberOfWordsPerPrimaryTile) + 1;
+		}
+		return tileNum;
 	}
 	
 	private List<TileWord> getTileWords(List<Integer> data, int from, int to){
@@ -260,12 +283,12 @@ public class ModifiedFrame {
 	public void setFamilyName(String familyName) {
 		this.familyName = familyName;
 	}
-	public DeviceColumnInfo getSelector() {
-		return selector;
+	public DeviceColumnInfo getdeviceInfo() {
+		return deviceInfo;
 	}
 
-	public void setSelector(DeviceColumnInfo selector) {
-		this.selector = selector;
+	public void setdeviceInfo(DeviceColumnInfo deviceInfo) {
+		this.deviceInfo = deviceInfo;
 	}
 
 	public boolean isFrameTop() {

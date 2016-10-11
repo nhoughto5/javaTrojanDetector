@@ -52,6 +52,8 @@ public class Utils{
 	
 	private static HashSet<TileType> logic_Overhead;
 	
+	private static HashSet<TileType> horizontalClock;
+	
 	private static HashSet<TileType> ignores;
 	
 	private static HashSet<TileType> miscellaneous;
@@ -150,6 +152,10 @@ public class Utils{
 	public static boolean isLogicOverhead(TileType type){
 		return logic_Overhead.contains(type);
 	}
+	
+	public static boolean isHorizontalClockTile(TileType type){
+		return horizontalClock.contains(type);
+	}
 
 	public static boolean isPrimaryTile(TileType type) {
 		if (isCLB(type) || isBRAM(type) || isDSP(type) || isSwitchBox(type)
@@ -199,6 +205,9 @@ public class Utils{
 		}
 		else if(isLogicOverhead(tile.getType())){
 			tileType = "LOGIC_OVERHEAD";
+		}
+		else if(isHorizontalClockTile(tile.getType())){
+			tileType = "HORIZONTAL_CLOCK";
 		}
 		else if (isIGNORE(tile.getType())){
 			tileType = null;
@@ -303,105 +312,105 @@ public class Utils{
 		miscellaneous.add(TileType.CMT_BOT);
 		miscellaneous.add(TileType.CMT_TOP);
 		
-		
+		horizontalClock = new HashSet<TileType>();
+		horizontalClock.add(TileType.HCLK);
+		horizontalClock.add(TileType.HCLK_BRAM);
+		horizontalClock.add(TileType.HCLK_BRAM_FEEDTHRU);
+		horizontalClock.add(TileType.HCLK_BRAM_FEEDTHRU_FOLD);
+		horizontalClock.add(TileType.HCLK_BRAM_FX);
+		horizontalClock.add(TileType.HCLK_BRAM_MGT);
+		horizontalClock.add(TileType.HCLK_BRAM_MGT_LEFT);
+		horizontalClock.add(TileType.HCLK_CENTER);
+		horizontalClock.add(TileType.HCLK_CENTER_ABOVE_CFG);
+		horizontalClock.add(TileType.HCLK_CLB);
+		horizontalClock.add(TileType.HCLK_CLBLL);
+		horizontalClock.add(TileType.HCLK_CLBLM);
+		horizontalClock.add(TileType.HCLK_CLBLM_MGT);
+		horizontalClock.add(TileType.HCLK_CLBLM_MGT_LEFT);
+		horizontalClock.add(TileType.HCLK_CLB_XL_CLE);
+		horizontalClock.add(TileType.HCLK_CLB_XL_CLE_FOLD);
+		horizontalClock.add(TileType.HCLK_CLB_XL_INT);
+		horizontalClock.add(TileType.HCLK_CLB_XL_INT_FOLD);
+		horizontalClock.add(TileType.HCLK_CLB_XM_CLE);
+		horizontalClock.add(TileType.HCLK_CLB_XM_CLE_FOLD);
+		horizontalClock.add(TileType.HCLK_CLB_XM_INT);
+		horizontalClock.add(TileType.HCLK_CLB_XM_INT_FOLD);
+		horizontalClock.add(TileType.HCLK_CMT_BOT);
+		horizontalClock.add(TileType.HCLK_CMT_CMT);
+		horizontalClock.add(TileType.HCLK_CMT_CMT_MGT);
+		horizontalClock.add(TileType.HCLK_CMT_IOI);
+		horizontalClock.add(TileType.HCLK_CMT_TOP);
+		horizontalClock.add(TileType.HCLK_DCM);
+		horizontalClock.add(TileType.HCLK_DCMIOB);
+		horizontalClock.add(TileType.HCLK_DSP);
+		horizontalClock.add(TileType.HCLK_FT);
+		horizontalClock.add(TileType.HCLK_GT3);
+		horizontalClock.add(TileType.HCLK_GTH);
+		horizontalClock.add(TileType.HCLK_GTH_LEFT);
+		horizontalClock.add(TileType.HCLK_GTX);
+		horizontalClock.add(TileType.HCLK_GTX_DUMMY);
+		horizontalClock.add(TileType.HCLK_GTX_LEFT);
+		horizontalClock.add(TileType.HCLK_GT_EMP);
+		horizontalClock.add(TileType.HCLK_INNER_IOI);
+		horizontalClock.add(TileType.HCLK_INT_INTERFACE);
+		horizontalClock.add(TileType.HCLK_IOB);
+		horizontalClock.add(TileType.HCLK_IOBDCM);
+		horizontalClock.add(TileType.HCLK_IOB_CMT_BOT);
+		horizontalClock.add(TileType.HCLK_IOB_CMT_BOT_MGT);
+		horizontalClock.add(TileType.HCLK_IOB_CMT_MID);
+		horizontalClock.add(TileType.HCLK_IOB_CMT_MID_MGT);
+		horizontalClock.add(TileType.HCLK_IOB_CMT_TOP);
+		horizontalClock.add(TileType.HCLK_IOB_CMT_TOP_MGT);
+		horizontalClock.add(TileType.HCLK_IOI);
+		horizontalClock.add(TileType.HCLK_IOIL_BOT_DN);
+		horizontalClock.add(TileType.HCLK_IOIL_BOT_SPLIT);
+		horizontalClock.add(TileType.HCLK_IOIL_BOT_UP);
+		horizontalClock.add(TileType.HCLK_IOIL_EMP);
+		horizontalClock.add(TileType.HCLK_IOIL_INT);
+		horizontalClock.add(TileType.HCLK_IOIL_INT_FOLD);
+		horizontalClock.add(TileType.HCLK_IOIL_TOP_DN);
+		horizontalClock.add(TileType.HCLK_IOIL_TOP_SPLIT);
+		horizontalClock.add(TileType.HCLK_IOIL_TOP_UP);
+		horizontalClock.add(TileType.HCLK_IOIR_BOT_DN);
+		horizontalClock.add(TileType.HCLK_IOIR_BOT_SPLIT);
+		horizontalClock.add(TileType.HCLK_IOIR_BOT_UP);
+		horizontalClock.add(TileType.HCLK_IOIR_EMP);
+		horizontalClock.add(TileType.HCLK_IOIR_INT);
+		horizontalClock.add(TileType.HCLK_IOIR_INT_FOLD);
+		horizontalClock.add(TileType.HCLK_IOIR_TOP_DN);
+		horizontalClock.add(TileType.HCLK_IOIR_TOP_SPLIT);
+		horizontalClock.add(TileType.HCLK_IOIR_TOP_UP);
+		horizontalClock.add(TileType.HCLK_IOIS_DCI);
+		horizontalClock.add(TileType.HCLK_IOIS_LVDS);
+		horizontalClock.add(TileType.HCLK_IOI_BOTCEN);
+		horizontalClock.add(TileType.HCLK_IOI_BOTCEN_MGT);
+		horizontalClock.add(TileType.HCLK_IOI_CENTER);
+		horizontalClock.add(TileType.HCLK_IOI_CMT);
+		horizontalClock.add(TileType.HCLK_IOI_CMT_MGT);
+		horizontalClock.add(TileType.HCLK_IOI_LTERM);
+		horizontalClock.add(TileType.HCLK_IOI_LTERM_BOT25);
+		horizontalClock.add(TileType.HCLK_IOI_RTERM);
+		horizontalClock.add(TileType.HCLK_IOI_RTERM_BOT25);
+		horizontalClock.add(TileType.HCLK_IOI_TOPCEN);
+		horizontalClock.add(TileType.HCLK_IOI_TOPCEN_MGT);
+		horizontalClock.add(TileType.HCLK_LIOB);
+		horizontalClock.add(TileType.HCLK_MGT);
+		horizontalClock.add(TileType.HCLK_OUTER_IOI);
+		horizontalClock.add(TileType.HCLK_PCIE_BRAM);
+		horizontalClock.add(TileType.HCLK_PPC);
+		horizontalClock.add(TileType.HCLK_PPC_TERM);
+		horizontalClock.add(TileType.HCLK_QBUF_L);
+		horizontalClock.add(TileType.HCLK_QBUF_R);
+		horizontalClock.add(TileType.HCLK_TERM);
+		horizontalClock.add(TileType.HCLK_TERM_L);
+		horizontalClock.add(TileType.HCLK_TERM_R);
+		horizontalClock.add(TileType.HCLK_VBRK);
+		horizontalClock.add(TileType.HCLK_VBRK_R);
+		horizontalClock.add(TileType.HCLK_VFRAME);
 		
 		ignores = new HashSet<TileType>();
 		ignores.add(TileType.NULL);
 		ignores.add(TileType.CLK_CMT_TOP);
-		ignores.add(TileType.HCLK);
-		ignores.add(TileType.HCLK_BRAM);
-		ignores.add(TileType.HCLK_BRAM_FEEDTHRU);
-		ignores.add(TileType.HCLK_BRAM_FEEDTHRU_FOLD);
-		ignores.add(TileType.HCLK_BRAM_FX);
-		ignores.add(TileType.HCLK_BRAM_MGT);
-		ignores.add(TileType.HCLK_BRAM_MGT_LEFT);
-		ignores.add(TileType.HCLK_CENTER);
-		ignores.add(TileType.HCLK_CENTER_ABOVE_CFG);
-		ignores.add(TileType.HCLK_CLB);
-		ignores.add(TileType.HCLK_CLBLL);
-		ignores.add(TileType.HCLK_CLBLM);
-		ignores.add(TileType.HCLK_CLBLM_MGT);
-		ignores.add(TileType.HCLK_CLBLM_MGT_LEFT);
-		ignores.add(TileType.HCLK_CLB_XL_CLE);
-		ignores.add(TileType.HCLK_CLB_XL_CLE_FOLD);
-		ignores.add(TileType.HCLK_CLB_XL_INT);
-		ignores.add(TileType.HCLK_CLB_XL_INT_FOLD);
-		ignores.add(TileType.HCLK_CLB_XM_CLE);
-		ignores.add(TileType.HCLK_CLB_XM_CLE_FOLD);
-		ignores.add(TileType.HCLK_CLB_XM_INT);
-		ignores.add(TileType.HCLK_CLB_XM_INT_FOLD);
-		ignores.add(TileType.HCLK_CMT_BOT);
-		ignores.add(TileType.HCLK_CMT_CMT);
-		ignores.add(TileType.HCLK_CMT_CMT_MGT);
-		ignores.add(TileType.HCLK_CMT_IOI);
-		ignores.add(TileType.HCLK_CMT_TOP);
-		ignores.add(TileType.HCLK_DCM);
-		ignores.add(TileType.HCLK_DCMIOB);
-		ignores.add(TileType.HCLK_DSP);
-		ignores.add(TileType.HCLK_FT);
-		ignores.add(TileType.HCLK_GT3);
-		ignores.add(TileType.HCLK_GTH);
-		ignores.add(TileType.HCLK_GTH_LEFT);
-		ignores.add(TileType.HCLK_GTX);
-		ignores.add(TileType.HCLK_GTX_DUMMY);
-		ignores.add(TileType.HCLK_GTX_LEFT);
-		ignores.add(TileType.HCLK_GT_EMP);
-		ignores.add(TileType.HCLK_INNER_IOI);
-		ignores.add(TileType.HCLK_INT_INTERFACE);
-		ignores.add(TileType.HCLK_IOB);
-		ignores.add(TileType.HCLK_IOBDCM);
-		ignores.add(TileType.HCLK_IOB_CMT_BOT);
-		ignores.add(TileType.HCLK_IOB_CMT_BOT_MGT);
-		ignores.add(TileType.HCLK_IOB_CMT_MID);
-		ignores.add(TileType.HCLK_IOB_CMT_MID_MGT);
-		ignores.add(TileType.HCLK_IOB_CMT_TOP);
-		ignores.add(TileType.HCLK_IOB_CMT_TOP_MGT);
-		ignores.add(TileType.HCLK_IOI);
-		ignores.add(TileType.HCLK_IOIL_BOT_DN);
-		ignores.add(TileType.HCLK_IOIL_BOT_SPLIT);
-		ignores.add(TileType.HCLK_IOIL_BOT_UP);
-		ignores.add(TileType.HCLK_IOIL_EMP);
-		ignores.add(TileType.HCLK_IOIL_INT);
-		ignores.add(TileType.HCLK_IOIL_INT_FOLD);
-		ignores.add(TileType.HCLK_IOIL_TOP_DN);
-		ignores.add(TileType.HCLK_IOIL_TOP_SPLIT);
-		ignores.add(TileType.HCLK_IOIL_TOP_UP);
-		ignores.add(TileType.HCLK_IOIR_BOT_DN);
-		ignores.add(TileType.HCLK_IOIR_BOT_SPLIT);
-		ignores.add(TileType.HCLK_IOIR_BOT_UP);
-		ignores.add(TileType.HCLK_IOIR_EMP);
-		ignores.add(TileType.HCLK_IOIR_INT);
-		ignores.add(TileType.HCLK_IOIR_INT_FOLD);
-		ignores.add(TileType.HCLK_IOIR_TOP_DN);
-		ignores.add(TileType.HCLK_IOIR_TOP_SPLIT);
-		ignores.add(TileType.HCLK_IOIR_TOP_UP);
-		ignores.add(TileType.HCLK_IOIS_DCI);
-		ignores.add(TileType.HCLK_IOIS_LVDS);
-		ignores.add(TileType.HCLK_IOI_BOTCEN);
-		ignores.add(TileType.HCLK_IOI_BOTCEN_MGT);
-		ignores.add(TileType.HCLK_IOI_CENTER);
-		ignores.add(TileType.HCLK_IOI_CMT);
-		ignores.add(TileType.HCLK_IOI_CMT_MGT);
-		ignores.add(TileType.HCLK_IOI_LTERM);
-		ignores.add(TileType.HCLK_IOI_LTERM_BOT25);
-		ignores.add(TileType.HCLK_IOI_RTERM);
-		ignores.add(TileType.HCLK_IOI_RTERM_BOT25);
-		ignores.add(TileType.HCLK_IOI_TOPCEN);
-		ignores.add(TileType.HCLK_IOI_TOPCEN_MGT);
-		ignores.add(TileType.HCLK_LIOB);
-		ignores.add(TileType.HCLK_MGT);
-		ignores.add(TileType.HCLK_OUTER_IOI);
-		ignores.add(TileType.HCLK_PCIE_BRAM);
-		ignores.add(TileType.HCLK_PPC);
-		ignores.add(TileType.HCLK_PPC_TERM);
-		ignores.add(TileType.HCLK_QBUF_L);
-		ignores.add(TileType.HCLK_QBUF_R);
-		ignores.add(TileType.HCLK_TERM);
-		ignores.add(TileType.HCLK_TERM_L);
-		ignores.add(TileType.HCLK_TERM_R);
-		ignores.add(TileType.HCLK_VBRK);
-		ignores.add(TileType.HCLK_VBRK_R);
-		ignores.add(TileType.HCLK_VFRAME);
 		ignores.add(TileType.BRKH);
 		ignores.add(TileType.T_TERM_INT);
 		ignores.add(TileType.T_TERM_INT_D);
