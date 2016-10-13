@@ -1406,7 +1406,7 @@ public class Device implements Serializable{
 			MessageGenerator.briefErrorAndExit("Error writing device debug file");
 		}
 	}
-	
+
 	private int getFamilyWireCount(String fileName){
 		// Return a large number.  We don't actually need the right number, just
 		// a sufficiently large number.  Largest devices tap out at under 70k wires

@@ -6,34 +6,10 @@ import edu.byu.ece.rapidSmith.device.PrimitiveSite;
 public class ModifiedInstance {
 	private Instance goldenInstance;
 	private PrimitiveSite primitiveSite;
-	
+
 	public ModifiedInstance(Instance goldenInstance, PrimitiveSite primitiveSite) {
 		this.goldenInstance = goldenInstance;
 		this.primitiveSite = primitiveSite;
-	}
-	
-	public Instance getGoldenInstance() {
-		return goldenInstance;
-	}
-	public void setGoldenInstance(Instance goldenInstance) {
-		this.goldenInstance = goldenInstance;
-	}
-	public PrimitiveSite getPrimitiveSite() {
-		return primitiveSite;
-	}
-	public void setPrimitiveSite(PrimitiveSite primitiveSite) {
-		this.primitiveSite = primitiveSite;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((goldenInstance == null) ? 0 : goldenInstance.hashCode());
-		result = prime * result
-				+ ((primitiveSite == null) ? 0 : primitiveSite.hashCode());
-		return result;
 	}
 
 	@Override
@@ -57,6 +33,32 @@ public class ModifiedInstance {
 			return false;
 		return true;
 	}
-	
-	
+
+	public Instance getGoldenInstance() {
+		return goldenInstance;
+	}
+
+	public PrimitiveSite getPrimitiveSite() {
+		return primitiveSite;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((goldenInstance == null) ? 0 : goldenInstance.hashCode());
+		result = prime * result
+				+ ((primitiveSite == null) ? 0 : primitiveSite.hashCode());
+		return result;
+	}
+
+	public void setGoldenInstance(Instance goldenInstance) {
+		this.goldenInstance = goldenInstance;
+	}
+
+	public void setPrimitiveSite(PrimitiveSite primitiveSite) {
+		this.primitiveSite = primitiveSite;
+	}
+
 }

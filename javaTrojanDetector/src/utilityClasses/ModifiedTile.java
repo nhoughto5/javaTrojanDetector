@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import edu.byu.ece.rapidSmith.bitstreamTools.configuration.FrameAddressRegister;
+import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.AbstractConfigurationSpecification;
+import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.XilinxConfigurationSpecification;
 import edu.byu.ece.rapidSmith.device.PrimitiveSite;
 import edu.byu.ece.rapidSmith.device.Tile;
 
@@ -12,13 +15,19 @@ public class ModifiedTile {
 	private List<TileWord> goldenWords, targetWords;
 	HashSet<ModifiedInstance> modifiedInstances;
 	int numWordsPerTile;
+	FrameAddressRegister far;
+	XilinxConfigurationSpecification spec;
+	String subColumnType;
 	
-	public ModifiedTile(Tile tile, List<TileWord> goldenWords,List<TileWord> targetWords, int numWordsPerTile) {
+	public ModifiedTile(Tile tile, List<TileWord> goldenWords,List<TileWord> targetWords, int numWordsPerTile, XilinxConfigurationSpecification spec, int address, String subColumnType) {
 		this.tile = tile;
 		this.goldenWords = goldenWords;
 		this.targetWords = targetWords;
 		this.numWordsPerTile = numWordsPerTile;
 		this.modifiedInstances = new HashSet<>();
+		this.spec = spec;
+		this.far = new FrameAddressRegister(spec, address);
+		this.subColumnType = subColumnType;
 	}
 	
 	public List<PrimitiveSite> getPrimitiveSites(){
@@ -42,7 +51,62 @@ public class ModifiedTile {
 		}
 		return false;
 	}
+	public boolean wasTileDeactivated(){
+		if(isGoldenConfigured() && !isTargetConfigured()){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	public boolean wasTileActivated(){
+		if(!isGoldenConfigured() && isTargetConfigured()){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	public boolean wasTileConfigurationAdjusted(){
+		if(isGoldenConfigured() && isTargetConfigured()){
+			if(targetWords.size() != goldenWords.size()){
+				Error.printError("Incorrect number of configuration words",
+						new Exception().getStackTrace()[0]);
+			}
+			for(int i = 0; i < targetWords.size(); ++i){
+				if(goldenWords.get(i) != targetWords.get(i)){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	public String getSubColumnType() {
+		return subColumnType;
+	}
+
+	public void setSubColumnType(String subColumnType) {
+		this.subColumnType = subColumnType;
+	}
+
+	public int getAddress(){
+		return this.far.getAddress();
+	}
 	
+	public String getFrameBlockSubType(){
+		return this.far.getFrameBlockSubTypeString();
+	}
+	
+	public String getFrameBlockType(){
+		return this.far.getFrameBlockType();
+	}
+	
+	public String getFARString(){
+		return this.far.toString();
+	}
+	public int getBlockType(){
+		return this.far.getBlockType();
+	}
 	public void addInstance(ModifiedInstance mI){
 		modifiedInstances.add(mI);
 	}
