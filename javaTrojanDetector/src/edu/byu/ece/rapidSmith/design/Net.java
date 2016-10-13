@@ -522,34 +522,81 @@ public class Net implements Comparable<Net>, Serializable {
 		return sb.toString();		
 	}
 
-	/**
-	 * Creates a hashCode for the net based on its name.
-	 */
 	@Override
-	public int hashCode(){
+	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result
+				+ ((attributes == null) ? 0 : attributes.hashCode());
+		result = prime * result + fanOut;
+		result = prime * result
+				+ ((moduleInstance == null) ? 0 : moduleInstance.hashCode());
+		result = prime * result
+				+ ((moduleTemplate == null) ? 0 : moduleTemplate.hashCode());
+		result = prime
+				* result
+				+ ((moduleTemplateNet == null) ? 0 : moduleTemplateNet
+						.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((pins == null) ? 0 : pins.hashCode());
+		result = prime * result + ((pips == null) ? 0 : pips.hashCode());
+		result = prime * result + ((source == null) ? 0 : source.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
 
-	/**
-	 * Checks if two nets are equal by name.
-	 */
 	@Override
-	public boolean equals(Object obj){
-		if(this == obj)
+	public boolean equals(Object obj) {
+		if (this == obj)
 			return true;
-		if(obj == null)
+		if (obj == null)
 			return false;
-		if(getClass() != obj.getClass())
+		if (getClass() != obj.getClass())
 			return false;
 		Net other = (Net) obj;
-		if(name == null){
-			if(other.name != null)
+		if (attributes == null) {
+			if (other.attributes != null)
 				return false;
-		}
-		else if(!name.equals(other.name))
+		} else if (!attributes.equals(other.attributes))
+			return false;
+		if (fanOut != other.fanOut)
+			return false;
+		if (moduleInstance == null) {
+			if (other.moduleInstance != null)
+				return false;
+		} else if (!moduleInstance.equals(other.moduleInstance))
+			return false;
+		if (moduleTemplate == null) {
+			if (other.moduleTemplate != null)
+				return false;
+		} else if (!moduleTemplate.equals(other.moduleTemplate))
+			return false;
+		if (moduleTemplateNet == null) {
+			if (other.moduleTemplateNet != null)
+				return false;
+		} else if (!moduleTemplateNet.equals(other.moduleTemplateNet))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (pins == null) {
+			if (other.pins != null)
+				return false;
+		} else if (!pins.equals(other.pins))
+			return false;
+		if (pips == null) {
+			if (other.pips != null)
+				return false;
+		} else if (!pips.equals(other.pips))
+			return false;
+		if (source == null) {
+			if (other.source != null)
+				return false;
+		} else if (!source.equals(other.source))
+			return false;
+		if (type != other.type)
 			return false;
 		return true;
 	}

@@ -1,19 +1,14 @@
 package utilityClasses;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 import deviceArchitecture.Column;
 import deviceArchitecture.SubColumn;
 import edu.byu.ece.rapidSmith.bitstreamTools.configuration.Frame;
 import edu.byu.ece.rapidSmith.bitstreamTools.configuration.FrameAddressRegister;
-import edu.byu.ece.rapidSmith.bitstreamTools.configuration.FrameData;
-import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.AbstractConfigurationSpecification;
 import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.BlockSubType;
 import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.XilinxConfigurationSpecification;
-import edu.byu.ece.rapidSmith.device.Device;
 import edu.byu.ece.rapidSmith.device.Tile;
 
 public class ModifiedFrame {
@@ -136,6 +131,21 @@ public class ModifiedFrame {
 	}
 	
 	private void mapCLKColumn(){
+		//This frame configures the Interconnect of the BRAM column
+		if(this.minor <= this.deviceInfo.getMaxIRFrameNumber()){
+			this.subColumn = this.column.getSubColumnByType("BUFS");			
+		}
+		//This frame configures the interface of the BRAM column
+		else if((this.deviceInfo.getMaxIRFrameNumber() < this.minor) && (this.minor <= this.deviceInfo.getMaxInterfaceFrameNumber())){
+			this.subColumn = this.column.getSubColumnByType("INTERCONNECT");
+		}
+		//This frame configures the actual CLB of the BRAM column
+		else if((this.deviceInfo.getMaxInterfaceFrameNumber() < this.minor) && (this.minor <= this.deviceInfo.getNumberOfFrames_CLBColumn())){
+			this.subColumn = this.column.getSubColumnByType("CLB");
+		}
+		else{
+			Error.printError("Mismatch frame address with column type: CLB", new Exception().getStackTrace()[0]);
+		}
 		findModifiedTiles();
 	}
 	
@@ -177,9 +187,9 @@ public class ModifiedFrame {
 		int totalNumRows = this.spec.getTopNumberOfRows() + this.spec.getBottomNumberOfRows();
 		int naturalRowNum = this.getNaturalRegionRowNumber();
 		List<Tile> regionTilesInColumn = this.subColumn.getAffectedTiles(totalNumRows, naturalRowNum);
-		if(((this.spec.getFrameSize() - this.deviceInfo.getNumberOfClockWordsPerFrame()) % (regionTilesInColumn.size() - this.deviceInfo.getNumberOfClockWordsPerFrame())) != 0){
-			Error.printError("Unbalanced number of tiles to config words", new Exception().getStackTrace()[0]);
-		}
+//		if(((this.spec.getFrameSize() - this.deviceInfo.getNumberOfClockWordsPerFrame()) % (regionTilesInColumn.size() - this.deviceInfo.getNumberOfClockWordsPerFrame())) != 0){
+//			Error.printError("Unbalanced number of tiles to config words", new Exception().getStackTrace()[0]);
+//		}
 		int numOfWordsPerFrameMinusClockTile = (this.spec.getFrameSize() - this.deviceInfo.getNumberOfClockWordsPerFrame());
 		int numberOfWordsPerTile = numOfWordsPerFrameMinusClockTile / (regionTilesInColumn.size() - this.deviceInfo.getNumberOfClockWordsPerFrame());
 		this.modifiedFrameWordNumbers = this.getModifiedWordNumbers();
