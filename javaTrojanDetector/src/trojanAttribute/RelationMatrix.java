@@ -3,6 +3,7 @@ package trojanAttribute;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -65,7 +66,7 @@ public class RelationMatrix {
 		}
 	}
 
-	public void analyzeMatrix(List<TrojanAttribute> attributes) {
+	public List<TrojanAttribute> analyzeMatrix(List<TrojanAttribute> attributes) {
 		HashSet<String> categorySet = getCategorySet(attributes);
 		HashSet<TrojanAttribute> ret = new HashSet<>();
 		if (!categorySet.contains("Insertion")
@@ -129,6 +130,13 @@ public class RelationMatrix {
 		else {
 			selectionNotPossible();
 		}
+		List<TrojanAttribute> retList = new ArrayList<TrojanAttribute>(ret);
+		Collections.sort(retList, new Comparator<TrojanAttribute>() {
+		    public int compare(TrojanAttribute x, TrojanAttribute y) {
+		        return (x.getId() - y.getId());
+		    }
+		});
+		return retList;
 	}
 
 	// Convert a list of attributes to a list of ints (Attribute ID)

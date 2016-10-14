@@ -5,9 +5,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.swing.JTextArea;
+
 import deviceArchitecture.Architecture;
 import trojanAttribute.AttributeManager;
 import trojanAttribute.RelationMatrix;
+import trojanAttribute.TrojanAttribute;
 import utilityClasses.Error;
 import utilityClasses.ModifiedFrame;
 import utilityClasses.ModifiedInstance;
@@ -21,15 +24,20 @@ import edu.byu.ece.rapidSmith.device.Device;
 import edu.byu.ece.rapidSmith.device.PrimitiveSite;
 
 public class TrojanDetector {
-	Architecture architecture;
-	String dbPath = "C:\\Users\\Nick\\git\\javaTrojanDetector\\javaTrojanDetector\\devices\\virtex5";
+	private Architecture architecture;
+	private String dbPath = "C:\\Users\\Nick\\git\\javaTrojanDetector\\javaTrojanDetector\\devices\\virtex5";
 	private Design design;
-	BitstreamDiff diff;
-	ArrayList<ModifiedFrame> modifiedFrames;
-	Device readDevice;
-	Trojan trojan;
-	File xdlFile;
-
+	private BitstreamDiff diff;
+	private ArrayList<ModifiedFrame> modifiedFrames;
+	private Device readDevice;
+	private Trojan trojan;
+	private File xdlFile;
+	private List<TrojanAttribute> trojanAttributes;
+	private JTextArea messageArea;
+	public TrojanDetector(JTextArea messageArea){
+		this.messageArea = messageArea;
+	}
+	
 	private List<String> getAllDBFileNames() {
 		File folder = new File(dbPath);
 		File[] listOfFiles = folder.listFiles();
@@ -88,9 +96,18 @@ public class TrojanDetector {
 		this.trojan.printAffectedNets();
 		AttributeManager aM = new AttributeManager(this.trojan);
 		RelationMatrix R = new RelationMatrix();
-		R.analyzeMatrix(aM.getTrojanAttributes());
+		this.trojanAttributes = R.analyzeMatrix(aM.getTrojanAttributes());
+		printTrojanAttributes();
 	}
 
+	public void printTrojanAttributes(){
+		
+		for(TrojanAttribute t : this.trojanAttributes){
+			//System.out.println(t.toString());
+			this.messageArea.append(t.toString() + "\n\n");
+		}
+		//this.messageArea.write();
+	}
 	private void matchFramesToTiles() {
 		for (ModifiedFrame mF : modifiedFrames) {
 			mF.mapTiles(this.architecture.getColumn(mF.getColumnNum()));

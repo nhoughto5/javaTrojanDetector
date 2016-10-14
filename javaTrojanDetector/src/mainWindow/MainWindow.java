@@ -9,15 +9,13 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import TrojanDetector.TrojanDetector;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 public class MainWindow {
 
@@ -37,12 +35,10 @@ public class MainWindow {
 			}
 		});
 	}
-	
+
 	private JFrame frame;
 	File targetBitFile, goldenBitFile, xdlFile;
 	private TrojanDetector trojanDetector;
-
-	JTextArea trojanTextArea;
 
 	/**
 	 * Create the application.
@@ -56,7 +52,7 @@ public class MainWindow {
 	 */
 	private void initialize() {
 		this.frame = new JFrame();
-		this.trojanDetector = new TrojanDetector();
+		// this.trojanDetector = new TrojanDetector(messageArea);
 		this.frame.setBounds(100, 100, 828, 565);
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.frame.getContentPane().setLayout(null);
@@ -117,30 +113,47 @@ public class MainWindow {
 		btnBrowse_Target.setBounds(154, 59, 89, 23);
 		this.frame.getContentPane().add(btnBrowse_Target);
 
-		final JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
-		tabbedPane.setBounds(10, 178, 792, 337);
-		this.frame.getContentPane().add(tabbedPane);
+		final JLabel lblSelectGoldenChip = new JLabel(
+				"Select Golden Chip Bit File:");
+		lblSelectGoldenChip.setBounds(10, 29, 134, 14);
+		this.frame.getContentPane().add(lblSelectGoldenChip);
 
-		final JPanel panel_1 = new JPanel();
-		tabbedPane.addTab("Trojan Detector", null, panel_1, null);
-		panel_1.setLayout(null);
+		final JLabel lblSelectTargetBit = new JLabel("Select Target Bit File:");
+		lblSelectTargetBit.setBounds(10, 63, 134, 14);
+		this.frame.getContentPane().add(lblSelectTargetBit);
 
-		this.trojanTextArea = new JTextArea();
-		this.trojanTextArea.setEditable(false);
-		this.trojanTextArea.setBounds(10, 40, 242, 258);
-		this.trojanTextArea.setLineWrap(true);
-		this.trojanTextArea.setWrapStyleWord(true);
-		panel_1.add(this.trojanTextArea);
+		final JButton btnBrowese_XDL = new JButton("Browse");
+		btnBrowese_XDL.setBounds(154, 93, 89, 23);
+		this.frame.getContentPane().add(btnBrowese_XDL);
 
-		final JButton btnFindModifiedFrames = new JButton(
-				"Find Modified Frames");
-		btnFindModifiedFrames.addActionListener(new ActionListener() {
+		final JLabel lblSelectGoldenXdl = new JLabel("Select Golden XDL File:");
+		lblSelectGoldenXdl.setBounds(10, 97, 134, 14);
+		this.frame.getContentPane().add(lblSelectGoldenXdl);
+
+		final JButton btnMapTilesToDesign = new JButton("Map");
+		btnMapTilesToDesign.setBounds(154, 133, 89, 23);
+		this.frame.getContentPane().add(btnMapTilesToDesign);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 190, 792, 325);
+		frame.getContentPane().add(scrollPane);
+		
+		JTextArea messageArea = new JTextArea();
+		messageArea.setLineWrap(true);
+		scrollPane.setViewportView(messageArea);
+		this.trojanDetector = new TrojanDetector(messageArea);
+		
+		btnMapTilesToDesign.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				MainWindow.this.goldenBitFile = new File(
 						"C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles/aes/aes_T100Clean.bit");
 				MainWindow.this.targetBitFile = new File(
 						"C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles/aes/aes_T100Trojan.bit");
+				MainWindow.this.xdlFile = new File(
+						"C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles/aes/aes_128.xdl");
+				MainWindow.this.trojanDetector
+						.loadDesign(MainWindow.this.xdlFile);
 				// goldenBitFile = new
 				// File("C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles/itemDefault.bit");
 				// targetBitFile = new
@@ -161,16 +174,10 @@ public class MainWindow {
 				// else{
 				// trojanTextArea.setText("Error: Please select a target and golden bit file.");
 				// }
+
+				MainWindow.this.trojanDetector.mapModifiedTilesToDesign();
 			}
 		});
-		btnFindModifiedFrames.setBounds(10, 11, 153, 23);
-		panel_1.add(btnFindModifiedFrames);
-
-		final JPanel panel = new JPanel();
-		tabbedPane.addTab("Design Mapper", null, panel, null);
-		panel.setLayout(null);
-
-		final JButton btnBrowese_XDL = new JButton("Browse");
 		btnBrowese_XDL.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -185,36 +192,9 @@ public class MainWindow {
 								"C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles"));
 				fileChooser.showOpenDialog(null);
 				MainWindow.this.xdlFile = fileChooser.getSelectedFile();
-				trojanDetector.loadDesign(MainWindow.this.xdlFile);
+				MainWindow.this.trojanDetector
+						.loadDesign(MainWindow.this.xdlFile);
 			}
 		});
-		btnBrowese_XDL.setBounds(154, 11, 89, 23);
-		panel.add(btnBrowese_XDL);
-
-		final JLabel lblSelectGoldenXdl = new JLabel("Select Golden XDL File:");
-		lblSelectGoldenXdl.setBounds(10, 15, 134, 14);
-		panel.add(lblSelectGoldenXdl);
-
-		final JTextArea textArea = new JTextArea();
-		textArea.setBounds(20, 72, 377, 226);
-		panel.add(textArea);
-		
-		JButton btnMapTilesToDesign = new JButton("Map");
-		btnMapTilesToDesign.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				trojanDetector.mapModifiedTilesToDesign();
-			}
-		});
-		btnMapTilesToDesign.setBounds(154, 45, 89, 23);
-		panel.add(btnMapTilesToDesign);
-
-		final JLabel lblSelectGoldenChip = new JLabel(
-				"Select Golden Chip Bit File:");
-		lblSelectGoldenChip.setBounds(10, 29, 134, 14);
-		this.frame.getContentPane().add(lblSelectGoldenChip);
-
-		final JLabel lblSelectTargetBit = new JLabel("Select Target Bit File:");
-		lblSelectTargetBit.setBounds(10, 63, 134, 14);
-		this.frame.getContentPane().add(lblSelectTargetBit);
 	}
 }
