@@ -2,6 +2,8 @@ package TrojanDetector;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -76,6 +78,7 @@ public class TrojanDetector {
 		HashSet<Instance> modifiedInstances = new HashSet<>();
 		List<ModifiedTile> mT = this.trojan.getAffectedTiles();
 		HashSet<Net> netSet = new HashSet<>();
+		Collection<Net> netMap = this.design.getNets();
 		for (int i = 0; i < mT.size(); i++) {
 			PrimitiveSite[] pS = mT.get(i).getTile().getPrimitiveSites();
 			if (pS != null) {
@@ -99,7 +102,6 @@ public class TrojanDetector {
 		this.trojanAttributes = R.analyzeMatrix(aM.getTrojanAttributes());
 		printTrojanAttributes();
 	}
-	
 	public void printAffectedTiles(JTextArea messageArea){
 		this.trojan.printAffectedTiles(messageArea);
 	}
@@ -119,9 +121,15 @@ public class TrojanDetector {
 	public void printTrojanAttributes(){
 		this.messageArea.setText("");
 		StringBuffer sBuffer = new StringBuffer();
-		for(TrojanAttribute t : this.trojanAttributes){
-			sBuffer.append(t.toString() + "\n\n");
+		if(this.trojan.getAffectedTiles().size() == 0){
+			sBuffer.append("There is no trojan present");
 		}
+		else{
+			for(TrojanAttribute t : this.trojanAttributes){
+				sBuffer.append(t.toString() + "\n\n");
+			}
+		}
+
 		this.messageArea.setText(sBuffer.toString());
 	}
 	private void matchFramesToTiles() {

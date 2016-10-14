@@ -183,36 +183,38 @@ public class MainWindow {
 		btnMapTilesToDesign.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				MainWindow.this.goldenBitFile = new File(
-						"C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles/aes/aes_T100Clean.bit");
-				MainWindow.this.targetBitFile = new File(
-						"C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles/aes/aes_T100Trojan.bit");
-				MainWindow.this.xdlFile = new File(
-						"C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles/aes/aes_128.xdl");
-				MainWindow.this.trojanDetector
-						.loadDesign(MainWindow.this.xdlFile);
-				// goldenBitFile = new
-				// File("C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles/itemDefault.bit");
-				// targetBitFile = new
-				// File("C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles/itemMod.bit");
-				MainWindow.this.trojanDetector.performDetection(
-						MainWindow.this.goldenBitFile,
-						MainWindow.this.targetBitFile);
-				// if(targetBitFile != null && goldenBitFile != null){
-				// trojanDetector.performDetection(goldenBitFile,
-				// targetBitFile);
-				// }
-				// else if(targetBitFile == null && goldenBitFile != null){
-				// trojanTextArea.setText("Error: Please select a target bit file.");
-				// }
-				// else if(targetBitFile != null && goldenBitFile == null){
-				// trojanTextArea.setText("Error: Please select a golden chip bit file.");
-				// }
-				// else{
-				// trojanTextArea.setText("Error: Please select a target and golden bit file.");
-				// }
+//				MainWindow.this.goldenBitFile = new File(
+//						"C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles/aes/aes_T100Clean.bit");
+//				MainWindow.this.targetBitFile = new File(
+//						"C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles/aes/aes_T100Trojan.bit");
+//				MainWindow.this.xdlFile = new File(
+//						"C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles/aes/aes_128.xdl");
+//				MainWindow.this.trojanDetector
+//						.loadDesign(MainWindow.this.xdlFile);
+//				 goldenBitFile = new
+//				 File("C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles/itemDefault.bit");
+//				 targetBitFile = new
+//				 File("C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles/itemMod.bit");
 
-				MainWindow.this.trojanDetector.mapModifiedTilesToDesign();
+				if(xdlFile != null){
+					if (targetBitFile == null && goldenBitFile != null) {
+						messageArea.setText("Error: Please select a target bit file.");
+					} 
+					else if (targetBitFile != null && goldenBitFile == null) {
+						messageArea.setText("Error: Please select a golden chip bit file.");
+					} 
+					else if(targetBitFile == null && goldenBitFile == null){
+						messageArea.setText("Error: Please select a target and golden bit file.");
+					}
+					else{
+						MainWindow.this.trojanDetector.performDetection(MainWindow.this.goldenBitFile,MainWindow.this.targetBitFile);
+						MainWindow.this.trojanDetector.mapModifiedTilesToDesign();
+					}
+				}
+				else{
+					messageArea.setText("Error: A XDL file is required");
+				}
+				
 			}
 		});
 		btnBrowese_XDL.addActionListener(new ActionListener() {
