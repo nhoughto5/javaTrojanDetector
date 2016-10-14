@@ -1,0 +1,161 @@
+
+# =======================================================
+# XDL NCD CONVERSION MODE $Revision: 1.01$
+# time: Thu Sep 15 20:59:17 2016
+
+# =======================================================
+
+
+# =======================================================
+# The syntax for the design statement is:                
+# design <design_name> <part> <ncd version>;             
+# or                                                     
+# design <design_name> <device> <package> <speed> <ncd_version>
+# =======================================================
+design "item" xc5vlx20tff323-2 v3.2 ,
+  cfg "
+       _DESIGN_PROP:P3_PLACE_OPTIONS:EFFORT_LEVEL:high
+       _DESIGN_PROP::P3_PLACED:
+       _DESIGN_PROP::P3_PLACE_OPTIONS:
+       _DESIGN_PROP::PK_NGMTIMESTAMP:1473998239";
+
+
+#  =======================================================
+#  The syntax for instances is:
+#      instance <name> <sitedef>, placed <tile> <site>, cfg <string> ;
+#  or
+#      instance <name> <sitedef>, unplaced, cfg <string> ;
+# 
+#  For typing convenience you can abbreviate instance to inst.
+# 
+#  For IOs there are two special keywords: bonded and unbonded
+#  that can be used to designate whether the PAD of an unplaced IO is
+#  bonded out. If neither keyword is specified, bonded is assumed.
+# 
+#  The bonding of placed IOs is determined by the site they are placed in.
+# 
+#  If you specify bonded or unbonded for an instance that is not an
+#  IOB it is ignored.
+# 
+#  Shown below are three examples for IOs. 
+#     instance IO1 IOB, unplaced ;          # This will be bonded
+#     instance IO1 IOB, unplaced bonded ;   # This will be bonded
+#     instance IO1 IOB, unplaced unbonded ; # This will be unbonded
+#  =======================================================
+inst "XLXN_1" "IOB",placed CIOB_X17Y29 R1  ,
+  cfg " DIFFI_INUSED::#OFF DIFF_TERM::#OFF IMUX::I OUSED::#OFF PADOUTUSED::#OFF
+       PULLTYPE::#OFF TUSED::#OFF INBUF:XLXN_1_IBUF: PAD:XLXN_1:
+         ISTANDARD::LVCMOS25 "
+  ;
+inst "XLXN_2" "IOB",placed CIOB_X17Y29 T1  ,
+  cfg " DIFFI_INUSED::#OFF DIFF_TERM::#OFF IMUX::I OUSED::#OFF PADOUTUSED::#OFF
+       PULLTYPE::#OFF TUSED::#OFF INBUF:XLXN_2_IBUF: PAD:XLXN_2:
+         ISTANDARD::LVCMOS25 "
+  ;
+inst "XLXN_3" "IOB",placed CIOB_X17Y28 V1  ,
+  cfg " DIFFI_INUSED::#OFF DIFF_TERM::#OFF IMUX::#OFF OUSED::0 PADOUTUSED::#OFF
+       PULLTYPE::#OFF TUSED::#OFF OUTBUF:XLXN_3_OBUF: PAD:XLXN_3:
+         DRIVE::12  OSTANDARD::LVCMOS25  SLEW::SLOW "
+  ;
+inst "XLXN_3_OBUF" "SLICEL",placed CLBLL_X16Y29 SLICE_X26Y29  ,
+  cfg " A5LUT::#OFF A6LUT:XLXI_1:#LUT:O6=(A5*A3) ACY0::#OFF AFF::#OFF AFFINIT::#OFF
+       AFFMUX::#OFF AFFSR::#OFF AOUTMUX::#OFF AUSED::0 B5LUT::#OFF B6LUT::#OFF
+       BCY0::#OFF BFF::#OFF BFFINIT::#OFF BFFMUX::#OFF BFFSR::#OFF BOUTMUX::#OFF
+       BUSED::#OFF C5LUT::#OFF C6LUT::#OFF CCY0::#OFF CEUSED::#OFF CFF::#OFF
+       CFFINIT::#OFF CFFMUX::#OFF CFFSR::#OFF CLKINV::#OFF COUTMUX::#OFF
+       COUTUSED::#OFF CUSED::#OFF D5LUT::#OFF D6LUT::#OFF DCY0::#OFF DFF::#OFF
+       DFFINIT::#OFF DFFMUX::#OFF DFFSR::#OFF DOUTMUX::#OFF DUSED::#OFF
+       PRECYINIT::#OFF REVUSED::#OFF SRUSED::#OFF SYNC_ATTR::#OFF "
+  ;
+inst "XDL_DUMMY_IOI_X17Y28_OLOGIC_X1Y57" "OLOGIC",placed IOI_X17Y28 OLOGIC_X1Y57  ,
+  cfg "_NO_USER_LOGIC::  _ROUTETHROUGH:D1:OQ "
+  ;
+inst "XDL_DUMMY_IOI_X17Y29_ILOGIC_X1Y58" "ILOGIC",placed IOI_X17Y29 ILOGIC_X1Y58  ,
+  cfg "_NO_USER_LOGIC::  _ROUTETHROUGH:D:O "
+  ;
+inst "XDL_DUMMY_IOI_X17Y29_ILOGIC_X1Y59" "ILOGIC",placed IOI_X17Y29 ILOGIC_X1Y59  ,
+  cfg "_NO_USER_LOGIC::  _ROUTETHROUGH:D:O "
+  ;
+
+#  ================================================
+#  The syntax for nets is:
+#     net <name> <type>,
+#       outpin <inst_name> <inst_pin>,
+#       .
+#       .
+#       inpin <inst_name> <inst_pin>,
+#       .
+#       .
+#       pip <tile> <wire0> <dir> <wire1> , # [<rt>]
+#       .
+#       .
+#       ;
+# 
+#  There are three available wire types: wire, power and ground.
+#  If no type is specified, wire is assumed.
+# 
+#  Wire indicates that this a normal wire.
+#  Power indicates that this net is tied to a DC power source.
+#  You can use "power", "vcc" or "vdd" to specify a power net.
+# 
+#  Ground indicates that this net is tied to ground.
+#  You can use "ground", or "gnd" to specify a ground net.
+# 
+#  The <dir> token will be one of the following:
+# 
+#     Symbol Description
+#     ====== ==========================================
+#       ==   Bidirectional, unbuffered.
+#       =>   Bidirectional, buffered in one direction.
+#       =-   Bidirectional, buffered in both directions.
+#       ->   Directional, buffered.
+# 
+#  No pips exist for unrouted nets.
+#  ================================================
+net "XLXN_1" , cfg " _BELSIG:PAD,PAD,XLXN_1:XLXN_1",
+  ;
+net "XLXN_1_IBUF" , 
+  outpin "XLXN_1" I ,
+  inpin "XLXN_3_OBUF" A3 ,
+  pip CLBLL_X16Y29 SITE_IMUX_B27 -> M_A3 , 
+  pip INT_INTERFACE_X17Y29 INT_INTERFACE_LOGIC_OUTS_B11 -> INT_INTERFACE_LOGIC_OUTS11 , 
+  pip INT_X16Y29 WS2MID2 -> IMUX_B27 , 
+  pip INT_X17Y29 LOGIC_OUTS11 -> WS2BEG2 , 
+  pip IOI_X17Y29 IOI_D0 -> IOI_I0 ,  #  _ROUTETHROUGH:D:O "XDL_DUMMY_IOI_X17Y29_ILOGIC_X1Y59" D -> O
+  pip IOI_X17Y29 IOI_I0 -> IOI_LOGIC_OUTS11 , 
+  pip IOI_X17Y29 IOI_IBUF0 -> IOI_D0 , 
+  ;
+net "XLXN_2" , cfg " _BELSIG:PAD,PAD,XLXN_2:XLXN_2",
+  ;
+net "XLXN_2_IBUF" , 
+  outpin "XLXN_2" I ,
+  inpin "XLXN_3_OBUF" A5 ,
+  pip CLBLL_X16Y29 SITE_IMUX_B26 -> M_A5 , 
+  pip INT_INTERFACE_X17Y29 INT_INTERFACE_LOGIC_OUTS_B21 -> INT_INTERFACE_LOGIC_OUTS21 , 
+  pip INT_X16Y29 WR2MID1 -> IMUX_B26 , 
+  pip INT_X17Y29 LOGIC_OUTS21 -> WR2BEG1 , 
+  pip IOI_X17Y29 IOI_D1 -> IOI_I1 ,  #  _ROUTETHROUGH:D:O "XDL_DUMMY_IOI_X17Y29_ILOGIC_X1Y58" D -> O
+  pip IOI_X17Y29 IOI_I1 -> IOI_LOGIC_OUTS21 , 
+  pip IOI_X17Y29 IOI_IBUF1 -> IOI_D1 , 
+  ;
+net "XLXN_3" , cfg " _BELSIG:PAD,PAD,XLXN_3:XLXN_3",
+  ;
+net "XLXN_3_OBUF" , 
+  outpin "XLXN_3_OBUF" A ,
+  inpin "XLXN_3" O ,
+  pip CLBLL_X16Y29 M_A -> SITE_LOGIC_OUTS12 , 
+  pip INT_X16Y28 LOGIC_OUTS_S12 -> ES2BEG2 , 
+  pip INT_X17Y28 ES2MID2 -> IMUX_B47 , 
+  pip IOI_X17Y28 IOI_IMUX_B47 -> IOI_O10 , 
+  pip IOI_X17Y28 IOI_O10 -> IOI_O_PINWIRE0 ,  #  _ROUTETHROUGH:D1:OQ "XDL_DUMMY_IOI_X17Y28_OLOGIC_X1Y57" D1 -> OQ
+  pip IOI_X17Y28 IOI_O_PINWIRE0 -> IOI_O0 , 
+  ;
+
+# =======================================================
+# SUMMARY
+# Number of Module Defs: 0
+# Number of Module Insts: 0
+# Number of Primitive Insts: 4
+# Number of Nets: 6
+# =======================================================
+

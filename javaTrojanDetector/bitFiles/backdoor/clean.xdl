@@ -1,0 +1,348 @@
+
+# =======================================================
+# XDL NCD CONVERSION MODE $Revision: 1.01$
+# time: Fri Oct 14 08:15:20 2016
+
+# =======================================================
+
+
+# =======================================================
+# The syntax for the design statement is:                
+# design <design_name> <part> <ncd version>;             
+# or                                                     
+# design <design_name> <device> <package> <speed> <ncd_version>
+# =======================================================
+design "clean" xc5vsx240tff1738-2 v3.2 ,
+  cfg "
+       _DESIGN_PROP:P3_PLACE_OPTIONS:EFFORT_LEVEL:high
+       _DESIGN_PROP::P3_PLACED:
+       _DESIGN_PROP::P3_PLACE_OPTIONS:
+       _DESIGN_PROP::PK_NGMTIMESTAMP:1476456886";
+
+
+#  =======================================================
+#  The syntax for instances is:
+#      instance <name> <sitedef>, placed <tile> <site>, cfg <string> ;
+#  or
+#      instance <name> <sitedef>, unplaced, cfg <string> ;
+# 
+#  For typing convenience you can abbreviate instance to inst.
+# 
+#  For IOs there are two special keywords: bonded and unbonded
+#  that can be used to designate whether the PAD of an unplaced IO is
+#  bonded out. If neither keyword is specified, bonded is assumed.
+# 
+#  The bonding of placed IOs is determined by the site they are placed in.
+# 
+#  If you specify bonded or unbonded for an instance that is not an
+#  IOB it is ignored.
+# 
+#  Shown below are three examples for IOs. 
+#     instance IO1 IOB, unplaced ;          # This will be bonded
+#     instance IO1 IOB, unplaced bonded ;   # This will be bonded
+#     instance IO1 IOB, unplaced unbonded ; # This will be unbonded
+#  =======================================================
+inst "X1Z1" "IOB",placed LIOB_X0Y117 AD41  ,
+  cfg " DIFFI_INUSED::#OFF DIFF_TERM::#OFF IMUX::I OUSED::#OFF PADOUTUSED::#OFF
+       PULLTYPE::#OFF TUSED::#OFF INBUF:X1Z1_IBUF: PAD:X1Z1:
+         ISTANDARD::LVCMOS25 "
+  ;
+inst "X2" "IOB",placed LIOB_X0Y116 AF41  ,
+  cfg " DIFFI_INUSED::#OFF DIFF_TERM::#OFF IMUX::I OUSED::#OFF PADOUTUSED::#OFF
+       PULLTYPE::#OFF TUSED::#OFF INBUF:X2_IBUF: PAD:X2:
+         ISTANDARD::LVCMOS25 "
+  ;
+inst "X3" "IOB",placed LIOB_X0Y117 AE42  ,
+  cfg " DIFFI_INUSED::#OFF DIFF_TERM::#OFF IMUX::I OUSED::#OFF PADOUTUSED::#OFF
+       PULLTYPE::#OFF TUSED::#OFF INBUF:X3_IBUF: PAD:X3:
+         ISTANDARD::LVCMOS25 "
+  ;
+inst "Z2" "IOB",placed LIOB_X0Y115 AF40  ,
+  cfg " DIFFI_INUSED::#OFF DIFF_TERM::#OFF IMUX::#OFF OUSED::0 PADOUTUSED::#OFF
+       PULLTYPE::#OFF TUSED::#OFF OUTBUF:Z2_OBUF: PAD:Z2:
+         DRIVE::12  OSTANDARD::LVCMOS25  SLEW::SLOW "
+  ;
+inst "Z3" "IOB",placed LIOB_X0Y116 AF42  ,
+  cfg " DIFFI_INUSED::#OFF DIFF_TERM::#OFF IMUX::#OFF OUSED::0 PADOUTUSED::#OFF
+       PULLTYPE::#OFF TUSED::#OFF OUTBUF:Z3_OBUF: PAD:Z3:
+         DRIVE::12  OSTANDARD::LVCMOS25  SLEW::SLOW "
+  ;
+inst "Z4" "IOB",placed LIOB_X0Y118 AC41  ,
+  cfg " DIFFI_INUSED::#OFF DIFF_TERM::#OFF IMUX::#OFF OUSED::0 PADOUTUSED::#OFF
+       PULLTYPE::#OFF TUSED::#OFF OUTBUF:Z4_OBUF: PAD:Z4:
+         DRIVE::12  OSTANDARD::LVCMOS25  SLEW::SLOW "
+  ;
+inst "Z5" "IOB",placed LIOB_X0Y119 AB42  ,
+  cfg " DIFFI_INUSED::#OFF DIFF_TERM::#OFF IMUX::#OFF OUSED::0 PADOUTUSED::#OFF
+       PULLTYPE::#OFF TUSED::#OFF OUTBUF:Z5_OBUF: PAD:Z5:
+         DRIVE::12  OSTANDARD::LVCMOS25  SLEW::SLOW "
+  ;
+inst "Z6" "IOB",placed LIOB_X0Y119 AB41  ,
+  cfg " DIFFI_INUSED::#OFF DIFF_TERM::#OFF IMUX::#OFF OUSED::0 PADOUTUSED::#OFF
+       PULLTYPE::#OFF TUSED::#OFF OUTBUF:Z6_OBUF: PAD:Z6:
+         DRIVE::12  OSTANDARD::LVCMOS25  SLEW::SLOW "
+  ;
+inst "X4Z7" "IOB",placed LIOB_X0Y118 AD42  ,
+  cfg " DIFFI_INUSED::#OFF DIFF_TERM::#OFF IMUX::I OUSED::#OFF PADOUTUSED::#OFF
+       PULLTYPE::#OFF TUSED::#OFF INBUF:X4Z7_IBUF: PAD:X4Z7:
+         ISTANDARD::LVCMOS25 "
+  ;
+inst "Z2_OBUF" "SLICEL",placed CLBLM_X1Y116 SLICE_X0Y116  ,
+  cfg " A5LUT::#OFF A6LUT:XLXI_3:#LUT:O6=(A1*A2) ACY0::#OFF AFF::#OFF AFFINIT::#OFF
+       AFFMUX::#OFF AFFSR::#OFF AOUTMUX::#OFF AUSED::0 B5LUT::#OFF B6LUT::#OFF
+       BCY0::#OFF BFF::#OFF BFFINIT::#OFF BFFMUX::#OFF BFFSR::#OFF BOUTMUX::#OFF
+       BUSED::#OFF C5LUT::#OFF C6LUT::#OFF CCY0::#OFF CEUSED::#OFF CFF::#OFF
+       CFFINIT::#OFF CFFMUX::#OFF CFFSR::#OFF CLKINV::#OFF COUTMUX::#OFF
+       COUTUSED::#OFF CUSED::#OFF D5LUT::#OFF D6LUT::#OFF DCY0::#OFF DFF::#OFF
+       DFFINIT::#OFF DFFMUX::#OFF DFFSR::#OFF DOUTMUX::#OFF DUSED::#OFF
+       PRECYINIT::#OFF REVUSED::#OFF SRUSED::#OFF SYNC_ATTR::#OFF "
+  ;
+inst "Z3_OBUF" "SLICEL",placed CLBLM_X1Y117 SLICE_X0Y117  ,
+  cfg " A5LUT::#OFF A6LUT:XLXI_7:#LUT:O6=((~A2*(A4*~A1))+(A2*(A4+A3))) ACY0::#OFF
+       AFF::#OFF AFFINIT::#OFF AFFMUX::#OFF AFFSR::#OFF AOUTMUX::#OFF AUSED::0
+       B5LUT::#OFF B6LUT::#OFF BCY0::#OFF BFF::#OFF BFFINIT::#OFF BFFMUX::#OFF
+       BFFSR::#OFF BOUTMUX::#OFF BUSED::#OFF C5LUT::#OFF C6LUT::#OFF CCY0::#OFF
+       CEUSED::#OFF CFF::#OFF CFFINIT::#OFF CFFMUX::#OFF CFFSR::#OFF CLKINV::#OFF
+       COUTMUX::#OFF COUTUSED::#OFF CUSED::#OFF D5LUT::#OFF D6LUT::#OFF
+       DCY0::#OFF DFF::#OFF DFFINIT::#OFF DFFMUX::#OFF DFFSR::#OFF DOUTMUX::#OFF
+       DUSED::#OFF PRECYINIT::#OFF REVUSED::#OFF SRUSED::#OFF SYNC_ATTR::#OFF
+       "
+  ;
+inst "Z4_OBUF" "SLICEL",placed CLBLM_X1Y118 SLICE_X0Y118  ,
+  cfg " A5LUT::#OFF A6LUT:XLXI_4:#LUT:O6=(A1*(A4@A3)) ACY0::#OFF AFF::#OFF
+       AFFINIT::#OFF AFFMUX::#OFF AFFSR::#OFF AOUTMUX::#OFF AUSED::0 B5LUT::#OFF
+       B6LUT::#OFF BCY0::#OFF BFF::#OFF BFFINIT::#OFF BFFMUX::#OFF BFFSR::#OFF
+       BOUTMUX::#OFF BUSED::#OFF C5LUT::#OFF C6LUT::#OFF CCY0::#OFF CEUSED::#OFF
+       CFF::#OFF CFFINIT::#OFF CFFMUX::#OFF CFFSR::#OFF CLKINV::#OFF COUTMUX::#OFF
+       COUTUSED::#OFF CUSED::#OFF D5LUT::#OFF D6LUT::#OFF DCY0::#OFF DFF::#OFF
+       DFFINIT::#OFF DFFMUX::#OFF DFFSR::#OFF DOUTMUX::#OFF DUSED::#OFF
+       PRECYINIT::#OFF REVUSED::#OFF SRUSED::#OFF SYNC_ATTR::#OFF "
+  ;
+inst "Z5_OBUF" "SLICEL",placed CLBLM_X1Y118 SLICE_X1Y118  ,
+  cfg " A5LUT::#OFF A6LUT:XLXI_5:#LUT:O6=(~A1*A4) ACY0::#OFF AFF::#OFF AFFINIT::#OFF
+       AFFMUX::#OFF AFFSR::#OFF AOUTMUX::#OFF AUSED::0 B5LUT::#OFF B6LUT::#OFF
+       BCY0::#OFF BFF::#OFF BFFINIT::#OFF BFFMUX::#OFF BFFSR::#OFF BOUTMUX::#OFF
+       BUSED::#OFF C5LUT::#OFF C6LUT::#OFF CCY0::#OFF CEUSED::#OFF CFF::#OFF
+       CFFINIT::#OFF CFFMUX::#OFF CFFSR::#OFF CLKINV::#OFF COUTMUX::#OFF
+       COUTUSED::#OFF CUSED::#OFF D5LUT::#OFF D6LUT::#OFF DCY0::#OFF DFF::#OFF
+       DFFINIT::#OFF DFFMUX::#OFF DFFSR::#OFF DOUTMUX::#OFF DUSED::#OFF
+       PRECYINIT::#OFF REVUSED::#OFF SRUSED::#OFF SYNC_ATTR::#OFF "
+  ;
+inst "XDL_DUMMY_INT_X0Y119_TIEOFF_X0Y119" "TIEOFF",placed INT_X0Y119 TIEOFF_X0Y119  ,
+  cfg "_NO_USER_LOGIC:: _GND_SOURCE::HARD0 "
+  ;
+inst "XDL_DUMMY_IOI_X0Y115_OLOGIC_X0Y231" "OLOGIC",placed IOI_X0Y115 OLOGIC_X0Y231  ,
+  cfg "_NO_USER_LOGIC::  _ROUTETHROUGH:D1:OQ "
+  ;
+inst "XDL_DUMMY_IOI_X0Y116_OLOGIC_X0Y232" "OLOGIC",placed IOI_X0Y116 OLOGIC_X0Y232  ,
+  cfg "_NO_USER_LOGIC::  _ROUTETHROUGH:D1:OQ "
+  ;
+inst "XDL_DUMMY_IOI_X0Y116_ILOGIC_X0Y233" "ILOGIC",placed IOI_X0Y116 ILOGIC_X0Y233  ,
+  cfg "_NO_USER_LOGIC::  _ROUTETHROUGH:D:O "
+  ;
+inst "XDL_DUMMY_IOI_X0Y117_ILOGIC_X0Y234" "ILOGIC",placed IOI_X0Y117 ILOGIC_X0Y234  ,
+  cfg "_NO_USER_LOGIC::  _ROUTETHROUGH:D:O "
+  ;
+inst "XDL_DUMMY_IOI_X0Y117_ILOGIC_X0Y235" "ILOGIC",placed IOI_X0Y117 ILOGIC_X0Y235  ,
+  cfg "_NO_USER_LOGIC::  _ROUTETHROUGH:D:O "
+  ;
+inst "XDL_DUMMY_IOI_X0Y118_ILOGIC_X0Y236" "ILOGIC",placed IOI_X0Y118 ILOGIC_X0Y236  ,
+  cfg "_NO_USER_LOGIC::  _ROUTETHROUGH:D:O "
+  ;
+inst "XDL_DUMMY_IOI_X0Y118_OLOGIC_X0Y237" "OLOGIC",placed IOI_X0Y118 OLOGIC_X0Y237  ,
+  cfg "_NO_USER_LOGIC::  _ROUTETHROUGH:D1:OQ "
+  ;
+inst "XDL_DUMMY_IOI_X0Y119_OLOGIC_X0Y238" "OLOGIC",placed IOI_X0Y119 OLOGIC_X0Y238  ,
+  cfg "_NO_USER_LOGIC::  _ROUTETHROUGH:D1:OQ "
+  ;
+inst "XDL_DUMMY_IOI_X0Y119_OLOGIC_X0Y239" "OLOGIC",placed IOI_X0Y119 OLOGIC_X0Y239  ,
+  cfg "_NO_USER_LOGIC::  _ROUTETHROUGH:D1:OQ "
+  ;
+
+#  ================================================
+#  The syntax for nets is:
+#     net <name> <type>,
+#       outpin <inst_name> <inst_pin>,
+#       .
+#       .
+#       inpin <inst_name> <inst_pin>,
+#       .
+#       .
+#       pip <tile> <wire0> <dir> <wire1> , # [<rt>]
+#       .
+#       .
+#       ;
+# 
+#  There are three available wire types: wire, power and ground.
+#  If no type is specified, wire is assumed.
+# 
+#  Wire indicates that this a normal wire.
+#  Power indicates that this net is tied to a DC power source.
+#  You can use "power", "vcc" or "vdd" to specify a power net.
+# 
+#  Ground indicates that this net is tied to ground.
+#  You can use "ground", or "gnd" to specify a ground net.
+# 
+#  The <dir> token will be one of the following:
+# 
+#     Symbol Description
+#     ====== ==========================================
+#       ==   Bidirectional, unbuffered.
+#       =>   Bidirectional, buffered in one direction.
+#       =-   Bidirectional, buffered in both directions.
+#       ->   Directional, buffered.
+# 
+#  No pips exist for unrouted nets.
+#  ================================================
+net "GLOBAL_LOGIC0_0" gnd, 
+  outpin "XDL_DUMMY_INT_X0Y119_TIEOFF_X0Y119" HARD0 ,
+  inpin "Z6" O ,
+  pip INT_X0Y119 FAN5 -> FAN_BOUNCE5 , 
+  pip INT_X0Y119 FAN_BOUNCE5 -> IMUX_B47 , 
+  pip INT_X0Y119 GND_WIRE -> FAN5 , 
+  pip IOI_X0Y119 IOI_IMUX_B47 -> IOI_O10 , 
+  pip IOI_X0Y119 IOI_O10 -> IOI_O_PINWIRE0 ,  #  _ROUTETHROUGH:D1:OQ "XDL_DUMMY_IOI_X0Y119_OLOGIC_X0Y239" D1 -> OQ
+  pip IOI_X0Y119 IOI_O_PINWIRE0 -> IOI_O0 , 
+  ;
+net "X1Z1" , cfg " _BELSIG:PAD,PAD,X1Z1:X1Z1",
+  ;
+net "X1Z1_IBUF" , 
+  outpin "X1Z1" I ,
+  inpin "Z3_OBUF" A3 ,
+  pip CLBLM_X1Y117 SITE_IMUX_B27 -> M_A3 , 
+  pip INT_INTERFACE_X0Y117 INT_INTERFACE_LOGIC_OUTS_B21 -> INT_INTERFACE_LOGIC_OUTS21 , 
+  pip INT_X0Y117 LOGIC_OUTS21 -> ES2BEG2 , 
+  pip INT_X1Y117 ES2MID2 -> FAN6 , 
+  pip INT_X1Y117 FAN6 -> FAN_BOUNCE6 , 
+  pip INT_X1Y117 FAN_BOUNCE6 -> IMUX_B27 , 
+  pip IOI_X0Y117 IOI_D1 -> IOI_I1 ,  #  _ROUTETHROUGH:D:O "XDL_DUMMY_IOI_X0Y117_ILOGIC_X0Y234" D -> O
+  pip IOI_X0Y117 IOI_I1 -> IOI_LOGIC_OUTS21 , 
+  pip IOI_X0Y117 IOI_IBUF1 -> IOI_D1 , 
+  ;
+net "X2" , cfg " _BELSIG:PAD,PAD,X2:X2",
+  ;
+net "X2_IBUF" , 
+  outpin "X2" I ,
+  inpin "Z2_OBUF" A2 ,
+  inpin "Z3_OBUF" A4 ,
+  inpin "Z4_OBUF" A3 ,
+  pip CLBLM_X1Y116 SITE_IMUX_B28 -> M_A2 , 
+  pip CLBLM_X1Y117 SITE_IMUX_B25 -> M_A4 , 
+  pip CLBLM_X1Y118 SITE_IMUX_B27 -> M_A3 , 
+  pip INT_INTERFACE_X0Y116 INT_INTERFACE_LOGIC_OUTS_B11 -> INT_INTERFACE_LOGIC_OUTS11 , 
+  pip INT_X0Y116 LOGIC_OUTS11 -> EN2BEG2 , 
+  pip INT_X0Y116 LOGIC_OUTS11 -> ER2BEG_S0 , 
+  pip INT_X1Y116 EN2MID2 -> IMUX_B28 , 
+  pip INT_X1Y117 ER2MID0 -> IMUX_B25 , 
+  pip INT_X1Y117 ER2MID0 -> NL2BEG1 , 
+  pip INT_X1Y118 NL2MID1 -> IMUX_B27 , 
+  pip IOI_X0Y116 IOI_D0 -> IOI_I0 ,  #  _ROUTETHROUGH:D:O "XDL_DUMMY_IOI_X0Y116_ILOGIC_X0Y233" D -> O
+  pip IOI_X0Y116 IOI_I0 -> IOI_LOGIC_OUTS11 , 
+  pip IOI_X0Y116 IOI_IBUF0 -> IOI_D0 , 
+  ;
+net "X3" , cfg " _BELSIG:PAD,PAD,X3:X3",
+  ;
+net "X3_IBUF" , 
+  outpin "X3" I ,
+  inpin "Z2_OBUF" A1 ,
+  inpin "Z3_OBUF" A1 ,
+  inpin "Z4_OBUF" A4 ,
+  inpin "Z5_OBUF" A4 ,
+  pip CLBLM_X1Y116 SITE_IMUX_B29 -> M_A1 , 
+  pip CLBLM_X1Y117 SITE_IMUX_B29 -> M_A1 , 
+  pip CLBLM_X1Y118 SITE_IMUX_B1 -> L_A4 , 
+  pip CLBLM_X1Y118 SITE_IMUX_B25 -> M_A4 , 
+  pip INT_INTERFACE_X0Y117 INT_INTERFACE_LOGIC_OUTS_B11 -> INT_INTERFACE_LOGIC_OUTS11 , 
+  pip INT_X0Y117 LOGIC_OUTS11 -> EL2BEG2 , 
+  pip INT_X0Y117 LOGIC_OUTS11 -> ER2BEG_S0 , 
+  pip INT_X0Y117 LOGIC_OUTS11 -> SE2BEG2 , 
+  pip INT_X1Y116 SE2END2 -> IMUX_B29 , 
+  pip INT_X1Y117 EL2MID2 -> IMUX_B29 , 
+  pip INT_X1Y118 ER2MID0 -> IMUX_B1 , 
+  pip INT_X1Y118 ER2MID0 -> IMUX_B25 , 
+  pip IOI_X0Y117 IOI_D0 -> IOI_I0 ,  #  _ROUTETHROUGH:D:O "XDL_DUMMY_IOI_X0Y117_ILOGIC_X0Y235" D -> O
+  pip IOI_X0Y117 IOI_I0 -> IOI_LOGIC_OUTS11 , 
+  pip IOI_X0Y117 IOI_IBUF0 -> IOI_D0 , 
+  ;
+net "X4Z7" , cfg " _BELSIG:PAD,PAD,X4Z7:X4Z7",
+  ;
+net "X4Z7_IBUF" , 
+  outpin "X4Z7" I ,
+  inpin "Z3_OBUF" A2 ,
+  inpin "Z4_OBUF" A1 ,
+  inpin "Z5_OBUF" A1 ,
+  pip CLBLM_X1Y117 SITE_IMUX_B28 -> M_A2 , 
+  pip CLBLM_X1Y118 SITE_IMUX_B29 -> M_A1 , 
+  pip CLBLM_X1Y118 SITE_IMUX_B5 -> L_A1 , 
+  pip INT_INTERFACE_X0Y118 INT_INTERFACE_LOGIC_OUTS_B21 -> INT_INTERFACE_LOGIC_OUTS21 , 
+  pip INT_X0Y118 LOGIC_OUTS21 -> ES2BEG2 , 
+  pip INT_X1Y117 ES2END2 -> IMUX_B28 , 
+  pip INT_X1Y118 ES2MID2 -> IMUX_B29 , 
+  pip INT_X1Y118 ES2MID2 -> IMUX_B5 , 
+  pip IOI_X0Y118 IOI_D1 -> IOI_I1 ,  #  _ROUTETHROUGH:D:O "XDL_DUMMY_IOI_X0Y118_ILOGIC_X0Y236" D -> O
+  pip IOI_X0Y118 IOI_I1 -> IOI_LOGIC_OUTS21 , 
+  pip IOI_X0Y118 IOI_IBUF1 -> IOI_D1 , 
+  ;
+net "Z2" , cfg " _BELSIG:PAD,PAD,Z2:Z2",
+  ;
+net "Z2_OBUF" , 
+  outpin "Z2_OBUF" A ,
+  inpin "Z2" O ,
+  pip CLBLM_X1Y116 M_A -> SITE_LOGIC_OUTS12 , 
+  pip INT_X0Y115 EL2END2 -> IMUX_B47 , 
+  pip INT_X1Y116 LOGIC_OUTS12 -> WR2BEG_N2 , 
+  pip IOI_X0Y115 IOI_IMUX_B47 -> IOI_O10 , 
+  pip IOI_X0Y115 IOI_O10 -> IOI_O_PINWIRE0 ,  #  _ROUTETHROUGH:D1:OQ "XDL_DUMMY_IOI_X0Y115_OLOGIC_X0Y231" D1 -> OQ
+  pip IOI_X0Y115 IOI_O_PINWIRE0 -> IOI_O0 , 
+  pip L_TERM_INT_X0Y115 L_TERM_INT_WR2MID2 -> L_TERM_INT_EL2END2 , 
+  ;
+net "Z3" , cfg " _BELSIG:PAD,PAD,Z3:Z3",
+  ;
+net "Z3_OBUF" , 
+  outpin "Z3_OBUF" A ,
+  inpin "Z3" O ,
+  pip CLBLM_X1Y117 M_A -> SITE_LOGIC_OUTS12 , 
+  pip INT_X0Y116 EL2END2 -> IMUX_B41 , 
+  pip INT_X1Y117 LOGIC_OUTS12 -> WR2BEG_N2 , 
+  pip IOI_X0Y116 IOI_IMUX_B41 -> IOI_O11 , 
+  pip IOI_X0Y116 IOI_O11 -> IOI_O_PINWIRE1 ,  #  _ROUTETHROUGH:D1:OQ "XDL_DUMMY_IOI_X0Y116_OLOGIC_X0Y232" D1 -> OQ
+  pip IOI_X0Y116 IOI_O_PINWIRE1 -> IOI_O1 , 
+  pip L_TERM_INT_X0Y116 L_TERM_INT_WR2MID2 -> L_TERM_INT_EL2END2 , 
+  ;
+net "Z4" , cfg " _BELSIG:PAD,PAD,Z4:Z4",
+  ;
+net "Z4_OBUF" , 
+  outpin "Z4_OBUF" A ,
+  inpin "Z4" O ,
+  pip CLBLM_X1Y118 M_A -> SITE_LOGIC_OUTS12 , 
+  pip INT_X0Y118 WN2END_S0 -> IMUX_B47 , 
+  pip INT_X1Y118 LOGIC_OUTS12 -> WN2BEG0 , 
+  pip IOI_X0Y118 IOI_IMUX_B47 -> IOI_O10 , 
+  pip IOI_X0Y118 IOI_O10 -> IOI_O_PINWIRE0 ,  #  _ROUTETHROUGH:D1:OQ "XDL_DUMMY_IOI_X0Y118_OLOGIC_X0Y237" D1 -> OQ
+  pip IOI_X0Y118 IOI_O_PINWIRE0 -> IOI_O0 , 
+  ;
+net "Z5" , cfg " _BELSIG:PAD,PAD,Z5:Z5",
+  ;
+net "Z5_OBUF" , 
+  outpin "Z5_OBUF" A ,
+  inpin "Z5" O ,
+  pip CLBLM_X1Y118 L_A -> SITE_LOGIC_OUTS8 , 
+  pip INT_X0Y119 CTRL1 -> CTRL_BOUNCE1 , 
+  pip INT_X0Y119 CTRL_BOUNCE1 -> IMUX_B41 , 
+  pip INT_X0Y119 NW2END0 -> CTRL1 , 
+  pip INT_X1Y118 LOGIC_OUTS8 -> NW2BEG0 , 
+  pip IOI_X0Y119 IOI_IMUX_B41 -> IOI_O11 , 
+  pip IOI_X0Y119 IOI_O11 -> IOI_O_PINWIRE1 ,  #  _ROUTETHROUGH:D1:OQ "XDL_DUMMY_IOI_X0Y119_OLOGIC_X0Y238" D1 -> OQ
+  pip IOI_X0Y119 IOI_O_PINWIRE1 -> IOI_O1 , 
+  ;
+net "Z6" , cfg " _BELSIG:PAD,PAD,Z6:Z6",
+  ;
+
+# =======================================================
+# SUMMARY
+# Number of Module Defs: 0
+# Number of Module Insts: 0
+# Number of Primitive Insts: 13
+# Number of Nets: 18
+# =======================================================
+

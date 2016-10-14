@@ -1,0 +1,83 @@
+Bitstream parsed correctly:C:\Users\Nick\Desktop\NickTop\HomeWork\MASc\Virtex5\bitFiles\itemDefault.bit
+Part:XC5VLX20T
+Bitstream parsed correctly:C:\Users\Nick\Desktop\NickTop\HomeWork\MASc\Virtex5\bitFiles\itemTopIOB.bit
+Part:XC5VLX20T
+00000781 (FAR:00000781, Half: top, Type:LOGIC (0), Row:0, Column:15 (CLB), Minor:1):Frames differ in contents
+00000782 (FAR:00000782, Half: top, Type:LOGIC (0), Row:0, Column:15 (CLB), Minor:2):Frames differ in contents
+00000785 (FAR:00000785, Half: top, Type:LOGIC (0), Row:0, Column:15 (CLB), Minor:5):Frames differ in contents
+00000889 (FAR:00000889, Half: top, Type:LOGIC (0), Row:0, Column:17 (IOB), Minor:9):Frames differ in contents
+0000088C (FAR:0000088C, Half: top, Type:LOGIC (0), Row:0, Column:17 (IOB), Minor:12):Frames differ in contents
+00000891 (FAR:00000891, Half: top, Type:LOGIC (0), Row:0, Column:17 (IOB), Minor:17):Frames differ in contents
+00000894 (FAR:00000894, Half: top, Type:LOGIC (0), Row:0, Column:17 (IOB), Minor:20):Frames differ in contents
+00000899 (FAR:00000899, Half: top, Type:LOGIC (0), Row:0, Column:17 (IOB), Minor:25):Frames differ in contents
+000008A3 (FAR:000008A3, Half: top, Type:LOGIC (0), Row:0, Column:17 (IOB), Minor:35):Frames differ in contents
+000008A4 (FAR:000008A4, Half: top, Type:LOGIC (0), Row:0, Column:17 (IOB), Minor:36):Frames differ in contents
+00100706 (FAR:00100706, Half: bottom, Type:LOGIC (0), Row:0, Column:14 (CLB), Minor:6):Frames differ in contents
+00100709 (FAR:00100709, Half: bottom, Type:LOGIC (0), Row:0, Column:14 (CLB), Minor:9):Frames differ in contents
+0010070A (FAR:0010070A, Half: bottom, Type:LOGIC (0), Row:0, Column:14 (CLB), Minor:10):Frames differ in contents
+0010070D (FAR:0010070D, Half: bottom, Type:LOGIC (0), Row:0, Column:14 (CLB), Minor:13):Frames differ in contents
+00100712 (FAR:00100712, Half: bottom, Type:LOGIC (0), Row:0, Column:14 (CLB), Minor:18):Frames differ in contents
+00100713 (FAR:00100713, Half: bottom, Type:LOGIC (0), Row:0, Column:14 (CLB), Minor:19):Frames differ in contents
+00100719 (FAR:00100719, Half: bottom, Type:LOGIC (0), Row:0, Column:14 (CLB), Minor:25):Frames differ in contents
+00100720 (FAR:00100720, Half: bottom, Type:LOGIC (0), Row:0, Column:14 (CLB), Minor:32):Frames differ in contents
+00100721 (FAR:00100721, Half: bottom, Type:LOGIC (0), Row:0, Column:14 (CLB), Minor:33):Frames differ in contents
+00100722 (FAR:00100722, Half: bottom, Type:LOGIC (0), Row:0, Column:14 (CLB), Minor:34):Frames differ in contents
+00100723 (FAR:00100723, Half: bottom, Type:LOGIC (0), Row:0, Column:14 (CLB), Minor:35):Frames differ in contents
+00100786 (FAR:00100786, Half: bottom, Type:LOGIC (0), Row:0, Column:15 (CLB), Minor:6):Frames differ in contents
+00100789 (FAR:00100789, Half: bottom, Type:LOGIC (0), Row:0, Column:15 (CLB), Minor:9):Frames differ in contents
+0010078F (FAR:0010078F, Half: bottom, Type:LOGIC (0), Row:0, Column:15 (CLB), Minor:15):Frames differ in contents
+00100791 (FAR:00100791, Half: bottom, Type:LOGIC (0), Row:0, Column:15 (CLB), Minor:17):Frames differ in contents
+00100808 (FAR:00100808, Half: bottom, Type:LOGIC (0), Row:0, Column:16 (CLB), Minor:8):Frames differ in contents
+0010080C (FAR:0010080C, Half: bottom, Type:LOGIC (0), Row:0, Column:16 (CLB), Minor:12):Frames differ in contents
+0010080D (FAR:0010080D, Half: bottom, Type:LOGIC (0), Row:0, Column:16 (CLB), Minor:13):Frames differ in contents
+00100816 (FAR:00100816, Half: bottom, Type:LOGIC (0), Row:0, Column:16 (CLB), Minor:22):Frames differ in contents
+00100818 (FAR:00100818, Half: bottom, Type:LOGIC (0), Row:0, Column:16 (CLB), Minor:24):Frames differ in contents
+00100820 (FAR:00100820, Half: bottom, Type:LOGIC (0), Row:0, Column:16 (CLB), Minor:32):Frames differ in contents
+00100821 (FAR:00100821, Half: bottom, Type:LOGIC (0), Row:0, Column:16 (CLB), Minor:33):Frames differ in contents
+00100822 (FAR:00100822, Half: bottom, Type:LOGIC (0), Row:0, Column:16 (CLB), Minor:34):Frames differ in contents
+00100823 (FAR:00100823, Half: bottom, Type:LOGIC (0), Row:0, Column:16 (CLB), Minor:35):Frames differ in contents
+00100886 (FAR:00100886, Half: bottom, Type:LOGIC (0), Row:0, Column:17 (IOB), Minor:6):Frames differ in contents
+00100887 (FAR:00100887, Half: bottom, Type:LOGIC (0), Row:0, Column:17 (IOB), Minor:7):Frames differ in contents
+0010088B (FAR:0010088B, Half: bottom, Type:LOGIC (0), Row:0, Column:17 (IOB), Minor:11):Frames differ in contents
+0010088D (FAR:0010088D, Half: bottom, Type:LOGIC (0), Row:0, Column:17 (IOB), Minor:13):Frames differ in contents
+00100895 (FAR:00100895, Half: bottom, Type:LOGIC (0), Row:0, Column:17 (IOB), Minor:21):Frames differ in contents
+00100897 (FAR:00100897, Half: bottom, Type:LOGIC (0), Row:0, Column:17 (IOB), Minor:23):Frames differ in contents
+0010089F (FAR:0010089F, Half: bottom, Type:LOGIC (0), Row:0, Column:17 (IOB), Minor:31):Frames differ in contents
+001008A3 (FAR:001008A3, Half: bottom, Type:LOGIC (0), Row:0, Column:17 (IOB), Minor:35):Frames differ in contents
+001008A4 (FAR:001008A4, Half: bottom, Type:LOGIC (0), Row:0, Column:17 (IOB), Minor:36):Frames differ in contents
+001008A5 (FAR:001008A5, Half: bottom, Type:LOGIC (0), Row:0, Column:17 (IOB), Minor:37):Frames differ in contents
+00108880 (FAR:00108880, Half: bottom, Type:LOGIC (0), Row:1, Column:17 (IOB), Minor:0):Frames differ in contents
+00108883 (FAR:00108883, Half: bottom, Type:LOGIC (0), Row:1, Column:17 (IOB), Minor:3):Frames differ in contents
+00108885 (FAR:00108885, Half: bottom, Type:LOGIC (0), Row:1, Column:17 (IOB), Minor:5):Frames differ in contents
+0010889F (FAR:0010889F, Half: bottom, Type:LOGIC (0), Row:1, Column:17 (IOB), Minor:31):Frames differ in contents
+001088A4 (FAR:001088A4, Half: bottom, Type:LOGIC (0), Row:1, Column:17 (IOB), Minor:36):Frames differ in contents
+001088A5 (FAR:001088A5, Half: bottom, Type:LOGIC (0), Row:1, Column:17 (IOB), Minor:37):Frames differ in contents
+
+
+Tile: INT_X15Y40: G = 0x0  T = 0x2000     Tile: INT_X15Y45: G = 0x0  T = 0x10000     Tile: INT_X15Y50: G = 0x0  T = 0xefd     
+Tile: INT_X15Y40: G = 0x0  T = 0x8000     Tile: INT_X15Y50: G = 0x0  T = 0x2cf     
+Tile: INT_X15Y45: G = 0x0  T = 0x40000     Tile: INT_X15Y50: G = 0x0  T = 0xc32     
+Tile: INT_X14Y21: G = 0x0  T = 0x2     Tile: INT_X14Y30: G = 0x0  T = 0x301     
+Tile: INT_X14Y21: G = 0x0  T = 0x8000000     Tile: INT_X14Y30: G = 0x0  T = 0x33b     
+Tile: INT_X14Y21: G = 0x0  T = 0x2     Tile: INT_X14Y30: G = 0x0  T = 0x301     
+Tile: INT_X14Y21: G = 0x0  T = 0x20000000     Tile: INT_X14Y30: G = 0x0  T = 0x33d     
+Tile: INT_X14Y22: G = 0x0  T = 0x60     Tile: INT_X14Y30: G = 0x0  T = 0x3     
+Tile: INT_X14Y22: G = 0x0  T = 0x8000000     Tile: INT_X14Y30: G = 0x0  T = 0xb7b     
+Tile: INT_X14Y22: G = 0x0  T = 0x40000000     Tile: INT_X14Y30: G = 0x0  T = 0xb7e     
+Tile: CLBLL_X14Y22: G = 0x0  T = 0x55     
+Tile: CLBLL_X14Y22: G = 0x0  T = 0xaa     
+Tile: CLBLL_X14Y22: G = 0x0  T = 0xaa     
+Tile: CLBLL_X14Y22: G = 0x0  T = 0x55     
+Tile: INT_X15Y20: G = 0x0  T = 0x1     Tile: INT_X15Y20: G = 0x0  T = 0x80000000     Tile: INT_X15Y30: G = 0x0  T = 0x3f     
+Tile: INT_X15Y20: G = 0x0  T = 0x1     Tile: INT_X15Y20: G = 0x0  T = 0x40000000     Tile: INT_X15Y30: G = 0x0  T = 0x83e     
+Tile: INT_X15Y22: G = 0x0  T = 0x18000000     Tile: INT_X15Y30: G = 0x0  T = 0x807     
+Tile: INT_X15Y22: G = 0x0  T = 0x10000000     Tile: INT_X15Y30: G = 0x0  T = 0x37c     
+Tile: INT_X16Y28: G = 0x200000  T = 0x0     Tile: INT_X16Y30: G = 0x515  T = 0x0     
+Tile: INT_X16Y28: G = 0x400000  T = 0x0     Tile: INT_X16Y30: G = 0x516  T = 0x0     
+Tile: INT_X16Y29: G = 0x1000000  T = 0x0     Tile: INT_X16Y30: G = 0x538  T = 0x0     
+Tile: INT_X16Y29: G = 0xc0  T = 0x0     Tile: INT_X16Y30: G = 0x801  T = 0x0     
+Tile: INT_X16Y29: G = 0x8000000  T = 0x0     Tile: INT_X16Y30: G = 0x53b  T = 0x0     
+Tile: CLBLL_X16Y29: G = 0x505  T = 0x0     
+Tile: CLBLL_X16Y29: G = 0x505  T = 0x0     
+Tile: CLBLL_X16Y29: G = 0x505  T = 0x0     
+Tile: CLBLL_X16Y29: G = 0x505  T = 0x0     
