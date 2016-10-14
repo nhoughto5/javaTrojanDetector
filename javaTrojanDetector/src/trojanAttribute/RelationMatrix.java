@@ -5,7 +5,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+
+import utilityClasses.Error;
 
 public class RelationMatrix {
 	private HashMap<Integer, MatrixCell> cellMapByCellId;
@@ -17,14 +20,15 @@ public class RelationMatrix {
 		this.addCellNumbersAndMakeHashMap();
 	}
 
-	private void abstractionOnly(List<TrojanAttribute> userChosen) {
+	private List<TrojanAttribute> abstractionOnly(
+			List<TrojanAttribute> userChosen) {
 		List<Integer> abstraction = attrToInt(userChosen);
 		List<Integer> properties = testRowTrue(abstraction, "R23");
 		List<Integer> locations = testRowTrue(properties, "R34");
 		if ((abstraction.size() == 0) || (properties.size() == 0)
 				|| (locations.size() == 0)) {
 			selectionNotPossible();
-			return;
+			return new ArrayList<TrojanAttribute>();
 		} else {
 			List<Connection> Connections = new ArrayList<Connection>();
 			List<MatrixCell> tempCol = new ArrayList<MatrixCell>();
@@ -49,6 +53,7 @@ public class RelationMatrix {
 			Nodes = nodeFilter(Nodes, Collections.max(abstraction), Connections);
 			Connections = connectionFilter(Nodes, Connections);
 			Collections.sort(Nodes);
+			return getAttributesFromIntegers(Nodes);
 		}
 	}
 
@@ -62,33 +67,33 @@ public class RelationMatrix {
 
 	public void analyzeMatrix(List<TrojanAttribute> attributes) {
 		HashSet<String> categorySet = getCategorySet(attributes);
-
+		HashSet<TrojanAttribute> ret = new HashSet<>();
 		if (!categorySet.contains("Insertion")
 				&& !categorySet.contains("Abstraction")
 				&& categorySet.contains("Properties")
 				&& !categorySet.contains("Location")) {
-			propertiesOnly(attributes);
+			ret.addAll(propertiesOnly(attributes));
 		}
 		// #2 Used for IAPL: 0100
 		else if (!categorySet.contains("Insertion")
 				&& categorySet.contains("Abstraction")
 				&& !categorySet.contains("Properties")
 				&& !categorySet.contains("Location")) {
-			abstractionOnly(attributes);
+			ret.addAll(abstractionOnly(attributes));
 		}
 		// #3 Used for IAPL: 0001
 		else if (!categorySet.contains("Insertion")
 				&& !categorySet.contains("Abstraction")
 				&& !categorySet.contains("Properties")
 				&& categorySet.contains("Location")) {
-			locationOnly(attributes);
+			ret.addAll(locationOnly(attributes));
 		}
 		// #4 Used for IAPL: 1000
 		else if (categorySet.contains("Insertion")
 				&& !categorySet.contains("Abstraction")
 				&& !categorySet.contains("Properties")
 				&& !categorySet.contains("Location")) {
-			insertionOnly(attributes);
+			ret.addAll(insertionOnly(attributes));
 		}
 		// #5 Used for IAPL: 0101 1100 1101 => ( B . C'. D ) + ( A . B . C')
 		else if ((categorySet.contains("Abstraction")
@@ -97,7 +102,7 @@ public class RelationMatrix {
 				|| (categorySet.contains("Insertion")
 						&& categorySet.contains("Abstraction") && !categorySet
 							.contains("Properties"))) {
-			forwardPropagation(attributes);
+			ret.addAll(forwardPropagation(attributes));
 		}
 		// # 7 Used for IAPL: 0011 1010 1011 => ( B'. C . D ) + ( A . B'. C )
 		else if ((!categorySet.contains("Abstraction")
@@ -106,19 +111,19 @@ public class RelationMatrix {
 				|| (categorySet.contains("Insertion")
 						&& !categorySet.contains("Abstraction") && categorySet
 							.contains("Properties"))) {
-			backPropagationNoAbstraction(attributes);
+			ret.addAll(backPropagationNoAbstraction(attributes));
 		}
 		// #8 Used for IAPL: 0110 0111 1110 1111 => ( B . C )
 		else if (categorySet.contains("Abstraction")
 				&& categorySet.contains("Properties")) {
-			backPropagationNoAbstraction(attributes);
+			ret.addAll(backPropagationNoAbstraction(attributes));
 		}
 		// #9 Used for IAPL: 1001 => ( A . B'. C'. D )
 		else if (categorySet.contains("Insertion")
 				&& !categorySet.contains("Abstraction")
 				&& !categorySet.contains("Properties")
 				&& categorySet.contains("Location")) {
-			splitPropagation(attributes);
+			ret.addAll(splitPropagation(attributes));
 		}
 		// #X Used for IAPL: 0000
 		else {
@@ -135,7 +140,8 @@ public class RelationMatrix {
 		return Ints;
 	}
 
-	private void backPropagationNoAbstraction(List<TrojanAttribute> userChosen) {
+	private List<TrojanAttribute> backPropagationNoAbstraction(
+			List<TrojanAttribute> userChosen) {
 		List<Integer> properties = new ArrayList<Integer>();
 		List<Integer> locations = new ArrayList<Integer>();
 		List<Integer> insert = new ArrayList<Integer>();
@@ -158,7 +164,7 @@ public class RelationMatrix {
 		}
 		if (!scannedAttributesCheck(scannedAbstraction, abstraction)) {
 			selectionNotPossible();
-			return;
+			return new ArrayList<TrojanAttribute>();
 		} else {
 			List<Integer> scannedLocation = testRowTrue(properties, "R34");
 			if (locations.size() == 0) {
@@ -166,7 +172,7 @@ public class RelationMatrix {
 			}
 			if (!scannedAttributesCheck(scannedLocation, locations)) {
 				selectionNotPossible();
-				return;
+				return new ArrayList<TrojanAttribute>();
 			} else {
 				// add Nodes
 				HashSet<Integer> insertSet = new HashSet<Integer>();
@@ -187,7 +193,7 @@ public class RelationMatrix {
 				for (int X : insert) {
 					if (!insertSet.contains(X)) {
 						selectionNotPossible();
-						return;
+						return new ArrayList<TrojanAttribute>();
 					} else {
 						insertSet.add(X);
 					}
@@ -207,11 +213,11 @@ public class RelationMatrix {
 				scannedLocation = testRowTrue(properties, "R34");
 				if (!scannedAttributesCheck(scannedProperties, properties)) {
 					selectionNotPossible();
-					return;
+					return new ArrayList<TrojanAttribute>();
 				}
 				if (!scannedAttributesCheck(scannedLocation, locations)) {
 					selectionNotPossible();
-					return;
+					return new ArrayList<TrojanAttribute>();
 				}
 				// Make Connections
 				List<MatrixCell> testRow = new ArrayList<MatrixCell>();
@@ -236,7 +242,7 @@ public class RelationMatrix {
 				}
 				if (Connections.size() == 0) {
 					selectionNotPossible();
-					return;
+					return new ArrayList<TrojanAttribute>();
 				}
 				List<Integer> Nodes = new ArrayList<>();
 				Nodes.addAll(insertSet);
@@ -249,7 +255,7 @@ public class RelationMatrix {
 
 				Connections = connectionFilter(Nodes, Connections);
 				Collections.sort(Nodes);
-				return;
+				return getAttributesFromIntegers(Nodes);
 			}
 		}
 	}
@@ -378,7 +384,8 @@ public class RelationMatrix {
 			return true;
 	}
 
-	private void forwardPropagation(List<TrojanAttribute> userChosen) {
+	private List<TrojanAttribute> forwardPropagation(
+			List<TrojanAttribute> userChosen) {
 		List<Integer> locations = new ArrayList<Integer>();
 		List<Integer> insert = new ArrayList<Integer>();
 		List<Integer> abstraction = new ArrayList<Integer>();
@@ -399,7 +406,7 @@ public class RelationMatrix {
 		}
 		if (!scannedAttributesCheck(scannedLocations, locations)) {
 			selectionNotPossible();
-			return;
+			return new ArrayList<TrojanAttribute>();
 		} else {
 			HashSet<Integer> insertSet = new HashSet<Integer>();
 			List<Connection> Connections = new ArrayList<Connection>();
@@ -418,7 +425,7 @@ public class RelationMatrix {
 			for (int X : insert) {
 				if (!insertSet.contains(X)) {
 					selectionNotPossible();
-					return;
+					return new ArrayList<TrojanAttribute>();
 				} else {
 					insertSet.add(X);
 				}
@@ -446,7 +453,7 @@ public class RelationMatrix {
 			}
 			if (Connections.size() == 0) {
 				selectionNotPossible();
-				return;
+				return new ArrayList<TrojanAttribute>();
 			}
 			List<Integer> Nodes = new ArrayList<>();
 			Nodes.addAll(insertSet);
@@ -456,8 +463,17 @@ public class RelationMatrix {
 			Nodes = nodeFilter(Nodes, Collections.max(abstraction), Connections);
 			Connections = connectionFilter(Nodes, Connections);
 			Collections.sort(Nodes);
-			return;
+			return getAttributesFromIntegers(Nodes);
 		}
+	}
+
+	private List<TrojanAttribute> getAttributesFromIntegers(List<Integer> ints) {
+		List<TrojanAttribute> ret = new ArrayList<>();
+		AttributeInitializer init = new AttributeInitializer();
+		for (Integer i : ints) {
+			ret.add(init.getAttributeById(i));
+		}
+		return ret;
 	}
 
 	private HashSet<String> getCategorySet(List<TrojanAttribute> attributes) {
@@ -518,7 +534,7 @@ public class RelationMatrix {
 		return ret;
 	}
 
-	private void insertionOnly(List<TrojanAttribute> userChosen) {
+	private List<TrojanAttribute> insertionOnly(List<TrojanAttribute> userChosen) {
 		List<Integer> insertion = attrToInt(userChosen);
 		int currentAttr = Collections.min(insertion);
 		List<MatrixCell> tempRow = new ArrayList<MatrixCell>();
@@ -561,16 +577,17 @@ public class RelationMatrix {
 		Nodes = nodeFilter(Nodes, highestAbs, Connections);
 		Connections = connectionFilter(Nodes, Connections);
 		Collections.sort(Nodes);
+		return getAttributesFromIntegers(Nodes);
 	}
 
-	private void locationOnly(List<TrojanAttribute> userChosen) {
+	private List<TrojanAttribute> locationOnly(List<TrojanAttribute> userChosen) {
 		List<Integer> locations = attrToInt(userChosen);
 		List<Integer> properties = testColumnTrue(locations, "R34");
 		List<Integer> abstraction = testColumnTrue(properties, "R23");
 		if ((locations.size() == 0) || (properties.size() == 0)
 				|| (abstraction.size() == 0)) {
 			selectionNotPossible();
-			return;
+			return new ArrayList<TrojanAttribute>();
 		} else {
 			List<Connection> Connections = new ArrayList<Connection>();
 			List<MatrixCell> tempCol = new ArrayList<MatrixCell>();
@@ -595,6 +612,7 @@ public class RelationMatrix {
 			Nodes = nodeFilter(Nodes, Collections.max(abstraction), Connections);
 			Connections = connectionFilter(Nodes, Connections);
 			Collections.sort(Nodes);
+			return getAttributesFromIntegers(Nodes);
 		}
 
 	}
@@ -618,13 +636,15 @@ public class RelationMatrix {
 		return filtereNodes;
 	}
 
-	private void propertiesOnly(List<TrojanAttribute> PropertiesList) {
+	private List<TrojanAttribute> propertiesOnly(
+			List<TrojanAttribute> PropertiesList) {
 		List<Integer> propertyIDs = attrToInt(PropertiesList);
 		List<Integer> LocationIDs = testRowTrue(propertyIDs, "R34");
 		List<Integer> abstractionResults = testColumnTrue(propertyIDs, "R23");
-		if (abstractionResults.size() == 0)
+		if (abstractionResults.size() == 0) {
 			selectionNotPossible();
-		else {
+			return new ArrayList<TrojanAttribute>();
+		} else {
 			List<Connection> Connections = new ArrayList<Connection>();
 			List<MatrixCell> tempCol = new ArrayList<MatrixCell>();
 			HashSet<Integer> nodeSet = new HashSet<Integer>();
@@ -649,6 +669,7 @@ public class RelationMatrix {
 					Connections);
 			Connections = connectionFilter(Nodes, Connections);
 			Collections.sort(Nodes);
+			return getAttributesFromIntegers(Nodes);
 		}
 
 	}
@@ -709,7 +730,9 @@ public class RelationMatrix {
 	}
 
 	private void selectionNotPossible() {
-
+		Error.printError(
+				"Analysis of the Relation Matrix is not possible with this combination",
+				new Exception().getStackTrace()[0]);
 	}
 
 	public void setCellMapByCellId(
@@ -721,7 +744,8 @@ public class RelationMatrix {
 		this.cells = cells;
 	}
 
-	private void splitPropagation(List<TrojanAttribute> userChosen) {
+	private List<TrojanAttribute> splitPropagation(
+			List<TrojanAttribute> userChosen) {
 		List<Integer> locations = new ArrayList<Integer>();
 		List<Integer> insert = new ArrayList<Integer>();
 
@@ -736,7 +760,7 @@ public class RelationMatrix {
 		List<Integer> abstraction = testColumnTrue(properties, "R23");
 		if (abstraction.size() == 0 || properties.size() == 0) {
 			selectionNotPossible();
-			return;
+			return new ArrayList<TrojanAttribute>();
 		}
 		HashSet<Integer> insertSet = new HashSet<Integer>();
 		List<Connection> Connections = new ArrayList<Connection>();
@@ -754,7 +778,7 @@ public class RelationMatrix {
 		for (int X : insert) {
 			if (!insertSet.contains(X)) {
 				selectionNotPossible();
-				return;
+				return new ArrayList<TrojanAttribute>();
 			} else {
 				insertSet.add(X);
 			}
@@ -783,7 +807,7 @@ public class RelationMatrix {
 		}
 		if (Connections.size() == 0) {
 			selectionNotPossible();
-			return;
+			return new ArrayList<TrojanAttribute>();
 		}
 		List<Integer> Nodes = new ArrayList<>();
 		Nodes.addAll(insertSet);
@@ -793,7 +817,7 @@ public class RelationMatrix {
 		Nodes = nodeFilter(Nodes, Collections.max(abstraction), Connections);
 		Connections = connectionFilter(Nodes, Connections);
 		Collections.sort(Nodes);
-		return;
+		return getAttributesFromIntegers(Nodes);
 	}
 
 	// Receives a list of column numbers and determines which rows
@@ -832,9 +856,9 @@ public class RelationMatrix {
 			for (MatrixCell A : rowTrue) {
 				if (A.getValue() == false) {
 					removedSet.add(A.getColumnId());
-					if (resultsInt.contains(A.getColumnId())) {
-						resultsInt.remove(A.getColumnId());
-					}
+//					if (resultsInt.contains(A.getColumnId())) {
+//						resultsInt.remove(A.getColumnId());
+//					}
 				}
 				if ((A.getValue() == true)
 						&& (!removedSet.contains(A.getColumnId()))
@@ -843,6 +867,17 @@ public class RelationMatrix {
 				}
 			}
 		}
-		return resultsInt;
+		HashSet<Integer> ret = new HashSet<Integer>();
+		for(Integer i : resultsInt){
+			if(removedSet.contains(i)){
+				//ret.add(i);
+			}
+			else{
+				ret.add(i);
+			}
+		}
+		List<Integer> retList = new ArrayList<Integer>(ret);
+		Collections.sort(retList);
+		return retList;
 	}
 }

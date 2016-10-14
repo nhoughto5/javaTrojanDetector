@@ -202,6 +202,11 @@ public class AttributeInitializer {
 		return ret;
 	}
 
+	public TrojanAttribute getAttributeById(int id) {
+		HashMap<Integer, TrojanAttribute> map = getAttributeMapByID();
+		return map.get(id);
+	}
+
 	public HashMap<String, TrojanAttribute> getAttributeMapByName() {
 		List<TrojanAttribute> list = getAttributeList();
 		HashMap<String, TrojanAttribute> ret = new HashMap<>();

@@ -23,6 +23,7 @@ public class AttributeManager {
 
 	public List<TrojanAttribute> getAbstractionAttributes(){
 		List<TrojanAttribute> ret = new ArrayList<>();
+		ret.add(attributesByName.get("System"));
 		ret.add(attributesByName.get("RTL"));
 		return ret;
 	}
@@ -49,6 +50,8 @@ public class AttributeManager {
 		
 		//Fabrication
 		ret.add(attributesByName.get("Fabrication"));
+		ret.add(attributesByName.get("Testing"));
+		ret.add(attributesByName.get("Assembly"));
 		return ret;
 	}
 	

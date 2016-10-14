@@ -7,6 +7,7 @@ import java.util.List;
 
 import deviceArchitecture.Architecture;
 import trojanAttribute.AttributeManager;
+import trojanAttribute.RelationMatrix;
 import utilityClasses.Error;
 import utilityClasses.ModifiedFrame;
 import utilityClasses.ModifiedInstance;
@@ -86,8 +87,8 @@ public class TrojanDetector {
 		this.trojan.setAffectedNets(netSet);
 		this.trojan.printAffectedNets();
 		AttributeManager aM = new AttributeManager(this.trojan);
-		aM.getTrojanAttributes();
-
+		RelationMatrix R = new RelationMatrix();
+		R.analyzeMatrix(aM.getTrojanAttributes());
 	}
 
 	private void matchFramesToTiles() {
