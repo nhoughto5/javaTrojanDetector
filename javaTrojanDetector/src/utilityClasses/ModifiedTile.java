@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import edu.byu.ece.rapidSmith.bitstreamTools.configuration.FrameAddressRegister;
-import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.AbstractConfigurationSpecification;
 import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.XilinxConfigurationSpecification;
 import edu.byu.ece.rapidSmith.device.PrimitiveSite;
 import edu.byu.ece.rapidSmith.device.Tile;

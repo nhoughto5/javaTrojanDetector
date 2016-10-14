@@ -1,7 +1,10 @@
 package trojanAttribute;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class RelationMatrix {
@@ -9,10 +12,536 @@ public class RelationMatrix {
 	private List<MatrixCell> cells;
 
 	public RelationMatrix() {
-		this.cells = this.getCells();
+		RelationMatrixInit rInit = new RelationMatrixInit();
+		this.cells = rInit.getCells();
 		this.addCellNumbersAndMakeHashMap();
 	}
 
+	private HashSet<String> getCategorySet(List<TrojanAttribute> attributes){
+		HashSet<String> ret = new HashSet<String>();
+		for(TrojanAttribute t : attributes){
+			ret.add(t.getCategory());
+		}
+		return ret;
+	}
+	
+    //Scan the row and return all column ID's with value 1
+    private List<MatrixCell> scanRowTrue(int rowNum, String subM)
+    {
+    	List<MatrixCell> ret = new ArrayList<>();
+        //Scan row in specific subMatrix
+        if (subM != null)
+        {
+        	for(MatrixCell m : this.cells){
+        		if(m.getRowId() == rowNum && m.getSubMatrix() == subM && m.getValue()){
+        			ret.add(m);
+        		}
+        	}
+        }
+        //Scan entire row
+        else
+        {
+        	for(MatrixCell m : this.cells){
+        		if(m.getRowId() == rowNum && m.getValue()){
+        			ret.add(m);
+        		}
+        	}
+        }
+        return ret;
+    }
+
+    //Return all of the matrix cells in a particulat column that are in a particular submatrix
+    private List<MatrixCell> scanColumnTrue(int rowNum, String subM)
+    {
+    	List<MatrixCell> ret = new ArrayList<>();
+        if (subM != null)
+        {
+        	for(MatrixCell m : this.cells){
+        		if(m.getColumnId() == rowNum && m.getSubMatrix() == subM && m.getValue()){
+        			ret.add(m);
+        		}
+        	}
+        }
+        else
+        {
+        	for(MatrixCell m : this.cells){
+        		if(m.getColumnId() == rowNum && m.getValue()){
+        			ret.add(m);
+        		}
+        	}
+        }
+        return ret;
+    }
+	
+    //Convert a list of attributes to a list of ints (Attribute ID)
+    private List<Integer> attrToInt(List<TrojanAttribute> attributes)
+    {
+        List<Integer> Ints = new ArrayList<Integer>();
+        for(TrojanAttribute A : attributes){
+            Ints.add(A.getId());
+        }
+        return Ints;
+    }
+    //Return all of the matrix cells in a particulat column that are in a particular submatrix
+    private List<MatrixCell> getColumn(int rowNum, String subM)
+    {
+    	List<MatrixCell> ret = new ArrayList<>();
+        //Scan row in specific subMatrix
+        if (subM != null)
+        {
+        	for(MatrixCell m : this.cells){
+        		if(m.getColumnId() == rowNum && m.getSubMatrix() == subM){
+        			ret.add(m);
+        		}
+        	}
+        }
+        //Scan entire row
+        else
+        {
+        	for(MatrixCell m : this.cells){
+        		if(m.getColumnId() == rowNum){
+        			ret.add(m);
+        		}
+        	}
+        }
+        return ret;
+
+    }
+    //Scan the row and return all column ID's
+    private List<MatrixCell> getRow(int rowNum, String subM)
+    {
+    	List<MatrixCell> ret = new ArrayList<>();
+        //Scan row in specific subMatrix
+        if (subM != null)
+        {
+        	for(MatrixCell m : this.cells){
+        		if(m.getRowId() == rowNum && m.getSubMatrix() == subM){
+        			ret.add(m);
+        		}
+        	}
+        }
+        //Scan entire row
+        else
+        {
+        	for(MatrixCell m : this.cells){
+        		if(m.getRowId() == rowNum){
+        			ret.add(m);
+        		}
+        	}
+        }
+        return ret;
+    }
+    
+    //Receives a list of row numbers and determines which columns
+    //The rows have value true in common
+    private List<Integer> testRowTrue(List<Integer> list, String subMatrix){
+        List<Integer> resultsInt = new ArrayList<Integer>();
+        List<MatrixCell> rowTrue = new ArrayList<MatrixCell>();
+        HashSet<Integer> removedSet = new HashSet<Integer>();
+        for (Integer X : list)
+        {
+            rowTrue = getRow(X, subMatrix);
+            for(MatrixCell A : rowTrue)
+            {
+                if (A.getValue() == false)
+                {
+                    removedSet.add(A.getColumnId());
+                    if (resultsInt.contains(A.getColumnId()))
+                    {
+                        resultsInt.remove(A.getColumnId());
+                    }
+                }
+                if ((A.getValue() == true) && (!removedSet.contains(A.getColumnId())) && (!resultsInt.contains(A.getColumnId())))
+                {
+                    resultsInt.add(A.getColumnId());
+                }
+            }
+        }
+        return resultsInt;
+    }
+    //Receives a list of column numbers and determines which rows
+    //The columns have true value in common
+    private List<Integer> testColumnTrue(List<Integer> list, String subMatrix)
+    {
+        List<Integer> resultsInt = new ArrayList<Integer>();
+        List<MatrixCell> colTrue = new ArrayList<MatrixCell>();
+        HashSet<Integer> removedSet = new HashSet<Integer>();
+        for(Integer X : list)
+        {
+            colTrue = getColumn(X, subMatrix);
+            for(MatrixCell A : colTrue)
+            {
+                if (A.getValue() == false)
+                {
+                    removedSet.add(A.getRowId());
+                    if (resultsInt.contains(A.getRowId()))
+                    {
+                        resultsInt.remove(A.getRowId());
+                    }
+                }
+                if ((A.getValue() == true) && (!removedSet.contains(A.getRowId())) && (!resultsInt.contains(A.getRowId())))
+                {
+                    resultsInt.add(A.getRowId());
+                }
+            }
+        }
+        return resultsInt;
+    }
+    //Determines if a rowId is a direct connection
+    //to the current Matrix_Cell when doing backwards propagation 
+    private boolean directConnectionBackwards(MatrixCell X, int i)
+    {
+        if (Math.abs(i - X.getRowId()) == 1) return false;
+        else return true;
+    }
+    private void abstractionOnly(List<TrojanAttribute> userChosen)
+    {
+        List<Integer> abstraction = attrToInt(userChosen);
+        List<Integer> properties = testRowTrue(abstraction, "R23");
+        List<Integer> locations = testRowTrue(properties, "R34");
+        if ((abstraction.size() == 0) || (properties.size() == 0) || (locations.size() == 0))
+        {
+            selectionNotPossible();
+            return;
+        }
+        else
+        {
+            List<Connection> Connections = new ArrayList<Connection>();
+            List<MatrixCell> tempCol = new ArrayList<MatrixCell>();
+            HashSet<Integer> nodeSet = new HashSet<Integer>();
+            boolean tempDirect = false;
+            int maxAbstraction = Collections.max(abstraction);
+
+            //Adds nodes in Abstraction and Insertion Category
+            for (int i = maxAbstraction; i > 0; --i)
+            {
+                tempCol = scanColumnTrue(i, null);
+                nodeSet.add(i);
+                for(MatrixCell X : tempCol)
+                {
+                    tempDirect = directConnectionBackwards(X, i);
+                    Connections.add(new Connection(X.getRowId(), i, tempDirect));
+                }
+            }
+            List<Integer> Nodes = new ArrayList<>();
+            Nodes.addAll(nodeSet);
+            Nodes.addAll(locations);
+            Nodes.addAll(properties);
+            Nodes = nodeFilter(Nodes, Collections.max(abstraction), Connections);
+            Connections = connectionFilter(Nodes, Connections);
+            Collections.sort(Nodes);
+        }
+    }
+    private void insertionOnly(List<TrojanAttribute> userChosen)
+    {
+        List<Integer> insertion = attrToInt(userChosen);
+        int currentAttr = Collections.min(insertion);
+        List<MatrixCell> tempRow = new ArrayList<MatrixCell>();
+        HashSet<Integer> nodeSet = new HashSet<Integer>();
+        HashSet<Integer> absSet = new HashSet<Integer>();
+        List<Connection> Connections = new ArrayList<Connection>();
+
+        //Scan through insertion attributes
+        for (int i = currentAttr; i < 6; ++i)
+        {
+            tempRow = scanRowTrue(i, null);
+            nodeSet.add(i);
+            for(MatrixCell M : tempRow)
+            {
+                
+                if (M.getSubMatrix() == "R12")
+                {
+                    absSet.add(M.getColumnId());
+                }
+                Connections.add(new Connection(i, M.getColumnId(), directConnectionForwards(M, i)));
+            }
+        }
+        int highestAbs = Collections.max(absSet);
+
+        //Scan through abstraction attributes
+        for (int i = 6; i <= highestAbs; ++i)
+        {
+            nodeSet.add(i); absSet.add(i);
+            tempRow = scanRowTrue(i, "R2");
+            for(MatrixCell M : tempRow)
+            {
+                Connections.add(new Connection(i, M.getColumnId(), directConnectionForwards(M, i)));
+            }
+        }
+        List<Integer> properties = testRowTrue(new ArrayList<>(absSet), "R23");
+        List<Integer> locations = testRowTrue(properties, "R34");
+        List<Integer> Nodes = new ArrayList<>();
+        Nodes.addAll(nodeSet);
+        Nodes.addAll(locations);
+        Nodes.addAll(properties);
+        
+        
+        
+        Nodes = nodeFilter(Nodes, highestAbs, Connections);
+        Connections = connectionFilter(Nodes, Connections);
+        Collections.sort(Nodes);
+    }
+    
+    private void locationOnly(List<TrojanAttribute> userChosen)
+    {
+        List<Integer> locations = attrToInt(userChosen);
+        List<Integer> properties = testColumnTrue(locations, "R34");
+        List<Integer> abstraction = testColumnTrue(properties, "R23");
+        if((locations.size() == 0)||(properties.size() == 0)||(abstraction.size() == 0)){
+            selectionNotPossible();
+            return;
+        }
+        else
+        {
+            List<Connection> Connections = new ArrayList<Connection>();
+            List<MatrixCell> tempCol = new ArrayList<MatrixCell>();
+            HashSet<Integer> nodeSet = new HashSet<Integer>();
+            boolean tempDirect = false;
+            int maxAbstraction = Collections.max(abstraction);
+
+            //Adds nodes in Abstraction and Insertion Category
+            for (int i = maxAbstraction; i > 0; --i)
+            {
+                tempCol = scanColumnTrue(i, null);
+                nodeSet.add(i);
+                for(MatrixCell X : tempCol)
+                {
+                    tempDirect = directConnectionBackwards(X, i);
+                    Connections.add(new Connection(X.getRowId(), i, tempDirect));
+                }
+            }
+            List<Integer> Nodes = new ArrayList<>();
+            Nodes.addAll(nodeSet);
+            Nodes.addAll(locations);
+            Nodes.addAll(properties);
+            Nodes = nodeFilter(Nodes, Collections.max(abstraction), Connections);
+            Connections = connectionFilter(Nodes, Connections);
+            Collections.sort(Nodes);
+        }
+
+    }
+    private void propertiesOnly(List<TrojanAttribute> PropertiesList)
+    {
+        List<Integer> propertyIDs = attrToInt(PropertiesList);
+        List<Integer> LocationIDs = testRowTrue(propertyIDs, "R34");
+        List<Integer> abstractionResults = testColumnTrue(propertyIDs, "R23");
+        if (abstractionResults.size() == 0) selectionNotPossible();
+        else
+        {
+        	List<Connection> Connections = new ArrayList<Connection>();
+            List<MatrixCell> tempCol = new ArrayList<MatrixCell>();
+            HashSet<Integer> nodeSet = new HashSet<Integer>();
+            boolean tempDirect = false;
+            int maxAbstraction = Collections.max(abstractionResults);
+
+            //Adds nodes in Abstraction and Insertion Category
+            for (int i = maxAbstraction; i > 0; --i)
+            {
+                tempCol = scanColumnTrue(i, null);
+                nodeSet.add(i);
+                for(MatrixCell X : tempCol)
+                {
+                    tempDirect = directConnectionBackwards(X, i);
+                    Connections.add(new Connection(X.getRowId(), i, tempDirect));
+                }
+            }
+            List<Integer> Nodes = new ArrayList<>();
+            Nodes.addAll(nodeSet);
+            Nodes.addAll(LocationIDs);
+            Nodes.addAll(propertyIDs);
+            Nodes = nodeFilter(Nodes, Collections.max(abstractionResults), Connections);
+            Connections = connectionFilter(Nodes, Connections);
+            Collections.sort(Nodes);
+        }
+        
+    }
+    private List<Connection> connectionFilter(List<Integer> nodes, List<Connection> Connections)
+    {
+        List<Connection> filteredConnections = new ArrayList<Connection>();
+        for(Connection C : Connections)
+        {
+            if (nodes.contains(C.getSource()) && nodes.contains(C.getTarget()))
+            {
+                filteredConnections.add(C);
+            }
+        }
+        return filteredConnections;
+    }
+    private List<Integer> nodeFilter(List<Integer> nodes, int end, List<Connection> Connections)
+    {
+        List<Integer> tempNodes = new ArrayList<Integer>();
+        for(Integer X : nodes)
+        {
+            if (X < 12)
+            {
+                tempNodes.add(X);
+            }
+        }
+        List<Integer> removedNodes = bellmanForward(tempNodes, Connections);
+        removedNodes.addAll(bellmanBackWards(tempNodes, Connections));
+        List<Integer> filtereNodes = new ArrayList<Integer>();
+        for(Integer X : nodes)
+        {
+            if (!removedNodes.contains(X))
+            {
+                filtereNodes.add(X);
+            }
+        }
+        return filtereNodes;
+    }
+    private List<Integer> bellmanForward(List<Integer> nodes, List<Connection> Connections)
+    {
+        Integer source = Collections.min(nodes);
+        Collections.sort(nodes);
+        List<Integer> unreachables = new ArrayList<Integer>();
+        HashMap<Integer, Integer> distance = new HashMap<Integer, Integer>();
+        HashMap<Integer, Integer> predecessor = new HashMap<Integer, Integer>();
+        for(Integer X : nodes)
+        {
+            if (X == source)
+            {
+                //distance[X] = 0;
+            	distance.put(X, 0);
+            }
+            else
+            {
+            	distance.put(X, 999);
+                //distance[X] = 999;
+            }
+            //predecessor[X] = 999;
+            predecessor.put(X, 999);
+        }
+
+        for(@SuppressWarnings("unused") Integer X : nodes)
+        {
+            for(Connection C : Connections)
+            {
+                if (distance.get(C.getSource()) != 999)
+                {
+                    if (nodes.contains(C.getSource()) && nodes.contains(C.getTarget()))
+                    {
+                        if (distance.get(C.getSource()) + 1 < distance.get(C.getTarget()))
+                        {
+                            distance.put(C.getTarget(), distance.get(C.getSource()) + 1);
+                            predecessor.put(C.getTarget(), C.getSource());
+                        }
+                    }
+                    
+                }
+            }
+        }
+        for(Integer X : nodes)
+        {
+            if (distance.get(X) == 999)
+            {
+                unreachables.add(X);
+            }
+        }
+        return unreachables;
+    }
+    private List<Integer> bellmanBackWards(List<Integer> nodes, List<Connection> Connections)
+    {
+        Integer source = Collections.min(nodes);
+        Collections.sort(nodes);
+        Collections.reverse(nodes);
+        List<Integer> unreachables = new ArrayList<Integer>();
+        HashMap<Integer, Integer> distance = new HashMap<Integer, Integer>();
+        HashMap<Integer, Integer> predecessor = new HashMap<Integer, Integer>();
+        for(Integer X : nodes)
+        {
+            if (X == source)
+            {
+                //distance[X] = 0;
+                distance.put(X, 0);
+            }
+            else
+            {
+                //distance[X] = 999;
+                distance.put(X, 999);
+            }
+            //predecessor[X] = 999;
+            predecessor.put(X, 999);
+        }
+
+        for(@SuppressWarnings("unused") Integer X : nodes)
+        {
+            for(Connection C : Connections)
+            {
+                if (nodes.contains(C.getSource()) && nodes.contains(C.getTarget()))
+                {
+                    if (distance.get(C.getTarget()) != 999)
+                    {
+                        if (distance.get(C.getTarget()) + 1 < distance.get(C.getSource()))
+                        {
+                            distance.put(C.getSource(), distance.get(C.getTarget()) + 1);
+                            predecessor.put(C.getSource(), C.getTarget());
+                        }
+                    }
+                }
+            }
+        }
+        for(Integer X : nodes)
+        {
+            if (distance.get(X) == 999)
+            {
+                unreachables.add(X);
+            }
+        }
+        return unreachables;
+    }
+    private void selectionNotPossible(){
+    	
+    }
+ 
+	public void analyzeMatrix(List<TrojanAttribute> attributes){
+		HashSet<String> categorySet = getCategorySet(attributes);
+
+        if (!categorySet.contains("Insertion") && !categorySet.contains("Abstraction") && categorySet.contains("Properties") && !categorySet.contains("Location"))
+        {
+            propertiesOnly(attributes);
+        }
+        //#2 Used for IAPL: 0100
+        else if (!categorySet.contains("Insertion") && categorySet.contains("Abstraction") && !categorySet.contains("Properties") && !categorySet.contains("Location"))
+        {
+            abstractionOnly(attributes);
+        }
+        //#3 Used for IAPL: 0001
+        else if (!categorySet.contains("Insertion") && !categorySet.contains("Abstraction") && !categorySet.contains("Properties") && categorySet.contains("Location"))
+        {
+            locationOnly(attributes);
+        }
+        //#4 Used for IAPL: 1000
+        else if (categorySet.contains("Insertion") && !categorySet.contains("Abstraction") && !categorySet.contains("Properties") && !categorySet.contains("Location"))
+        {
+            insertionOnly(attributes);
+        }
+        //#5 Used for IAPL: 0101 1100 1101 => ( B . C'. D ) + ( A . B . C')
+        else if ((categorySet.contains("Abstraction") && !categorySet.contains("Properties") && categorySet.contains("Location")) || (categorySet.contains("Insertion") && categorySet.contains("Abstraction") && !categorySet.contains("Properties")))
+        {
+            forwardPropagation(attributes);
+        }
+        //# 7 Used for IAPL: 0011 1010 1011 => ( B'. C . D ) + ( A . B'. C )
+        else if ((!categorySet.contains("Abstraction") && categorySet.contains("Properties") && categorySet.contains("Location"))||(categorySet.contains("Insertion") && !categorySet.contains("Abstraction") && categorySet.contains("Properties")))
+        {
+            backPropagationNoAbstraction(attributes);
+        }
+        //#8 Used for IAPL: 0110 0111 1110 1111 => ( B . C )
+        else if (categorySet.contains("Abstraction") && categorySet.contains("Properties"))
+        {
+            backPropagationNoAbstraction(attributes);
+        }
+        //#9 Used for IAPL: 1001 => ( A . B'. C'. D )
+        else if (categorySet.contains("Insertion") && !categorySet.contains("Abstraction") && !categorySet.contains("Properties") && categorySet.contains("Location"))
+        {
+            splitPropagation(attributes);
+        }
+        //#X Used for IAPL: 0000
+        else
+        {
+            selectionNotPossible();
+        }
+	}
+	
 	private void addCellNumbersAndMakeHashMap() {
 		this.cellMapByCellId = new HashMap<>();
 		for (int i = 0; i < this.cells.size(); ++i) {
@@ -25,581 +554,18 @@ public class RelationMatrix {
 		return this.cellMapByCellId;
 	}
 
-	public List<MatrixCell> getCells() {
-		final List<MatrixCell> entries = new ArrayList<MatrixCell>();
-
-		entries.add(new MatrixCell(1, 1, false, "R1"));
-		entries.add(new MatrixCell(1, 2, true, "R1"));
-		entries.add(new MatrixCell(1, 3, false, "R1"));
-		entries.add(new MatrixCell(1, 4, false, "R1"));
-		entries.add(new MatrixCell(1, 5, false, "R1"));
-		entries.add(new MatrixCell(2, 1, false, "R1"));
-		entries.add(new MatrixCell(2, 2, false, "R1"));
-		entries.add(new MatrixCell(2, 3, true, "R1"));
-		entries.add(new MatrixCell(2, 4, false, "R1"));
-		entries.add(new MatrixCell(2, 5, false, "R1"));
-		entries.add(new MatrixCell(3, 1, false, "R1"));
-		entries.add(new MatrixCell(3, 2, false, "R1"));
-		entries.add(new MatrixCell(3, 3, false, "R1"));
-		entries.add(new MatrixCell(3, 4, true, "R1"));
-		entries.add(new MatrixCell(3, 5, false, "R1"));
-		entries.add(new MatrixCell(4, 1, false, "R1"));
-		entries.add(new MatrixCell(4, 2, false, "R1"));
-		entries.add(new MatrixCell(4, 3, false, "R1"));
-		entries.add(new MatrixCell(4, 4, false, "R1"));
-		entries.add(new MatrixCell(4, 5, true, "R1"));
-		entries.add(new MatrixCell(5, 1, false, "R1"));
-		entries.add(new MatrixCell(5, 2, false, "R1"));
-		entries.add(new MatrixCell(5, 3, false, "R1"));
-		entries.add(new MatrixCell(5, 4, false, "R1"));
-		entries.add(new MatrixCell(5, 5, false, "R1"));
-		entries.add(new MatrixCell(1, 6, true, "R12"));
-		entries.add(new MatrixCell(1, 7, false, "R12"));
-		entries.add(new MatrixCell(1, 8, false, "R12"));
-		entries.add(new MatrixCell(1, 9, false, "R12"));
-		entries.add(new MatrixCell(1, 10, false, "R12"));
-		entries.add(new MatrixCell(1, 11, false, "R12"));
-		entries.add(new MatrixCell(2, 6, false, "R12"));
-		entries.add(new MatrixCell(2, 7, true, "R12"));
-		entries.add(new MatrixCell(2, 8, false, "R12"));
-		entries.add(new MatrixCell(2, 9, false, "R12"));
-		entries.add(new MatrixCell(2, 10, false, "R12"));
-		entries.add(new MatrixCell(2, 11, false, "R12"));
-		entries.add(new MatrixCell(3, 6, false, "R12"));
-		entries.add(new MatrixCell(3, 7, false, "R12"));
-		entries.add(new MatrixCell(3, 8, false, "R12"));
-		entries.add(new MatrixCell(3, 9, false, "R12"));
-		entries.add(new MatrixCell(3, 10, false, "R12"));
-		entries.add(new MatrixCell(3, 11, true, "R12"));
-		entries.add(new MatrixCell(4, 6, true, "R12"));
-		entries.add(new MatrixCell(4, 7, false, "R12"));
-		entries.add(new MatrixCell(4, 8, false, "R12"));
-		entries.add(new MatrixCell(4, 9, true, "R12"));
-		entries.add(new MatrixCell(4, 10, false, "R12"));
-		entries.add(new MatrixCell(4, 11, false, "R12"));
-		entries.add(new MatrixCell(5, 6, true, "R12"));
-		entries.add(new MatrixCell(5, 7, false, "R12"));
-		entries.add(new MatrixCell(5, 8, false, "R12"));
-		entries.add(new MatrixCell(5, 9, false, "R12"));
-		entries.add(new MatrixCell(5, 10, false, "R12"));
-		entries.add(new MatrixCell(5, 11, false, "R12"));
-		entries.add(new MatrixCell(6, 6, false, "R2"));
-		entries.add(new MatrixCell(6, 7, true, "R2"));
-		entries.add(new MatrixCell(6, 8, false, "R2"));
-		entries.add(new MatrixCell(6, 9, false, "R2"));
-		entries.add(new MatrixCell(6, 10, false, "R2"));
-		entries.add(new MatrixCell(6, 11, false, "R2"));
-		entries.add(new MatrixCell(7, 6, false, "R2"));
-		entries.add(new MatrixCell(7, 7, false, "R2"));
-		entries.add(new MatrixCell(7, 8, true, "R2"));
-		entries.add(new MatrixCell(7, 9, false, "R2"));
-		entries.add(new MatrixCell(7, 10, false, "R2"));
-		entries.add(new MatrixCell(7, 11, false, "R2"));
-		entries.add(new MatrixCell(8, 6, false, "R2"));
-		entries.add(new MatrixCell(8, 7, false, "R2"));
-		entries.add(new MatrixCell(8, 8, false, "R2"));
-		entries.add(new MatrixCell(8, 9, true, "R2"));
-		entries.add(new MatrixCell(8, 10, false, "R2"));
-		entries.add(new MatrixCell(8, 11, false, "R2"));
-		entries.add(new MatrixCell(9, 6, false, "R2"));
-		entries.add(new MatrixCell(9, 7, false, "R2"));
-		entries.add(new MatrixCell(9, 8, false, "R2"));
-		entries.add(new MatrixCell(9, 9, false, "R2"));
-		entries.add(new MatrixCell(9, 10, true, "R2"));
-		entries.add(new MatrixCell(9, 11, false, "R2"));
-		entries.add(new MatrixCell(10, 6, false, "R2"));
-		entries.add(new MatrixCell(10, 7, false, "R2"));
-		entries.add(new MatrixCell(10, 8, false, "R2"));
-		entries.add(new MatrixCell(10, 9, false, "R2"));
-		entries.add(new MatrixCell(10, 10, false, "R2"));
-		entries.add(new MatrixCell(10, 11, true, "R2"));
-		entries.add(new MatrixCell(11, 6, false, "R2"));
-		entries.add(new MatrixCell(11, 7, false, "R2"));
-		entries.add(new MatrixCell(11, 8, false, "R2"));
-		entries.add(new MatrixCell(11, 9, false, "R2"));
-		entries.add(new MatrixCell(11, 10, false, "R2"));
-		entries.add(new MatrixCell(11, 11, false, "R2"));
-		// ============== Matrix R23 ===============//
-		entries.add(new MatrixCell(6, 12, true, "R23"));
-		entries.add(new MatrixCell(6, 13, true, "R23"));
-		entries.add(new MatrixCell(6, 14, false, "R23"));
-		entries.add(new MatrixCell(6, 15, true, "R23"));
-		entries.add(new MatrixCell(6, 16, false, "R23"));
-		entries.add(new MatrixCell(6, 17, false, "R23"));
-		entries.add(new MatrixCell(6, 18, true, "R23"));
-		entries.add(new MatrixCell(6, 19, true, "R23"));
-		entries.add(new MatrixCell(6, 20, true, "R23"));
-		entries.add(new MatrixCell(6, 21, false, "R23"));
-		entries.add(new MatrixCell(6, 22, false, "R23"));
-		entries.add(new MatrixCell(6, 23, false, "R23"));
-		entries.add(new MatrixCell(6, 24, false, "R23"));
-		entries.add(new MatrixCell(6, 25, false, "R23"));
-		entries.add(new MatrixCell(6, 26, false, "R23"));
-		entries.add(new MatrixCell(6, 27, false, "R23"));
-		entries.add(new MatrixCell(6, 28, false, "R23"));
-		entries.add(new MatrixCell(7, 12, true, "R23"));
-		entries.add(new MatrixCell(7, 13, false, "R23"));
-		entries.add(new MatrixCell(7, 14, false, "R23"));
-		entries.add(new MatrixCell(7, 15, true, "R23"));
-		entries.add(new MatrixCell(7, 16, true, "R23"));
-		entries.add(new MatrixCell(7, 17, true, "R23"));
-		entries.add(new MatrixCell(7, 18, true, "R23"));
-		entries.add(new MatrixCell(7, 19, false, "R23"));
-		entries.add(new MatrixCell(7, 20, true, "R23"));
-		entries.add(new MatrixCell(7, 21, true, "R23"));
-		entries.add(new MatrixCell(7, 22, true, "R23"));
-		entries.add(new MatrixCell(7, 23, true, "R23"));
-		entries.add(new MatrixCell(7, 24, true, "R23"));
-		entries.add(new MatrixCell(7, 25, false, "R23"));
-		entries.add(new MatrixCell(7, 26, false, "R23"));
-		entries.add(new MatrixCell(7, 27, false, "R23"));
-		entries.add(new MatrixCell(7, 28, false, "R23"));
-		entries.add(new MatrixCell(8, 12, true, "R23"));
-		entries.add(new MatrixCell(8, 13, false, "R23"));
-		entries.add(new MatrixCell(8, 14, false, "R23"));
-		entries.add(new MatrixCell(8, 15, true, "R23"));
-		entries.add(new MatrixCell(8, 16, true, "R23"));
-		entries.add(new MatrixCell(8, 17, true, "R23"));
-		entries.add(new MatrixCell(8, 18, true, "R23"));
-		entries.add(new MatrixCell(8, 19, false, "R23"));
-		entries.add(new MatrixCell(8, 20, true, "R23"));
-		entries.add(new MatrixCell(8, 21, true, "R23"));
-		entries.add(new MatrixCell(8, 22, true, "R23"));
-		entries.add(new MatrixCell(8, 23, true, "R23"));
-		entries.add(new MatrixCell(8, 24, true, "R23"));
-		entries.add(new MatrixCell(8, 25, true, "R23"));
-		entries.add(new MatrixCell(8, 26, true, "R23"));
-		entries.add(new MatrixCell(8, 27, true, "R23"));
-		entries.add(new MatrixCell(8, 28, true, "R23"));
-		entries.add(new MatrixCell(9, 12, true, "R23"));
-		entries.add(new MatrixCell(9, 13, false, "R23"));
-		entries.add(new MatrixCell(9, 14, false, "R23"));
-		entries.add(new MatrixCell(9, 15, true, "R23"));
-		entries.add(new MatrixCell(9, 16, true, "R23"));
-		entries.add(new MatrixCell(9, 17, true, "R23"));
-		entries.add(new MatrixCell(9, 18, true, "R23"));
-		entries.add(new MatrixCell(9, 19, false, "R23"));
-		entries.add(new MatrixCell(9, 20, true, "R23"));
-		entries.add(new MatrixCell(9, 21, true, "R23"));
-		entries.add(new MatrixCell(9, 22, true, "R23"));
-		entries.add(new MatrixCell(9, 23, false, "R23"));
-		entries.add(new MatrixCell(9, 24, false, "R23"));
-		entries.add(new MatrixCell(9, 25, false, "R23"));
-		entries.add(new MatrixCell(9, 26, false, "R23"));
-		entries.add(new MatrixCell(9, 27, false, "R23"));
-		entries.add(new MatrixCell(9, 28, false, "R23"));
-		entries.add(new MatrixCell(10, 12, true, "R23"));
-		entries.add(new MatrixCell(10, 13, false, "R23"));
-		entries.add(new MatrixCell(10, 14, true, "R23"));
-		entries.add(new MatrixCell(10, 15, false, "R23"));
-		entries.add(new MatrixCell(10, 16, false, "R23"));
-		entries.add(new MatrixCell(10, 17, true, "R23"));
-		entries.add(new MatrixCell(10, 18, true, "R23"));
-		entries.add(new MatrixCell(10, 19, true, "R23"));
-		entries.add(new MatrixCell(10, 20, true, "R23"));
-		entries.add(new MatrixCell(10, 21, false, "R23"));
-		entries.add(new MatrixCell(10, 22, false, "R23"));
-		entries.add(new MatrixCell(10, 23, false, "R23"));
-		entries.add(new MatrixCell(10, 24, true, "R23"));
-		entries.add(new MatrixCell(10, 25, false, "R23"));
-		entries.add(new MatrixCell(10, 26, true, "R23"));
-		entries.add(new MatrixCell(10, 27, true, "R23"));
-		entries.add(new MatrixCell(10, 28, false, "R23"));
-		entries.add(new MatrixCell(11, 12, true, "R23"));
-		entries.add(new MatrixCell(11, 13, true, "R23"));
-		entries.add(new MatrixCell(11, 14, true, "R23"));
-		entries.add(new MatrixCell(11, 15, false, "R23"));
-		entries.add(new MatrixCell(11, 16, false, "R23"));
-		entries.add(new MatrixCell(11, 17, false, "R23"));
-		entries.add(new MatrixCell(11, 18, true, "R23"));
-		entries.add(new MatrixCell(11, 19, true, "R23"));
-		entries.add(new MatrixCell(11, 20, true, "R23"));
-		entries.add(new MatrixCell(11, 21, false, "R23"));
-		entries.add(new MatrixCell(11, 22, false, "R23"));
-		entries.add(new MatrixCell(11, 23, true, "R23"));
-		entries.add(new MatrixCell(11, 24, true, "R23"));
-		entries.add(new MatrixCell(11, 25, true, "R23"));
-		entries.add(new MatrixCell(11, 26, true, "R23"));
-		entries.add(new MatrixCell(11, 27, true, "R23"));
-		entries.add(new MatrixCell(11, 28, true, "R23"));
-		// ==============Matrix R3 =================//
-		entries.add(new MatrixCell(12, 12, false, "R3"));
-		entries.add(new MatrixCell(12, 13, false, "R3"));
-		entries.add(new MatrixCell(12, 14, false, "R3"));
-		entries.add(new MatrixCell(12, 15, false, "R3"));
-		entries.add(new MatrixCell(12, 16, true, "R3"));
-		entries.add(new MatrixCell(12, 17, true, "R3"));
-		entries.add(new MatrixCell(12, 18, true, "R3"));
-		entries.add(new MatrixCell(12, 19, false, "R3"));
-		entries.add(new MatrixCell(12, 20, true, "R3"));
-		entries.add(new MatrixCell(12, 21, true, "R3"));
-		entries.add(new MatrixCell(12, 22, true, "R3"));
-		entries.add(new MatrixCell(12, 23, true, "R3"));
-		entries.add(new MatrixCell(12, 24, true, "R3"));
-		entries.add(new MatrixCell(12, 25, true, "R3"));
-		entries.add(new MatrixCell(12, 26, true, "R3"));
-		entries.add(new MatrixCell(12, 27, true, "R3"));
-		entries.add(new MatrixCell(12, 28, true, "R3"));
-		entries.add(new MatrixCell(13, 12, false, "R3"));
-		entries.add(new MatrixCell(13, 13, false, "R3"));
-		entries.add(new MatrixCell(13, 14, false, "R3"));
-		entries.add(new MatrixCell(13, 15, false, "R3"));
-		entries.add(new MatrixCell(13, 16, false, "R3"));
-		entries.add(new MatrixCell(13, 17, true, "R3"));
-		entries.add(new MatrixCell(13, 18, false, "R3"));
-		entries.add(new MatrixCell(13, 19, true, "R3"));
-		entries.add(new MatrixCell(13, 20, true, "R3"));
-		entries.add(new MatrixCell(13, 21, false, "R3"));
-		entries.add(new MatrixCell(13, 22, true, "R3"));
-		entries.add(new MatrixCell(13, 23, false, "R3"));
-		entries.add(new MatrixCell(13, 24, true, "R3"));
-		entries.add(new MatrixCell(13, 25, false, "R3"));
-		entries.add(new MatrixCell(13, 26, true, "R3"));
-		entries.add(new MatrixCell(13, 27, true, "R3"));
-		entries.add(new MatrixCell(13, 28, true, "R3"));
-		entries.add(new MatrixCell(14, 12, false, "R3"));
-		entries.add(new MatrixCell(14, 13, false, "R3"));
-		entries.add(new MatrixCell(14, 14, false, "R3"));
-		entries.add(new MatrixCell(14, 15, false, "R3"));
-		entries.add(new MatrixCell(14, 16, false, "R3"));
-		entries.add(new MatrixCell(14, 17, false, "R3"));
-		entries.add(new MatrixCell(14, 18, false, "R3"));
-		entries.add(new MatrixCell(14, 19, true, "R3"));
-		entries.add(new MatrixCell(14, 20, true, "R3"));
-		entries.add(new MatrixCell(14, 21, false, "R3"));
-		entries.add(new MatrixCell(14, 22, false, "R3"));
-		entries.add(new MatrixCell(14, 23, false, "R3"));
-		entries.add(new MatrixCell(14, 24, true, "R3"));
-		entries.add(new MatrixCell(14, 25, false, "R3"));
-		entries.add(new MatrixCell(14, 26, true, "R3"));
-		entries.add(new MatrixCell(14, 27, true, "R3"));
-		entries.add(new MatrixCell(14, 28, true, "R3"));
-		entries.add(new MatrixCell(15, 12, false, "R3"));
-		entries.add(new MatrixCell(15, 13, false, "R3"));
-		entries.add(new MatrixCell(15, 14, false, "R3"));
-		entries.add(new MatrixCell(15, 15, false, "R3"));
-		entries.add(new MatrixCell(15, 16, true, "R3"));
-		entries.add(new MatrixCell(15, 17, true, "R3"));
-		entries.add(new MatrixCell(15, 18, true, "R3"));
-		entries.add(new MatrixCell(15, 19, false, "R3"));
-		entries.add(new MatrixCell(15, 20, true, "R3"));
-		entries.add(new MatrixCell(15, 21, true, "R3"));
-		entries.add(new MatrixCell(15, 22, true, "R3"));
-		entries.add(new MatrixCell(15, 23, true, "R3"));
-		entries.add(new MatrixCell(15, 24, true, "R3"));
-		entries.add(new MatrixCell(15, 25, true, "R3"));
-		entries.add(new MatrixCell(15, 26, true, "R3"));
-		entries.add(new MatrixCell(15, 27, true, "R3"));
-		entries.add(new MatrixCell(15, 28, true, "R3"));
-		entries.add(new MatrixCell(16, 12, true, "R3"));
-		entries.add(new MatrixCell(16, 13, false, "R3"));
-		entries.add(new MatrixCell(16, 14, false, "R3"));
-		entries.add(new MatrixCell(16, 15, true, "R3"));
-		entries.add(new MatrixCell(16, 16, false, "R3"));
-		entries.add(new MatrixCell(16, 17, false, "R3"));
-		entries.add(new MatrixCell(16, 18, true, "R3"));
-		entries.add(new MatrixCell(16, 19, false, "R3"));
-		entries.add(new MatrixCell(16, 20, false, "R3"));
-		entries.add(new MatrixCell(16, 21, true, "R3"));
-		entries.add(new MatrixCell(16, 22, true, "R3"));
-		entries.add(new MatrixCell(16, 23, true, "R3"));
-		entries.add(new MatrixCell(16, 24, false, "R3"));
-		entries.add(new MatrixCell(16, 25, true, "R3"));
-		entries.add(new MatrixCell(16, 26, true, "R3"));
-		entries.add(new MatrixCell(16, 27, true, "R3"));
-		entries.add(new MatrixCell(16, 28, true, "R3"));
-		entries.add(new MatrixCell(17, 12, true, "R3"));
-		entries.add(new MatrixCell(17, 13, true, "R3"));
-		entries.add(new MatrixCell(17, 14, false, "R3"));
-		entries.add(new MatrixCell(17, 15, true, "R3"));
-		entries.add(new MatrixCell(17, 16, false, "R3"));
-		entries.add(new MatrixCell(17, 17, false, "R3"));
-		entries.add(new MatrixCell(17, 18, true, "R3"));
-		entries.add(new MatrixCell(17, 19, false, "R3"));
-		entries.add(new MatrixCell(17, 20, true, "R3"));
-		entries.add(new MatrixCell(17, 21, true, "R3"));
-		entries.add(new MatrixCell(17, 22, true, "R3"));
-		entries.add(new MatrixCell(17, 23, true, "R3"));
-		entries.add(new MatrixCell(17, 24, true, "R3"));
-		entries.add(new MatrixCell(17, 25, true, "R3"));
-		entries.add(new MatrixCell(17, 26, true, "R3"));
-		entries.add(new MatrixCell(17, 27, true, "R3"));
-		entries.add(new MatrixCell(17, 28, true, "R3"));
-		entries.add(new MatrixCell(18, 12, true, "R3"));
-		entries.add(new MatrixCell(18, 13, false, "R3"));
-		entries.add(new MatrixCell(18, 14, false, "R3"));
-		entries.add(new MatrixCell(18, 15, true, "R3"));
-		entries.add(new MatrixCell(18, 16, true, "R3"));
-		entries.add(new MatrixCell(18, 17, true, "R3"));
-		entries.add(new MatrixCell(18, 18, false, "R3"));
-		entries.add(new MatrixCell(18, 19, false, "R3"));
-		entries.add(new MatrixCell(18, 20, true, "R3"));
-		entries.add(new MatrixCell(18, 21, true, "R3"));
-		entries.add(new MatrixCell(18, 22, true, "R3"));
-		entries.add(new MatrixCell(18, 23, true, "R3"));
-		entries.add(new MatrixCell(18, 24, true, "R3"));
-		entries.add(new MatrixCell(18, 25, true, "R3"));
-		entries.add(new MatrixCell(18, 26, true, "R3"));
-		entries.add(new MatrixCell(18, 27, true, "R3"));
-		entries.add(new MatrixCell(18, 28, true, "R3"));
-		entries.add(new MatrixCell(19, 12, false, "R3"));
-		entries.add(new MatrixCell(19, 13, true, "R3"));
-		entries.add(new MatrixCell(19, 14, true, "R3"));
-		entries.add(new MatrixCell(19, 15, false, "R3"));
-		entries.add(new MatrixCell(19, 16, false, "R3"));
-		entries.add(new MatrixCell(19, 17, false, "R3"));
-		entries.add(new MatrixCell(19, 18, false, "R3"));
-		entries.add(new MatrixCell(19, 19, false, "R3"));
-		entries.add(new MatrixCell(19, 20, true, "R3"));
-		entries.add(new MatrixCell(19, 21, false, "R3"));
-		entries.add(new MatrixCell(19, 22, false, "R3"));
-		entries.add(new MatrixCell(19, 23, false, "R3"));
-		entries.add(new MatrixCell(19, 24, true, "R3"));
-		entries.add(new MatrixCell(19, 25, false, "R3"));
-		entries.add(new MatrixCell(19, 26, true, "R3"));
-		entries.add(new MatrixCell(19, 27, false, "R3"));
-		entries.add(new MatrixCell(19, 28, true, "R3"));
-		entries.add(new MatrixCell(20, 12, true, "R3"));
-		entries.add(new MatrixCell(20, 13, true, "R3"));
-		entries.add(new MatrixCell(20, 14, true, "R3"));
-		entries.add(new MatrixCell(20, 15, true, "R3"));
-		entries.add(new MatrixCell(20, 16, false, "R3"));
-		entries.add(new MatrixCell(20, 17, true, "R3"));
-		entries.add(new MatrixCell(20, 18, true, "R3"));
-		entries.add(new MatrixCell(20, 19, true, "R3"));
-		entries.add(new MatrixCell(20, 20, false, "R3"));
-		entries.add(new MatrixCell(20, 21, false, "R3"));
-		entries.add(new MatrixCell(20, 22, false, "R3"));
-		entries.add(new MatrixCell(20, 23, true, "R3"));
-		entries.add(new MatrixCell(20, 24, true, "R3"));
-		entries.add(new MatrixCell(20, 25, true, "R3"));
-		entries.add(new MatrixCell(20, 26, true, "R3"));
-		entries.add(new MatrixCell(20, 27, true, "R3"));
-		entries.add(new MatrixCell(20, 28, true, "R3"));
-		entries.add(new MatrixCell(21, 12, true, "R3"));
-		entries.add(new MatrixCell(21, 13, false, "R3"));
-		entries.add(new MatrixCell(21, 14, false, "R3"));
-		entries.add(new MatrixCell(21, 15, true, "R3"));
-		entries.add(new MatrixCell(21, 16, true, "R3"));
-		entries.add(new MatrixCell(21, 17, true, "R3"));
-		entries.add(new MatrixCell(21, 18, true, "R3"));
-		entries.add(new MatrixCell(21, 19, false, "R3"));
-		entries.add(new MatrixCell(21, 20, false, "R3"));
-		entries.add(new MatrixCell(21, 21, false, "R3"));
-		entries.add(new MatrixCell(21, 22, false, "R3"));
-		entries.add(new MatrixCell(21, 23, true, "R3"));
-		entries.add(new MatrixCell(21, 24, true, "R3"));
-		entries.add(new MatrixCell(21, 25, false, "R3"));
-		entries.add(new MatrixCell(21, 26, true, "R3"));
-		entries.add(new MatrixCell(21, 27, true, "R3"));
-		entries.add(new MatrixCell(21, 28, true, "R3"));
-		entries.add(new MatrixCell(22, 12, true, "R3"));
-		entries.add(new MatrixCell(22, 13, true, "R3"));
-		entries.add(new MatrixCell(22, 14, false, "R3"));
-		entries.add(new MatrixCell(22, 15, true, "R3"));
-		entries.add(new MatrixCell(22, 16, true, "R3"));
-		entries.add(new MatrixCell(22, 17, true, "R3"));
-		entries.add(new MatrixCell(22, 18, true, "R3"));
-		entries.add(new MatrixCell(22, 19, false, "R3"));
-		entries.add(new MatrixCell(22, 20, false, "R3"));
-		entries.add(new MatrixCell(22, 21, false, "R3"));
-		entries.add(new MatrixCell(22, 22, false, "R3"));
-		entries.add(new MatrixCell(22, 23, false, "R3"));
-		entries.add(new MatrixCell(22, 24, true, "R3"));
-		entries.add(new MatrixCell(22, 25, false, "R3"));
-		entries.add(new MatrixCell(22, 26, true, "R3"));
-		entries.add(new MatrixCell(22, 27, true, "R3"));
-		entries.add(new MatrixCell(22, 28, false, "R3"));
-		entries.add(new MatrixCell(23, 12, true, "R3"));
-		entries.add(new MatrixCell(23, 13, false, "R3"));
-		entries.add(new MatrixCell(23, 14, false, "R3"));
-		entries.add(new MatrixCell(23, 15, true, "R3"));
-		entries.add(new MatrixCell(23, 16, true, "R3"));
-		entries.add(new MatrixCell(23, 17, true, "R3"));
-		entries.add(new MatrixCell(23, 18, true, "R3"));
-		entries.add(new MatrixCell(23, 19, false, "R3"));
-		entries.add(new MatrixCell(23, 20, true, "R3"));
-		entries.add(new MatrixCell(23, 21, true, "R3"));
-		entries.add(new MatrixCell(23, 22, false, "R3"));
-		entries.add(new MatrixCell(23, 23, false, "R3"));
-		entries.add(new MatrixCell(23, 24, false, "R3"));
-		entries.add(new MatrixCell(23, 25, true, "R3"));
-		entries.add(new MatrixCell(23, 26, true, "R3"));
-		entries.add(new MatrixCell(23, 27, true, "R3"));
-		entries.add(new MatrixCell(23, 28, true, "R3"));
-		entries.add(new MatrixCell(24, 12, true, "R3"));
-		entries.add(new MatrixCell(24, 13, true, "R3"));
-		entries.add(new MatrixCell(24, 14, true, "R3"));
-		entries.add(new MatrixCell(24, 15, true, "R3"));
-		entries.add(new MatrixCell(24, 16, false, "R3"));
-		entries.add(new MatrixCell(24, 17, true, "R3"));
-		entries.add(new MatrixCell(24, 18, true, "R3"));
-		entries.add(new MatrixCell(24, 19, true, "R3"));
-		entries.add(new MatrixCell(24, 20, true, "R3"));
-		entries.add(new MatrixCell(24, 21, true, "R3"));
-		entries.add(new MatrixCell(24, 22, true, "R3"));
-		entries.add(new MatrixCell(24, 23, false, "R3"));
-		entries.add(new MatrixCell(24, 24, false, "R3"));
-		entries.add(new MatrixCell(24, 25, false, "R3"));
-		entries.add(new MatrixCell(24, 26, true, "R3"));
-		entries.add(new MatrixCell(24, 27, true, "R3"));
-		entries.add(new MatrixCell(24, 28, false, "R3"));
-		entries.add(new MatrixCell(25, 12, true, "R3"));
-		entries.add(new MatrixCell(25, 13, false, "R3"));
-		entries.add(new MatrixCell(25, 14, false, "R3"));
-		entries.add(new MatrixCell(25, 15, true, "R3"));
-		entries.add(new MatrixCell(25, 16, true, "R3"));
-		entries.add(new MatrixCell(25, 17, true, "R3"));
-		entries.add(new MatrixCell(25, 18, true, "R3"));
-		entries.add(new MatrixCell(25, 19, false, "R3"));
-		entries.add(new MatrixCell(25, 20, true, "R3"));
-		entries.add(new MatrixCell(25, 21, false, "R3"));
-		entries.add(new MatrixCell(25, 22, false, "R3"));
-		entries.add(new MatrixCell(25, 23, true, "R3"));
-		entries.add(new MatrixCell(25, 24, false, "R3"));
-		entries.add(new MatrixCell(25, 25, false, "R3"));
-		entries.add(new MatrixCell(25, 26, true, "R3"));
-		entries.add(new MatrixCell(25, 27, true, "R3"));
-		entries.add(new MatrixCell(25, 28, false, "R3"));
-		entries.add(new MatrixCell(26, 12, true, "R3"));
-		entries.add(new MatrixCell(26, 13, true, "R3"));
-		entries.add(new MatrixCell(26, 14, true, "R3"));
-		entries.add(new MatrixCell(26, 15, true, "R3"));
-		entries.add(new MatrixCell(26, 16, true, "R3"));
-		entries.add(new MatrixCell(26, 17, true, "R3"));
-		entries.add(new MatrixCell(26, 18, true, "R3"));
-		entries.add(new MatrixCell(26, 19, true, "R3"));
-		entries.add(new MatrixCell(26, 20, true, "R3"));
-		entries.add(new MatrixCell(26, 21, true, "R3"));
-		entries.add(new MatrixCell(26, 22, true, "R3"));
-		entries.add(new MatrixCell(26, 23, true, "R3"));
-		entries.add(new MatrixCell(26, 24, true, "R3"));
-		entries.add(new MatrixCell(26, 25, true, "R3"));
-		entries.add(new MatrixCell(26, 26, false, "R3"));
-		entries.add(new MatrixCell(26, 27, true, "R3"));
-		entries.add(new MatrixCell(26, 28, true, "R3"));
-		entries.add(new MatrixCell(27, 12, true, "R3"));
-		entries.add(new MatrixCell(27, 13, true, "R3"));
-		entries.add(new MatrixCell(27, 14, true, "R3"));
-		entries.add(new MatrixCell(27, 15, true, "R3"));
-		entries.add(new MatrixCell(27, 16, true, "R3"));
-		entries.add(new MatrixCell(27, 17, true, "R3"));
-		entries.add(new MatrixCell(27, 18, true, "R3"));
-		entries.add(new MatrixCell(27, 19, false, "R3"));
-		entries.add(new MatrixCell(27, 20, true, "R3"));
-		entries.add(new MatrixCell(27, 21, true, "R3"));
-		entries.add(new MatrixCell(27, 22, true, "R3"));
-		entries.add(new MatrixCell(27, 23, true, "R3"));
-		entries.add(new MatrixCell(27, 24, true, "R3"));
-		entries.add(new MatrixCell(27, 25, true, "R3"));
-		entries.add(new MatrixCell(27, 26, true, "R3"));
-		entries.add(new MatrixCell(27, 27, false, "R3"));
-		entries.add(new MatrixCell(27, 28, false, "R3"));
-		entries.add(new MatrixCell(28, 12, true, "R3"));
-		entries.add(new MatrixCell(28, 13, true, "R3"));
-		entries.add(new MatrixCell(28, 14, true, "R3"));
-		entries.add(new MatrixCell(28, 15, true, "R3"));
-		entries.add(new MatrixCell(28, 16, true, "R3"));
-		entries.add(new MatrixCell(28, 17, true, "R3"));
-		entries.add(new MatrixCell(28, 18, true, "R3"));
-		entries.add(new MatrixCell(28, 19, true, "R3"));
-		entries.add(new MatrixCell(28, 20, true, "R3"));
-		entries.add(new MatrixCell(28, 21, true, "R3"));
-		entries.add(new MatrixCell(28, 22, false, "R3"));
-		entries.add(new MatrixCell(28, 23, true, "R3"));
-		entries.add(new MatrixCell(28, 24, false, "R3"));
-		entries.add(new MatrixCell(28, 25, false, "R3"));
-		entries.add(new MatrixCell(28, 26, true, "R3"));
-		entries.add(new MatrixCell(28, 27, false, "R3"));
-		entries.add(new MatrixCell(28, 28, false, "R3"));
-		// ================= Matrix R34 ==============//
-		entries.add(new MatrixCell(12, 29, true, "R34"));
-		entries.add(new MatrixCell(12, 30, true, "R34"));
-		entries.add(new MatrixCell(12, 31, true, "R34"));
-		entries.add(new MatrixCell(12, 32, true, "R34"));
-		entries.add(new MatrixCell(12, 33, true, "R34"));
-		entries.add(new MatrixCell(13, 29, true, "R34"));
-		entries.add(new MatrixCell(13, 30, true, "R34"));
-		entries.add(new MatrixCell(13, 31, true, "R34"));
-		entries.add(new MatrixCell(13, 32, true, "R34"));
-		entries.add(new MatrixCell(13, 33, true, "R34"));
-		entries.add(new MatrixCell(14, 29, true, "R34"));
-		entries.add(new MatrixCell(14, 30, true, "R34"));
-		entries.add(new MatrixCell(14, 31, true, "R34"));
-		entries.add(new MatrixCell(14, 32, true, "R34"));
-		entries.add(new MatrixCell(14, 33, true, "R34"));
-		entries.add(new MatrixCell(15, 29, true, "R34"));
-		entries.add(new MatrixCell(15, 30, false, "R34"));
-		entries.add(new MatrixCell(15, 31, true, "R34"));
-		entries.add(new MatrixCell(15, 32, true, "R34"));
-		entries.add(new MatrixCell(15, 33, true, "R34"));
-		entries.add(new MatrixCell(16, 29, true, "R34"));
-		entries.add(new MatrixCell(16, 30, true, "R34"));
-		entries.add(new MatrixCell(16, 31, true, "R34"));
-		entries.add(new MatrixCell(16, 32, true, "R34"));
-		entries.add(new MatrixCell(16, 33, true, "R34"));
-		entries.add(new MatrixCell(17, 29, true, "R34"));
-		entries.add(new MatrixCell(17, 30, true, "R34"));
-		entries.add(new MatrixCell(17, 31, true, "R34"));
-		entries.add(new MatrixCell(17, 32, true, "R34"));
-		entries.add(new MatrixCell(17, 33, true, "R34"));
-		entries.add(new MatrixCell(18, 29, true, "R34"));
-		entries.add(new MatrixCell(18, 30, true, "R34"));
-		entries.add(new MatrixCell(18, 31, true, "R34"));
-		entries.add(new MatrixCell(18, 32, true, "R34"));
-		entries.add(new MatrixCell(18, 33, true, "R34"));
-		entries.add(new MatrixCell(19, 29, false, "R34"));
-		entries.add(new MatrixCell(19, 30, false, "R34"));
-		entries.add(new MatrixCell(19, 31, true, "R34"));
-		entries.add(new MatrixCell(19, 32, true, "R34"));
-		entries.add(new MatrixCell(19, 33, true, "R34"));
-		entries.add(new MatrixCell(20, 29, true, "R34"));
-		entries.add(new MatrixCell(20, 30, true, "R34"));
-		entries.add(new MatrixCell(20, 31, true, "R34"));
-		entries.add(new MatrixCell(20, 32, true, "R34"));
-		entries.add(new MatrixCell(20, 33, true, "R34"));
-		entries.add(new MatrixCell(21, 29, true, "R34"));
-		entries.add(new MatrixCell(21, 30, true, "R34"));
-		entries.add(new MatrixCell(21, 31, true, "R34"));
-		entries.add(new MatrixCell(21, 32, true, "R34"));
-		entries.add(new MatrixCell(21, 33, true, "R34"));
-		entries.add(new MatrixCell(22, 29, true, "R34"));
-		entries.add(new MatrixCell(22, 30, true, "R34"));
-		entries.add(new MatrixCell(22, 31, true, "R34"));
-		entries.add(new MatrixCell(22, 32, true, "R34"));
-		entries.add(new MatrixCell(22, 33, true, "R34"));
-		entries.add(new MatrixCell(23, 29, true, "R34"));
-		entries.add(new MatrixCell(23, 30, true, "R34"));
-		entries.add(new MatrixCell(23, 31, false, "R34"));
-		entries.add(new MatrixCell(23, 32, false, "R34"));
-		entries.add(new MatrixCell(23, 33, false, "R34"));
-		entries.add(new MatrixCell(24, 29, true, "R34"));
-		entries.add(new MatrixCell(24, 30, true, "R34"));
-		entries.add(new MatrixCell(24, 31, true, "R34"));
-		entries.add(new MatrixCell(24, 32, true, "R34"));
-		entries.add(new MatrixCell(24, 33, true, "R34"));
-		entries.add(new MatrixCell(25, 29, true, "R34"));
-		entries.add(new MatrixCell(25, 30, true, "R34"));
-		entries.add(new MatrixCell(25, 31, true, "R34"));
-		entries.add(new MatrixCell(25, 32, true, "R34"));
-		entries.add(new MatrixCell(25, 33, true, "R34"));
-		entries.add(new MatrixCell(26, 29, true, "R34"));
-		entries.add(new MatrixCell(26, 30, true, "R34"));
-		entries.add(new MatrixCell(26, 31, true, "R34"));
-		entries.add(new MatrixCell(26, 32, true, "R34"));
-		entries.add(new MatrixCell(26, 33, true, "R34"));
-		entries.add(new MatrixCell(27, 29, true, "R34"));
-		entries.add(new MatrixCell(27, 30, true, "R34"));
-		entries.add(new MatrixCell(27, 31, true, "R34"));
-		entries.add(new MatrixCell(27, 32, true, "R34"));
-		entries.add(new MatrixCell(27, 33, true, "R34"));
-		entries.add(new MatrixCell(28, 29, true, "R34"));
-		entries.add(new MatrixCell(28, 30, true, "R34"));
-		entries.add(new MatrixCell(28, 31, true, "R34"));
-		entries.add(new MatrixCell(28, 32, true, "R34"));
-		entries.add(new MatrixCell(28, 33, true, "R34"));
-		return entries;
-	}
+    //Determines if a colId is a direct connection
+    //to the current Matrix_Cell when doing backwards propagation 
+    private boolean directConnectionForwards(MatrixCell X, int i)
+    {
+        if (Math.abs(i - X.getColumnId()) == 1) return false;
+        else return true;
+    }
+    private boolean directConnectionForwards(int X, int i)
+    {
+        if (Math.abs(i - X) == 1) return false;
+        else return true;
+    }
 
 	public void setCellMapByCellId(
 			final HashMap<Integer, MatrixCell> cellMapByCellId) {

@@ -38,7 +38,7 @@ public class MatrixCell {
 		this.columnId = columnId;
 	}
 
-	public boolean isValue() {
+	public boolean getValue() {
 		return value;
 	}
 

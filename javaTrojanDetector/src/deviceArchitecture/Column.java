@@ -1,16 +1,11 @@
 package deviceArchitecture;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-
 import utilityClasses.DeviceColumnInfo;
 import utilityClasses.Error;
 import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.XilinxConfigurationSpecification;
 import edu.byu.ece.rapidSmith.device.Tile;
-import edu.byu.ece.rapidSmith.device.Utils;
 
 public class Column {
 	private List<SubColumn> subColumns;

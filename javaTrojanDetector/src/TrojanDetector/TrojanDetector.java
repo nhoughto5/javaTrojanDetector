@@ -2,7 +2,6 @@ package TrojanDetector;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
@@ -14,7 +13,6 @@ import utilityClasses.ModifiedInstance;
 import utilityClasses.ModifiedTile;
 import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.XilinxConfigurationSpecification;
 import edu.byu.ece.rapidSmith.bitstreamTools.examples.BitstreamDiff;
-import edu.byu.ece.rapidSmith.design.Attribute;
 import edu.byu.ece.rapidSmith.design.Design;
 import edu.byu.ece.rapidSmith.design.Instance;
 import edu.byu.ece.rapidSmith.design.Net;

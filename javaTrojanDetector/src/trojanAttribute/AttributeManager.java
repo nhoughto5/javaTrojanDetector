@@ -66,7 +66,7 @@ public class AttributeManager {
 		if(this.trojan.doesTrojanModifyPower()){
 			ret.add(attributesByName.get("Power Supply"));
 		}
-		if(){
+		if(this.trojan.doesTrojanModifyClockGrid()){
 			ret.add(attributesByName.get("Clock Grid"));
 		}
 		return ret;
