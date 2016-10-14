@@ -331,7 +331,6 @@ public class ModifiedFrame {
 		} else {
 			Error.printError("Mismatch frame address with column type: IOB",
 					new Exception().getStackTrace()[0]);
-			System.exit(-1);
 		}
 		findModifiedTiles();
 	}

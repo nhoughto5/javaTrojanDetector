@@ -5,12 +5,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.swing.JTextArea;
+
 import utilityClasses.ModifiedInstance;
 import utilityClasses.ModifiedTile;
 import edu.byu.ece.rapidSmith.design.Attribute;
 import edu.byu.ece.rapidSmith.design.Design;
 import edu.byu.ece.rapidSmith.design.Instance;
 import edu.byu.ece.rapidSmith.design.Net;
+import edu.byu.ece.rapidSmith.design.PIP;
 import edu.byu.ece.rapidSmith.device.PrimitiveSite;
 import edu.byu.ece.rapidSmith.device.Tile;
 import edu.byu.ece.rapidSmith.device.TileType;
@@ -29,7 +32,73 @@ public class Trojan {
 	public void addTiles(final List<ModifiedTile> newTiles) {
 		this.affectedTiles.addAll(newTiles);
 	}
-
+	
+	public void printAffectedInstances(JTextArea messageArea){
+		messageArea.setText("");
+		StringBuffer sBuffer = new StringBuffer();
+		for(ModifiedTile m : this.affectedTiles){
+			HashSet<ModifiedInstance> i = m.getModifiedInstances();
+			for(ModifiedInstance mI : i){
+				sBuffer.append(i.toString() + "\n\n");
+			}
+		}
+		messageArea.setText(sBuffer.toString());
+	}
+	
+	public void printAffectedNetNames(JTextArea messageArea){
+		messageArea.setText("");
+		StringBuffer sBuffer = new StringBuffer();
+		sBuffer.append("Interconnect Networks Modified " + "\n\n");
+		for(Net n : this.affectedNets){
+			sBuffer.append(n.getName() + "\n");
+		}
+		messageArea.setText(sBuffer.toString());
+	}
+	public void printAffectedNets(JTextArea messageArea){
+		messageArea.setText("");
+		StringBuffer sBuffer = new StringBuffer();
+		sBuffer.append("Interconnect Networks Modified " + "\n\n");
+		for(Net n : this.affectedNets){
+			sBuffer.append("Net: " + n.getName() + "\n");
+			List<PIP> pips = new ArrayList<>(n.getPIPs());
+			for(PIP p : pips){
+				sBuffer.append(p.toString());
+			}
+			sBuffer.append("\n\n");
+		}
+		messageArea.setText(sBuffer.toString());
+	}
+	public void printAffectedTiles(JTextArea messageArea){
+		messageArea.setText("");
+		StringBuffer sBuffer = new StringBuffer();
+		for(ModifiedTile mT : this.affectedTiles){
+			sBuffer.append(mT.getTile().getName() + "\n\n");
+		}
+		messageArea.setText(sBuffer.toString());
+	}
+//	public boolean wasPIPModified(PIP p){
+//		return wasTileModified(getTileContainsPIP(p));
+//	}
+	public boolean wasTileModified(Tile tile){
+		return this.affectedTileMapByName.containsKey(tile.getName());
+	}
+//	public Tile getTileContainsPIP(PIP p){
+//		Tile[][] tiles =  this.goldenDesign.getDevice().getTiles();
+//
+//		for (int row = 0; row < tiles.length; row++) {
+//		    for (int col = 0; col < tiles[row].length; col++) {
+//		    	Tile p1 = tiles[row][col];
+//		    	List<PIP> pips = p1.getPIPs();
+//		    	for(PIP c : pips){
+//		    		if(p == c){
+//		    			return p1;
+//		    		}
+//		    	}
+//		    }
+//		}
+//		return null;
+//	}
+	
 	public boolean doesTrojanModifyCLB() {
 		for (final ModifiedTile i : this.affectedTiles) {
 			if (Utils.isCLB(i.getTile().getType())) {

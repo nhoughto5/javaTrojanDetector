@@ -64,6 +64,7 @@ public class TrojanDetector {
 	public void loadDesign(File xdlFile) {
 		this.xdlFile = xdlFile;
 		this.design = new Design(this.xdlFile.getAbsolutePath());
+		
 	}
 
 	public void mapModifiedTilesToDesign() {
@@ -81,8 +82,7 @@ public class TrojanDetector {
 				for (PrimitiveSite p : pS) {
 					Instance tI = this.design.getInstanceAtPrimitiveSite(p);
 					if (tI != null) {
-						System.out.println(tI.getName() + "  "
-								+ tI.getType().toString());
+						//System.out.println(tI.getName() + "  "+ tI.getType().toString());
 						modifiedInstances.add(tI);
 						netSet.addAll(tI.getNetList());
 						mT.get(i).addInstance(new ModifiedInstance(tI, p));
@@ -91,29 +91,44 @@ public class TrojanDetector {
 				}
 			}
 		}
+		this.trojan.setGoldenDesign(this.design);
 		this.trojan.setAffectedTiles(mT);
 		this.trojan.setAffectedNets(netSet);
-		this.trojan.printAffectedNets();
 		AttributeManager aM = new AttributeManager(this.trojan);
 		RelationMatrix R = new RelationMatrix();
 		this.trojanAttributes = R.analyzeMatrix(aM.getTrojanAttributes());
 		printTrojanAttributes();
 	}
-
+	
+	public void printAffectedTiles(JTextArea messageArea){
+		this.trojan.printAffectedTiles(messageArea);
+	}
+	
+	public void printAffectedInstances(JTextArea messageArea){
+		this.trojan.printAffectedInstances(messageArea);
+	}
+	
+	public void printAffectedNetNames(JTextArea messageArea){
+		this.trojan.printAffectedNetNames(messageArea);
+	}
+	
+	public void printAffectedNets(JTextArea messageArea){
+		this.trojan.printAffectedNets(messageArea);
+	}
+	
 	public void printTrojanAttributes(){
-		
+		this.messageArea.setText("");
+		StringBuffer sBuffer = new StringBuffer();
 		for(TrojanAttribute t : this.trojanAttributes){
-			//System.out.println(t.toString());
-			this.messageArea.append(t.toString() + "\n\n");
+			sBuffer.append(t.toString() + "\n\n");
 		}
-		//this.messageArea.write();
+		this.messageArea.setText(sBuffer.toString());
 	}
 	private void matchFramesToTiles() {
 		for (ModifiedFrame mF : modifiedFrames) {
 			mF.mapTiles(this.architecture.getColumn(mF.getColumnNum()));
 			trojan.addTiles(mF.getAffectedTiles());
 		}
-		// trojan.printTileNames();
 		return;
 	}
 

@@ -37,6 +37,7 @@ public class MainWindow {
 	}
 
 	private JFrame frame;
+	JTextArea messageArea;
 	File targetBitFile, goldenBitFile, xdlFile;
 	private TrojanDetector trojanDetector;
 
@@ -138,10 +139,46 @@ public class MainWindow {
 		scrollPane.setBounds(10, 190, 792, 325);
 		frame.getContentPane().add(scrollPane);
 		
-		JTextArea messageArea = new JTextArea();
+		this.messageArea = new JTextArea();
 		messageArea.setLineWrap(true);
 		scrollPane.setViewportView(messageArea);
 		this.trojanDetector = new TrojanDetector(messageArea);
+		
+		JButton btn_printModTiles = new JButton("Print Modified Tiles");
+		btn_printModTiles.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MainWindow.this.trojanDetector.printAffectedTiles(MainWindow.this.messageArea);
+			}
+		});
+		btn_printModTiles.setBounds(340, 25, 165, 23);
+		frame.getContentPane().add(btn_printModTiles);
+		
+		JButton btn_printModNetNames = new JButton("Print Modified Net Names");
+		btn_printModNetNames.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MainWindow.this.trojanDetector.printAffectedNetNames(MainWindow.this.messageArea);
+			}
+		});
+		btn_printModNetNames.setBounds(340, 59, 165, 23);
+		frame.getContentPane().add(btn_printModNetNames);
+		
+		JButton btn_ModNetDetails = new JButton("Print Modified Net Details");
+		btn_ModNetDetails.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MainWindow.this.trojanDetector.printAffectedNets(MainWindow.this.messageArea);
+			}
+		});
+		btn_ModNetDetails.setBounds(340, 93, 165, 23);
+		frame.getContentPane().add(btn_ModNetDetails);
+		
+		JButton btn_Clear = new JButton("Clear");
+		btn_Clear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MainWindow.this.messageArea.setText("");
+			}
+		});
+		btn_Clear.setBounds(713, 161, 89, 23);
+		frame.getContentPane().add(btn_Clear);
 		
 		btnMapTilesToDesign.addActionListener(new ActionListener() {
 			@Override
