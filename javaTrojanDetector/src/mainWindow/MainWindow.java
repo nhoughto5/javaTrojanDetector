@@ -1,10 +1,12 @@
 package mainWindow;
 
 import java.awt.EventQueue;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -14,6 +16,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import TrojanDetector.TrojanDetector;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
@@ -29,6 +32,7 @@ public class MainWindow {
 				try {
 					final MainWindow window = new MainWindow();
 					window.frame.setVisible(true);
+					window.frame.setTitle("Uvic FPGA Trojan Detection");;
 				} catch (final Exception e) {
 					e.printStackTrace();
 				}
@@ -82,9 +86,8 @@ public class MainWindow {
 				final FileNameExtensionFilter filter = new FileNameExtensionFilter(
 						"Bit Files", fileTypes);
 				fileChooser.setFileFilter(filter);
-				fileChooser
-						.setCurrentDirectory(new java.io.File(
-								"C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles"));
+				File workingDirectory = new File(System.getProperty("user.dir"));
+				fileChooser.setCurrentDirectory(workingDirectory);
 				fileChooser.showOpenDialog(null);
 				MainWindow.this.goldenBitFile = fileChooser.getSelectedFile();
 				// JOptionPane.showMessageDialog(null, "You selected: " +
@@ -104,9 +107,8 @@ public class MainWindow {
 				final FileNameExtensionFilter filter = new FileNameExtensionFilter(
 						"Bit Files", fileTypes);
 				fileChooser.setFileFilter(filter);
-				fileChooser
-						.setCurrentDirectory(new java.io.File(
-								"C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles"));
+				File workingDirectory = new File(System.getProperty("user.dir"));
+				fileChooser.setCurrentDirectory(workingDirectory);
 				fileChooser.showOpenDialog(null);
 				MainWindow.this.targetBitFile = fileChooser.getSelectedFile();
 			}
@@ -131,7 +133,7 @@ public class MainWindow {
 		lblSelectGoldenXdl.setBounds(10, 97, 134, 14);
 		this.frame.getContentPane().add(lblSelectGoldenXdl);
 
-		final JButton btnMapTilesToDesign = new JButton("Map");
+		final JButton btnMapTilesToDesign = new JButton("Analyze");
 		btnMapTilesToDesign.setBounds(154, 133, 89, 23);
 		this.frame.getContentPane().add(btnMapTilesToDesign);
 		
@@ -150,7 +152,7 @@ public class MainWindow {
 				MainWindow.this.trojanDetector.printAffectedTiles(MainWindow.this.messageArea);
 			}
 		});
-		btn_printModTiles.setBounds(340, 25, 165, 23);
+		btn_printModTiles.setBounds(637, 25, 165, 23);
 		frame.getContentPane().add(btn_printModTiles);
 		
 		JButton btn_printModNetNames = new JButton("Print Modified Net Names");
@@ -159,7 +161,7 @@ public class MainWindow {
 				MainWindow.this.trojanDetector.printAffectedNetNames(MainWindow.this.messageArea);
 			}
 		});
-		btn_printModNetNames.setBounds(340, 59, 165, 23);
+		btn_printModNetNames.setBounds(637, 59, 165, 23);
 		frame.getContentPane().add(btn_printModNetNames);
 		
 		JButton btn_ModNetDetails = new JButton("Print Modified Net Details");
@@ -168,7 +170,7 @@ public class MainWindow {
 				MainWindow.this.trojanDetector.printAffectedNets(MainWindow.this.messageArea);
 			}
 		});
-		btn_ModNetDetails.setBounds(340, 93, 165, 23);
+		btn_ModNetDetails.setBounds(637, 93, 165, 23);
 		frame.getContentPane().add(btn_ModNetDetails);
 		
 		JButton btn_Clear = new JButton("Clear");
@@ -179,6 +181,12 @@ public class MainWindow {
 		});
 		btn_Clear.setBounds(713, 161, 89, 23);
 		frame.getContentPane().add(btn_Clear);
+		
+		JLabel label = new JLabel("");
+		Image img = new ImageIcon(this.getClass().getResource("/uvicLogo.png")).getImage();
+		label.setIcon(new ImageIcon(img));
+		label.setBounds(299, 25, 328, 144);
+		frame.getContentPane().add(label);
 		
 		btnMapTilesToDesign.addActionListener(new ActionListener() {
 			@Override
@@ -226,9 +234,8 @@ public class MainWindow {
 				final FileNameExtensionFilter filter = new FileNameExtensionFilter(
 						"XDL Files", fileTypes);
 				fileChooser.setFileFilter(filter);
-				fileChooser
-						.setCurrentDirectory(new java.io.File(
-								"C:/Users/Nick/Desktop/NickTop/HomeWork/MASc/Virtex5/bitFiles"));
+				File workingDirectory = new File(System.getProperty("user.dir"));
+				fileChooser.setCurrentDirectory(workingDirectory);
 				fileChooser.showOpenDialog(null);
 				MainWindow.this.xdlFile = fileChooser.getSelectedFile();
 				MainWindow.this.trojanDetector

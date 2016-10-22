@@ -83,7 +83,7 @@ public class AttributeManager {
 	
 	public List<TrojanAttribute> getPhysicalLayoutAttributes(){
 		List<TrojanAttribute> ret = new ArrayList<>();
-		
+		//System.out.println("Average Manhatten: " + this.trojan.getAverageTrojanManhattenDistance());
 		return ret;
 	}
 	

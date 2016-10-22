@@ -21,6 +21,7 @@
 package edu.byu.ece.rapidSmith.bitstreamTools.examples;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import utilityClasses.ModifiedFrame;
 import joptsimple.OptionSet;
@@ -68,6 +69,7 @@ public class BitstreamDiff {
 	
 	private BitstreamHeader header;
 	private XilinxConfigurationSpecification spec1, spec2;
+	private List<Frame> goldenFrames, targetFrames;
 	public static final String[] HELP_DESCRIPTION = {
 		"Compares the values of two different bitstreams and reports any differences",
 	};
@@ -79,6 +81,8 @@ public class BitstreamDiff {
 	 */
 	public ArrayList<ModifiedFrame> findDifferences(String[] args) {
 
+		this.goldenFrames = new ArrayList<>();
+		this.targetFrames = new ArrayList<>();
 		/** Setup parser **/
 		BitstreamOptionParser cmdLineParser = new BitstreamOptionParser(HELP_DESCRIPTION);
 		// Options for input bitstream or readback file
@@ -185,6 +189,9 @@ public class BitstreamDiff {
 		for (; far.validFARAddress(); far.incrementFAR()) {
 			Frame goldenFrame = goldenChip.getFrame(far);
 			Frame targetFrame = targetChip.getFrame(far);
+			goldenFrames.add(goldenFrame);
+			targetFrames.add(targetFrame);
+			
 			String msg = null;
 
 			// Collect statistics
@@ -262,25 +269,6 @@ public class BitstreamDiff {
 			}
 			
 		}	
-
-		// Print summary
-//		System.out.println("FPGA1:");
-//		System.out.println("\t"+fpga1ConfiguredFrames+" configured frames");
-//		System.out.println("\t"+fpga1NonEmptyFrames+" configured frames with data");
-//		System.out.println("FPGA2:");
-//		System.out.println("\t"+fpga2ConfiguredFrames+" configured frames");
-//		System.out.println("\t"+fpga2NonEmptyFrames+" configured frames with data");
-//		int totalSame = configuredFramesEqualEmpty+configuredFramesEqualWithData;
-//		System.out.println("# configured frames with no data differences:"+totalSame);
-//		System.out.println("\t"+configuredFramesEqualEmpty+" empty frames that are equal");
-//		System.out.println("\t"+configuredFramesEqualWithData+" non-empty frames that are equal");
-//		// Data diff counters
-//		int totalDiffs = configuredDataNonEmptyDifferences + configuredFPGA1EmptyDifferences + configuredFPGA2EmptyDifferences;
-//		System.out.println("# configured frames with data differences:"+totalDiffs);
-//		System.out.println("\t"+configuredDataNonEmptyDifferences+" Non empty frame differences");
-//		System.out.println("\t"+configuredFPGA1EmptyDifferences+" FPGA1 empty frame differences");
-//		System.out.println("\t"+configuredFPGA2EmptyDifferences+" FPGA2 empty frame differences");
-
 		return diffPairs;
 
 	}
@@ -296,5 +284,11 @@ public class BitstreamDiff {
 	}
 	public String getPartName(){
 		return header.getPartName();
+	}
+	public List<Frame> getTargetFrames(){
+		return this.targetFrames;
+	}
+	public List<Frame> getGoldenFrames(){
+		return this.goldenFrames;
 	}
 }

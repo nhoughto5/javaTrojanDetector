@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.swing.JTextArea;
 
+import joptsimple.OptionSet;
 import deviceArchitecture.Architecture;
 import trojanAttribute.AttributeManager;
 import trojanAttribute.RelationMatrix;
@@ -17,6 +18,7 @@ import utilityClasses.Error;
 import utilityClasses.ModifiedFrame;
 import utilityClasses.ModifiedInstance;
 import utilityClasses.ModifiedTile;
+import edu.byu.ece.rapidSmith.bitstreamTools.configuration.Frame;
 import edu.byu.ece.rapidSmith.bitstreamTools.configurationSpecification.XilinxConfigurationSpecification;
 import edu.byu.ece.rapidSmith.bitstreamTools.examples.BitstreamDiff;
 import edu.byu.ece.rapidSmith.design.Design;
@@ -24,6 +26,7 @@ import edu.byu.ece.rapidSmith.design.Instance;
 import edu.byu.ece.rapidSmith.design.Net;
 import edu.byu.ece.rapidSmith.device.Device;
 import edu.byu.ece.rapidSmith.device.PrimitiveSite;
+import edu.byu.ece.rapidSmith.device.Tile;
 
 public class TrojanDetector {
 	private Architecture architecture;
@@ -36,6 +39,7 @@ public class TrojanDetector {
 	private File xdlFile;
 	private List<TrojanAttribute> trojanAttributes;
 	private JTextArea messageArea;
+	private List<Frame> goldenFrames, targetFrames;
 	public TrojanDetector(JTextArea messageArea){
 		this.messageArea = messageArea;
 	}
@@ -93,7 +97,8 @@ public class TrojanDetector {
 
 				}
 			}
-		}
+		}	
+		
 		this.trojan.setGoldenDesign(this.design);
 		this.trojan.setAffectedTiles(mT);
 		this.trojan.setAffectedNets(netSet);
@@ -102,6 +107,15 @@ public class TrojanDetector {
 		this.trojanAttributes = R.analyzeMatrix(aM.getTrojanAttributes());
 		printTrojanAttributes();
 	}
+	
+	public List<Tile> getGoldenUsedTiles(){
+		List<Tile> ret = new ArrayList<>();
+		for(Frame f : this.goldenFrames){
+			
+		}
+		return ret;
+	}
+	
 	public void printAffectedTiles(JTextArea messageArea){
 		this.trojan.printAffectedTiles(messageArea);
 	}
@@ -116,6 +130,10 @@ public class TrojanDetector {
 	
 	public void printAffectedNets(JTextArea messageArea){
 		this.trojan.printAffectedNets(messageArea);
+	}
+	
+	public void getGoldenUsedTiles(File goldenBitFile){
+		
 	}
 	
 	public void printTrojanAttributes(){
@@ -146,6 +164,8 @@ public class TrojanDetector {
 				targetBitFile.getAbsolutePath() };
 		diff = new BitstreamDiff();
 		modifiedFrames = diff.findDifferences(args);
+		this.goldenFrames = this.diff.getGoldenFrames();
+		this.targetFrames = this.diff.getTargetFrames();
 		XilinxConfigurationSpecification partType = diff.getDeviceType();
 		this.readDevice = selectedDevice(partType);
 		this.architecture = new Architecture(this.readDevice, partType);

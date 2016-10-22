@@ -237,39 +237,39 @@ public class Trojan {
 		return ret;
 	}
 
-	public int getAverageTrojanManhattenDistance() {
-		int sum = 0, count = 0;
-		if (this.goldenDesign == null) {
-			return 0;
-		}
-		for (final ModifiedTile i : this.affectedTiles) {
-			for (final ModifiedTile j : this.affectedTiles) {
-				sum += i.getTile().getManhattanDistance(j.getTile());
-				count++;
-			}
-		}
-		return sum / count;
-	}
+//	public int getAverageTrojanManhattenDistance() {
+//		int sum = 0, count = 0;
+//		if (this.goldenDesign == null) {
+//			return 0;
+//		}
+//		for (final ModifiedTile i : this.affectedTiles) {
+//			for (final ModifiedTile j : this.affectedTiles) {
+//				sum += i.getTile().getManhattanDistance(j.getTile());
+//				count++;
+//			}
+//		}
+//		return sum / count;
+//	}
 
 	public Design getGoldenDesign() {
 		return this.goldenDesign;
 	}
 
-	public int getLargestTrojanManhattenDistance() {
-		int largest = 0;
-		if (this.goldenDesign == null) {
-			return 0;
-		}
-		for (final ModifiedTile i : this.affectedTiles) {
-			for (final ModifiedTile j : this.affectedTiles) {
-				final int y = i.getTile().getManhattanDistance(j.getTile());
-				if (y > largest) {
-					largest = y;
-				}
-			}
-		}
-		return largest;
-	}
+//	public int getLargestTrojanManhattenDistance() {
+//		int largest = 0;
+//		if (this.goldenDesign == null) {
+//			return 0;
+//		}
+//		for (final ModifiedTile i : this.affectedTiles) {
+//			for (final ModifiedTile j : this.affectedTiles) {
+//				final int y = i.getTile().getManhattanDistance(j.getTile());
+//				if (y > largest) {
+//					largest = y;
+//				}
+//			}
+//		}
+//		return largest;
+//	}
 
 	public int getSmallestTrojanManhattenDistance() {
 		int largest = Integer.MAX_VALUE;
