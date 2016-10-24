@@ -161,7 +161,7 @@ public class MainWindow {
 				MainWindow.this.trojanDetector.printAffectedNetNames(MainWindow.this.messageArea);
 			}
 		});
-		btn_printModNetNames.setBounds(637, 59, 165, 23);
+		btn_printModNetNames.setBounds(637, 93, 165, 23);
 		frame.getContentPane().add(btn_printModNetNames);
 		
 		JButton btn_ModNetDetails = new JButton("Print Modified Net Details");
@@ -170,7 +170,7 @@ public class MainWindow {
 				MainWindow.this.trojanDetector.printAffectedNets(MainWindow.this.messageArea);
 			}
 		});
-		btn_ModNetDetails.setBounds(637, 93, 165, 23);
+		btn_ModNetDetails.setBounds(637, 127, 165, 23);
 		frame.getContentPane().add(btn_ModNetDetails);
 		
 		JButton btn_Clear = new JButton("Clear");
@@ -187,6 +187,14 @@ public class MainWindow {
 		label.setIcon(new ImageIcon(img));
 		label.setBounds(299, 25, 328, 144);
 		frame.getContentPane().add(label);
+		
+		JButton button = new JButton("Print Modified Instances");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		button.setBounds(637, 59, 165, 23);
+		frame.getContentPane().add(button);
 		
 		btnMapTilesToDesign.addActionListener(new ActionListener() {
 			@Override
@@ -215,8 +223,11 @@ public class MainWindow {
 						messageArea.setText("Error: Please select a target and golden bit file.");
 					}
 					else{
-						MainWindow.this.trojanDetector.performDetection(MainWindow.this.goldenBitFile,MainWindow.this.targetBitFile);
+						boolean isTrojan = MainWindow.this.trojanDetector.performDetection(MainWindow.this.goldenBitFile,MainWindow.this.targetBitFile);
 						MainWindow.this.trojanDetector.mapModifiedTilesToDesign();
+						if(!isTrojan){
+							messageArea.setText("This target file does not contain a trojan.");
+						}
 					}
 				}
 				else{

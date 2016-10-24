@@ -82,9 +82,15 @@ public class TrojanDetector {
 		HashSet<Instance> modifiedInstances = new HashSet<>();
 		List<ModifiedTile> mT = this.trojan.getAffectedTiles();
 		HashSet<Net> netSet = new HashSet<>();
-		Collection<Net> netMap = this.design.getNets();
+		//Collection<Net> netMap = this.design.getNets();
+		//List<String> netSourceTilesNames = getNetSourceTiles();
+		HashMap<String, Net> netMap = this.design.getNetMap();
 		for (int i = 0; i < mT.size(); i++) {
 			PrimitiveSite[] pS = mT.get(i).getTile().getPrimitiveSites();
+//			String tileName = mT.get(i).getTile().getName();
+//			if(netSourceTilesNames.contains(tileName)){
+//				netSet.add(this.design.getNetBySourceTileName(tileName));
+//			}
 			if (pS != null) {
 				for (PrimitiveSite p : pS) {
 					Instance tI = this.design.getInstanceAtPrimitiveSite(p);
@@ -107,7 +113,18 @@ public class TrojanDetector {
 		this.trojanAttributes = R.analyzeMatrix(aM.getTrojanAttributes());
 		printTrojanAttributes();
 	}
-	
+	public List<String> getNetSourceTiles(){
+		Collection<Net> netTiles = this.design.getNets();
+		List<String> ret = new ArrayList<>();
+		for(Net n : netTiles){
+			Tile t = n.getSourceTile();
+			if(t != null){
+				ret.add(t.getName());
+			}
+			
+		}
+		return ret;
+	}
 	public List<Tile> getGoldenUsedTiles(){
 		List<Tile> ret = new ArrayList<>();
 		for(Frame f : this.goldenFrames){
@@ -126,6 +143,16 @@ public class TrojanDetector {
 	
 	public void printAffectedNetNames(JTextArea messageArea){
 		this.trojan.printAffectedNetNames(messageArea);
+//		Collection<Net> nets = this.design.getNets();
+//		messageArea.setText("");
+//		StringBuffer sBuffer = new StringBuffer();
+//		sBuffer.append("Interconnect Networks Modified " + "\n\n");
+//		for(Net n : nets){
+//			if(this.trojan.doesTrojanModifyTile(n.getSourceTile())){
+//				sBuffer.append("Net: " + n.getName() + "\n");
+//			}
+//		}
+//		messageArea.setText(sBuffer.toString());
 	}
 	
 	public void printAffectedNets(JTextArea messageArea){
@@ -158,7 +185,7 @@ public class TrojanDetector {
 		return;
 	}
 
-	public void performDetection(File goldenBitFile, File targetBitFile) {
+	public boolean performDetection(File goldenBitFile, File targetBitFile) {
 		this.trojan = new Trojan();
 		String[] args = { "-i", goldenBitFile.getAbsolutePath(), "-c",
 				targetBitFile.getAbsolutePath() };
@@ -170,7 +197,12 @@ public class TrojanDetector {
 		this.readDevice = selectedDevice(partType);
 		this.architecture = new Architecture(this.readDevice, partType);
 		matchFramesToTiles();
-		return;
+		if(this.modifiedFrames.size() == 0){
+			return false;
+		}
+		else{
+			return true;
+		}
 	}
 
 	private Device selectedDevice(XilinxConfigurationSpecification partType) {

@@ -299,6 +299,7 @@ public class Utils{
 		
 		logic_Overhead = new HashSet<TileType>();
 		logic_Overhead.add(TileType.R_TERM_INT);
+		logic_Overhead.add(TileType.R_TERM_INT_D);
 		
 		miscellaneous = new HashSet<TileType>();
 		miscellaneous.add(TileType.PCIE_INT_INTERFACE);

@@ -44,7 +44,6 @@ public class Trojan {
 		}
 		messageArea.setText(sBuffer.toString());
 	}
-	
 	public void printAffectedNetNames(JTextArea messageArea){
 		messageArea.setText("");
 		StringBuffer sBuffer = new StringBuffer();
@@ -54,6 +53,7 @@ public class Trojan {
 		}
 		messageArea.setText(sBuffer.toString());
 	}
+
 	public void printAffectedNets(JTextArea messageArea){
 		messageArea.setText("");
 		StringBuffer sBuffer = new StringBuffer();
@@ -332,7 +332,14 @@ public class Trojan {
 		}
 		return false;
 	}
-
+	public boolean doesTrojanModifyTile(Tile t){
+		for(ModifiedTile m : this.affectedTiles){
+			if(m.getTile() == t){
+				return true;
+			}
+		}
+		return false;
+	}
 	public boolean wasTileDeactivatedByTrojan(final Tile tile) {
 		for (final ModifiedTile i : this.affectedTiles) {
 			if (i.getTile() == tile) {
