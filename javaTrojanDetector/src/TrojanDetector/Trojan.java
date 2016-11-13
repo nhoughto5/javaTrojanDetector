@@ -198,6 +198,16 @@ public class Trojan {
 		return ret;
 	}
 
+	public HashSet<Tile> getAllTilesThatHaveBeenModified() {
+		final HashSet<Tile> ret = new HashSet<Tile>();
+		for (final ModifiedTile i : this.affectedTiles) {
+			if (i.isGoldenConfigured() && i.isTargetConfigured()) {
+				ret.add(i.getTile());
+			}
+		}
+		return ret;
+	}
+
 	public Design getGoldenDesign() {
 		return this.goldenDesign;
 	}

@@ -14,7 +14,7 @@ public class AttributeManager {
 	List<TrojanAttribute> attributesList;
 	Trojan trojan;
 	ScatterScoreUtil scatterScoreManager;
-	
+
 	public AttributeManager(Trojan trojan) {
 		this.trojan = trojan;
 		AttributeInitializer init = new AttributeInitializer();
@@ -24,73 +24,91 @@ public class AttributeManager {
 		this.attributesList = init.getAttributeList();
 	}
 
-	public List<TrojanAttribute> getAbstractionAttributes(){
+	public List<TrojanAttribute> getAbstractionAttributes() {
 		List<TrojanAttribute> ret = new ArrayList<>();
 		ret.add(attributesByName.get("System"));
 		ret.add(attributesByName.get("RTL"));
 		return ret;
 	}
-	public List<TrojanAttribute> getActivationAttributes(){
+
+	public List<TrojanAttribute> getActivationAttributes() {
 		List<TrojanAttribute> ret = new ArrayList<>();
-		
+
 		return ret;
 	}
-	
-	public List<TrojanAttribute> getEffectAttributes(){
+
+	public List<TrojanAttribute> getEffectAttributes() {
 		List<TrojanAttribute> ret = new ArrayList<>();
-		
+
 		return ret;
 	}
-	
-	public List<TrojanAttribute> getFunctionalityAttributes(){
+
+	public List<TrojanAttribute> getFunctionalityAttributes() {
 		List<TrojanAttribute> ret = new ArrayList<>();
-		
+
 		return ret;
 	}
-	
-	public List<TrojanAttribute> getInsertionAttributes(){
+
+	public List<TrojanAttribute> getInsertionAttributes() {
 		List<TrojanAttribute> ret = new ArrayList<>();
-		
-		//Fabrication
+
+		// Fabrication
 		ret.add(attributesByName.get("Fabrication"));
 		ret.add(attributesByName.get("Testing"));
 		ret.add(attributesByName.get("Assembly"));
 		return ret;
 	}
-	
-	public List<TrojanAttribute> getLocationAttributes(){
+
+	public List<TrojanAttribute> getLocationAttributes() {
 		List<TrojanAttribute> ret = new ArrayList<>();
-		if(this.trojan.doesTrojanModifyCLB()){
+		if (this.trojan.doesTrojanModifyCLB()) {
 			ret.add(attributesByName.get("Processor"));
 		}
-		if(this.trojan.doesTrojanModifyIOB()){
+		if (this.trojan.doesTrojanModifyIOB()) {
 			ret.add(attributesByName.get("I/O"));
 		}
-		if(this.trojan.doesTrojanModifyMemory()){
+		if (this.trojan.doesTrojanModifyMemory()) {
 			ret.add(attributesByName.get("Memory"));
 		}
-		if(this.trojan.doesTrojanModifyPower()){
+		if (this.trojan.doesTrojanModifyPower()) {
 			ret.add(attributesByName.get("Power Supply"));
 		}
-		if(this.trojan.doesTrojanModifyClockGrid()){
+		if (this.trojan.doesTrojanModifyClockGrid()) {
 			ret.add(attributesByName.get("Clock Grid"));
 		}
 		return ret;
 	}
-	
-	public List<TrojanAttribute> getLogicTypeAttributes(){
+
+	public List<TrojanAttribute> getLogicTypeAttributes() {
 		List<TrojanAttribute> ret = new ArrayList<>();
-		
+
 		return ret;
 	}
-	
-	public List<TrojanAttribute> getPhysicalLayoutAttributes(){
+
+	public List<TrojanAttribute> getPhysicalLayoutAttributes() {
 		List<TrojanAttribute> ret = new ArrayList<>();
-		
+
+		if (this.scatterScoreManager.isSmall()) {
+			ret.add(attributesByName.get("Small"));
+		} else {
+			ret.add(attributesByName.get("Large"));
+		}
+
+		if (this.scatterScoreManager.isAugmented()) {
+			ret.add(attributesByName.get("Augmented"));
+		} else {
+			ret.add(attributesByName.get("Clustered"));
+		}
+
+		if (this.scatterScoreManager.isDistributed()) {
+			ret.add(attributesByName.get("Distributed"));
+		} else {
+			ret.add(attributesByName.get("Clustered"));
+		}
 		return ret;
 	}
-	
-	public List<TrojanAttribute> getTrojanAttributes(){
+
+	public List<TrojanAttribute> getTrojanAttributes() {
 		List<TrojanAttribute> ret = new ArrayList<>();
 		ret.addAll(getInsertionAttributes());
 		ret.addAll(getAbstractionAttributes());

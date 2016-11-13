@@ -6,23 +6,26 @@ import TrojanDetector.Trojan;
 import edu.byu.ece.rapidSmith.device.Tile;
 
 public class ScatterScoreUtil {
+	private static final double SMALL_TROJAN_THRESHOLD = 5.0;
+	private static final double CLUSTERED_TROJAN_THRESHOLD = 15.0;
 
 	private List<Tile> goldenConfiguredTiles, targetConfiguredTiles;
 	private PositionMedian goldenPositionMedian, targetPositionMedian;
 	private ScatterScore goldenScatterScore, targetScatterScore;
 	private Trojan trojan;
+
 	public ScatterScoreUtil(Trojan trojan) {
 		this.trojan = trojan;
 		this.goldenConfiguredTiles = this.trojan.getAllGoldenTiles();
 		this.targetConfiguredTiles = this.trojan.getAllTargetTiles();
-		
+
 		this.goldenPositionMedian = new PositionMedian(
 				this.averageX(this.goldenConfiguredTiles),
 				this.averageY(this.goldenConfiguredTiles));
 		this.targetPositionMedian = new PositionMedian(
 				this.averageX(this.targetConfiguredTiles),
 				this.averageY(this.targetConfiguredTiles));
-		
+
 		this.goldenScatterScore = new ScatterScore(
 				this.standardDeviationX(this.goldenConfiguredTiles),
 				this.standardDeviationY(this.goldenConfiguredTiles));
@@ -31,9 +34,36 @@ public class ScatterScoreUtil {
 				this.standardDeviationY(this.targetConfiguredTiles));
 	}
 
-	
-	
-	
+	public boolean isSmall() {
+		int numTilesInGolden = this.goldenConfiguredTiles.size();
+		int numReconfigured = this.trojan.getAffectedTiles().size();
+		double percent = ((numReconfigured * 1.0) / numTilesInGolden) * 100.0;
+		if (percent <= SMALL_TROJAN_THRESHOLD) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean isAugmented() {
+		if (this.trojan.getAllTilesThatHaveBeenActivated().size() == 0
+				&& this.trojan.getAllTilesThatHaveBeenDeactivated().size() == 0) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	public boolean isDistributed() {
+		if ((this.targetScatterScore.getDeltaX() * 100.0) > CLUSTERED_TROJAN_THRESHOLD
+				|| (this.targetScatterScore.getDeltaY() * 100.0) > CLUSTERED_TROJAN_THRESHOLD) {
+			return false;
+		}
+		else{
+			return true;
+		}
+	}
+
 	public double averageX(final List<Tile> tiles) {
 		int sum = 0;
 		for (final Tile t : tiles) {
