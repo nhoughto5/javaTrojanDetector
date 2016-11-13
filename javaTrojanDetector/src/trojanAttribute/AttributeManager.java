@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import utilityClasses.ScatterScoreUtil;
 import TrojanDetector.Trojan;
 
 public class AttributeManager {
@@ -12,10 +13,12 @@ public class AttributeManager {
 	HashMap<String, TrojanAttribute> attributesByName;
 	List<TrojanAttribute> attributesList;
 	Trojan trojan;
+	ScatterScoreUtil scatterScoreManager;
 	
 	public AttributeManager(Trojan trojan) {
 		this.trojan = trojan;
 		AttributeInitializer init = new AttributeInitializer();
+		this.scatterScoreManager = new ScatterScoreUtil(this.trojan);
 		this.attributesById = init.getAttributeMapByID();
 		this.attributesByName = init.getAttributeMapByName();
 		this.attributesList = init.getAttributeList();
@@ -83,7 +86,7 @@ public class AttributeManager {
 	
 	public List<TrojanAttribute> getPhysicalLayoutAttributes(){
 		List<TrojanAttribute> ret = new ArrayList<>();
-		//System.out.println("Average Manhatten: " + this.trojan.getAverageTrojanManhattenDistance());
+		
 		return ret;
 	}
 	

@@ -70,7 +70,6 @@ public class TrojanDetector {
 	public void loadDesign(File xdlFile) {
 		this.xdlFile = xdlFile;
 		this.design = new Design(this.xdlFile.getAbsolutePath());
-		
 	}
 
 	public void mapModifiedTilesToDesign() {
@@ -125,13 +124,6 @@ public class TrojanDetector {
 		}
 		return ret;
 	}
-	public List<Tile> getGoldenUsedTiles(){
-		List<Tile> ret = new ArrayList<>();
-		for(Frame f : this.goldenFrames){
-			
-		}
-		return ret;
-	}
 	
 	public void printAffectedTiles(JTextArea messageArea){
 		this.trojan.printAffectedTiles(messageArea);
@@ -157,10 +149,6 @@ public class TrojanDetector {
 	
 	public void printAffectedNets(JTextArea messageArea){
 		this.trojan.printAffectedNets(messageArea);
-	}
-	
-	public void getGoldenUsedTiles(File goldenBitFile){
-		
 	}
 	
 	public void printTrojanAttributes(){
