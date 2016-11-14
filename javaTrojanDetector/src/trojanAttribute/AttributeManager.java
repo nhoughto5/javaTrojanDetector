@@ -33,19 +33,44 @@ public class AttributeManager {
 
 	public List<TrojanAttribute> getActivationAttributes() {
 		List<TrojanAttribute> ret = new ArrayList<>();
-
+		ret.add(attributesByName.get("Always On"));
 		return ret;
 	}
 
 	public List<TrojanAttribute> getEffectAttributes() {
 		List<TrojanAttribute> ret = new ArrayList<>();
-
+		boolean clb = this.trojan.doesTrojanModifyCLB();
+		boolean clk = this.trojan.doesTrojanModifyClockGrid();
+		boolean dsp = this.trojan.doesTrojanModifyDSP();
+		boolean iob = this.trojan.doesTrojanModifyIOB();
+		boolean mem = this.trojan.doesTrojanModifyMemory();
+		boolean pwr = this.trojan.doesTrojanModifyPower();
+		boolean rut = this.trojan.doesTrojanModifyRouting();
+		if((clb || rut) && !clk && ! dsp && !iob && !mem && !pwr ){
+			ret.add(attributesByName.get("Change in Functionailty"));
+		}
+		else if(iob){
+			ret.add(attributesByName.get("Information Leakage"));
+		}
+		else if(clb && clk && ! dsp && !iob && !mem && !pwr && rut ){
+			ret.add(attributesByName.get("Reduced Reliability"));
+		}
+		else{
+			ret.add(attributesByName.get("Denial of Service"));
+		}
 		return ret;
 	}
 
 	public List<TrojanAttribute> getFunctionalityAttributes() {
 		List<TrojanAttribute> ret = new ArrayList<>();
-
+		boolean clk = this.trojan.doesTrojanModifyClockGrid();
+		boolean pwr = this.trojan.doesTrojanModifyPower();
+		if(pwr && clk){
+			ret.add(attributesByName.get("Parametric"));
+		}
+		else{
+			ret.add(attributesByName.get("Functional"));
+		}
 		return ret;
 	}
 
@@ -81,7 +106,12 @@ public class AttributeManager {
 
 	public List<TrojanAttribute> getLogicTypeAttributes() {
 		List<TrojanAttribute> ret = new ArrayList<>();
-
+		if(this.trojan.doesTrojanModifyClockGrid() && this.trojan.doesTrojanModifyMemory()){
+			ret.add(attributesByName.get("Sequential"));
+		}
+		else{
+			ret.add(attributesByName.get("Combinational"));
+		}
 		return ret;
 	}
 

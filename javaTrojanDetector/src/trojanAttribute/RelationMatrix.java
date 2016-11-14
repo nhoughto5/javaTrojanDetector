@@ -1,12 +1,10 @@
 package trojanAttribute;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 import utilityClasses.Error;
@@ -69,72 +67,80 @@ public class RelationMatrix {
 	public List<TrojanAttribute> analyzeMatrix(List<TrojanAttribute> attributes) {
 		HashSet<String> categorySet = getCategorySet(attributes);
 		HashSet<TrojanAttribute> ret = new HashSet<>();
-		if (!categorySet.contains("Insertion")
-				&& !categorySet.contains("Abstraction")
-				&& categorySet.contains("Properties")
-				&& !categorySet.contains("Location")) {
-			ret.addAll(propertiesOnly(attributes));
-		}
-		// #2 Used for IAPL: 0100
-		else if (!categorySet.contains("Insertion")
+		// Contains from all 4 categories
+		if (categorySet.contains("Insertion")
 				&& categorySet.contains("Abstraction")
-				&& !categorySet.contains("Properties")
-				&& !categorySet.contains("Location")) {
-			ret.addAll(abstractionOnly(attributes));
-		}
-		// #3 Used for IAPL: 0001
-		else if (!categorySet.contains("Insertion")
-				&& !categorySet.contains("Abstraction")
-				&& !categorySet.contains("Properties")
+				&& categorySet.contains("Properties")
 				&& categorySet.contains("Location")) {
-			ret.addAll(locationOnly(attributes));
-		}
-		// #4 Used for IAPL: 1000
-		else if (categorySet.contains("Insertion")
-				&& !categorySet.contains("Abstraction")
-				&& !categorySet.contains("Properties")
-				&& !categorySet.contains("Location")) {
-			ret.addAll(insertionOnly(attributes));
-		}
-		// #5 Used for IAPL: 0101 1100 1101 => ( B . C'. D ) + ( A . B . C')
-		else if ((categorySet.contains("Abstraction")
-				&& !categorySet.contains("Properties") && categorySet
-					.contains("Location"))
-				|| (categorySet.contains("Insertion")
-						&& categorySet.contains("Abstraction") && !categorySet
-							.contains("Properties"))) {
-			ret.addAll(forwardPropagation(attributes));
-		}
-		// # 7 Used for IAPL: 0011 1010 1011 => ( B'. C . D ) + ( A . B'. C )
-		else if ((!categorySet.contains("Abstraction")
-				&& categorySet.contains("Properties") && categorySet
-					.contains("Location"))
-				|| (categorySet.contains("Insertion")
-						&& !categorySet.contains("Abstraction") && categorySet
-							.contains("Properties"))) {
-			ret.addAll(backPropagationNoAbstraction(attributes));
-		}
-		// #8 Used for IAPL: 0110 0111 1110 1111 => ( B . C )
-		else if (categorySet.contains("Abstraction")
-				&& categorySet.contains("Properties")) {
-			ret.addAll(backPropagationNoAbstraction(attributes));
-		}
-		// #9 Used for IAPL: 1001 => ( A . B'. C'. D )
-		else if (categorySet.contains("Insertion")
-				&& !categorySet.contains("Abstraction")
-				&& !categorySet.contains("Properties")
-				&& categorySet.contains("Location")) {
-			ret.addAll(splitPropagation(attributes));
-		}
-		// #X Used for IAPL: 0000
-		else {
-			selectionNotPossible();
+			ret = new HashSet<TrojanAttribute>(attributes);
+		} else {
+			if (!categorySet.contains("Insertion")
+					&& !categorySet.contains("Abstraction")
+					&& categorySet.contains("Properties")
+					&& !categorySet.contains("Location")) {
+				ret.addAll(propertiesOnly(attributes));
+			}
+			// #2 Used for IAPL: 0100
+			else if (!categorySet.contains("Insertion")
+					&& categorySet.contains("Abstraction")
+					&& !categorySet.contains("Properties")
+					&& !categorySet.contains("Location")) {
+				ret.addAll(abstractionOnly(attributes));
+			}
+			// #3 Used for IAPL: 0001
+			else if (!categorySet.contains("Insertion")
+					&& !categorySet.contains("Abstraction")
+					&& !categorySet.contains("Properties")
+					&& categorySet.contains("Location")) {
+				ret.addAll(locationOnly(attributes));
+			}
+			// #4 Used for IAPL: 1000
+			else if (categorySet.contains("Insertion")
+					&& !categorySet.contains("Abstraction")
+					&& !categorySet.contains("Properties")
+					&& !categorySet.contains("Location")) {
+				ret.addAll(insertionOnly(attributes));
+			}
+			// #5 Used for IAPL: 0101 1100 1101 => ( B . C'. D ) + ( A . B . C')
+			else if ((categorySet.contains("Abstraction")
+					&& !categorySet.contains("Properties") && categorySet
+						.contains("Location"))
+					|| (categorySet.contains("Insertion")
+							&& categorySet.contains("Abstraction") && !categorySet
+								.contains("Properties"))) {
+				ret.addAll(forwardPropagation(attributes));
+			}
+			// # 7 Used for IAPL: 0011 1010 1011 => ( B'. C . D ) + ( A . B'. C)
+			else if ((!categorySet.contains("Abstraction")
+					&& categorySet.contains("Properties") && categorySet
+						.contains("Location"))
+					|| (categorySet.contains("Insertion")
+							&& !categorySet.contains("Abstraction") && categorySet
+								.contains("Properties"))) {
+				ret.addAll(backPropagationNoAbstraction(attributes));
+			}
+			// #8 Used for IAPL: 0110 0111 1110 1111 => ( B . C )
+			else if (categorySet.contains("Abstraction")
+					&& categorySet.contains("Properties")) {
+				ret.addAll(backPropagationNoAbstraction(attributes));
+			}
+			// #9 Used for IAPL: 1001 => ( A . B'. C'. D )
+			else if (categorySet.contains("Insertion")
+					&& !categorySet.contains("Abstraction")
+					&& !categorySet.contains("Properties")
+					&& categorySet.contains("Location")) {
+				ret.addAll(splitPropagation(attributes));
+			}
+			// #X Used for IAPL: 0000
+			else {
+				selectionNotPossible();
+			}
 		}
 		List<TrojanAttribute> retList = new ArrayList<TrojanAttribute>(ret);
 		Collections.sort(retList, new Comparator<TrojanAttribute>() {
-		    public int compare(TrojanAttribute x, TrojanAttribute y) {
-		        return (x.getId() - y.getId());
-		    }
+			public int compare(TrojanAttribute x, TrojanAttribute y) {
+				return (x.getId() - y.getId());
+			}
 		});
 		return retList;
 	}
@@ -156,7 +162,11 @@ public class RelationMatrix {
 		List<Integer> abstraction = new ArrayList<Integer>();
 
 		for (TrojanAttribute A : userChosen) {
-			if (A.getCategory() == "Properties") {
+			String cat = A.getCategory();
+			// Properties
+			if (cat.equals("Effect") || cat.equals("Logic Type")
+					|| cat.equals("Functionality") || cat.equals("Activation")
+					|| cat.equals("Physical Layout")) {
 				properties.add(A.getId());
 			} else if (A.getCategory() == "Location") {
 				locations.add(A.getId());
@@ -437,7 +447,15 @@ public class RelationMatrix {
 	private HashSet<String> getCategorySet(List<TrojanAttribute> attributes) {
 		HashSet<String> ret = new HashSet<String>();
 		for (TrojanAttribute t : attributes) {
-			ret.add(t.getCategory());
+			String cat = t.getCategory();
+			if (cat.equals("Effect") || cat.equals("Logic Type")
+					|| cat.equals("Functionality") || cat.equals("Activation")
+					|| cat.equals("Physical Layout")) {
+				ret.add("Properties");
+			} else {
+				ret.add(t.getCategory());
+			}
+
 		}
 		return ret;
 	}
@@ -789,9 +807,9 @@ public class RelationMatrix {
 			for (MatrixCell A : colTrue) {
 				if (A.getValue() == false) {
 					removedSet.add(A.getRowId());
-//					if (resultsInt.contains(A.getRowId())) {
-//						resultsInt.remove(A.getRowId());
-//					}
+					// if (resultsInt.contains(A.getRowId())) {
+					// resultsInt.remove(A.getRowId());
+					// }
 				}
 				if ((A.getValue() == true)
 						&& (!removedSet.contains(A.getRowId()))
@@ -801,11 +819,10 @@ public class RelationMatrix {
 			}
 		}
 		HashSet<Integer> ret = new HashSet<Integer>();
-		for(Integer i : resultsInt){
-			if(removedSet.contains(i)){
-				//ret.add(i);
-			}
-			else{
+		for (Integer i : resultsInt) {
+			if (removedSet.contains(i)) {
+				// ret.add(i);
+			} else {
 				ret.add(i);
 			}
 		}
@@ -825,9 +842,9 @@ public class RelationMatrix {
 			for (MatrixCell A : rowTrue) {
 				if (A.getValue() == false) {
 					removedSet.add(A.getColumnId());
-//					if (resultsInt.contains(A.getColumnId())) {
-//						resultsInt.remove(A.getColumnId());
-//					}
+					// if (resultsInt.contains(A.getColumnId())) {
+					// resultsInt.remove(A.getColumnId());
+					// }
 				}
 				if ((A.getValue() == true)
 						&& (!removedSet.contains(A.getColumnId()))
@@ -837,11 +854,10 @@ public class RelationMatrix {
 			}
 		}
 		HashSet<Integer> ret = new HashSet<Integer>();
-		for(Integer i : resultsInt){
-			if(removedSet.contains(i)){
-				//ret.add(i);
-			}
-			else{
+		for (Integer i : resultsInt) {
+			if (removedSet.contains(i)) {
+				// ret.add(i);
+			} else {
 				ret.add(i);
 			}
 		}

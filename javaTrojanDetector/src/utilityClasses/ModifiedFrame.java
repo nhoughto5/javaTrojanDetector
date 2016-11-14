@@ -370,7 +370,7 @@ public class ModifiedFrame {
 				break;
 			default:
 				Error.printError(
-						"Modified Frame does not match know Column Type: "
+						"Modified Frame does not match a known Column Type: "
 								+ colType + ": " + this.column.getColumn(),
 						new Exception().getStackTrace()[0]);
 				break;
